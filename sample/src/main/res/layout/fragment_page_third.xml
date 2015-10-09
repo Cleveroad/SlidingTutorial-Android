@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout
+    android:id="@+id/rootThirdPage"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
+
+    <ImageView
+        android:id="@+id/ivThirdImage"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@mipmap/s_2_3"
+
+        app:layout_heightPercent="40%"
+        app:layout_marginTopPercent="27%"
+        app:layout_widthPercent="100%"/>
+
+    <ImageView
+        android:id="@+id/ivSecondImage"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:alpha=".5"
+
+        android:src="@mipmap/s_2_2"
+
+        app:layout_heightPercent="27%"
+        app:layout_marginLeftPercent="20%"
+        app:layout_marginRightPercent="12%"
+        app:layout_marginTopPercent="20%"
+        app:layout_widthPercent="75%"/>
+
+    <ImageView
+        android:id="@+id/ivFirstImage"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+
+        android:src="@mipmap/s_2_1"
+
+        app:layout_heightPercent="18%"
+        app:layout_widthPercent="55%"/>
+
+
+    <ImageView
+        android:id="@+id/ivFourthImage"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@mipmap/s_2_4"
+
+        app:layout_heightPercent="7%"
+        app:layout_marginLeftPercent="33%"
+        app:layout_marginTopPercent="34%"
+        app:layout_widthPercent="16%"/>
+
+    <ImageView
+        android:id="@+id/ivSixthImage"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@mipmap/s_2_6"
+
+        app:layout_heightPercent="7%"
+        app:layout_marginLeftPercent="57%"
+        app:layout_marginTopPercent="29%"
+        app:layout_widthPercent="14%"/>
+
+    <ImageView
+        android:id="@+id/ivSeventhImage"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@mipmap/s_2_7"
+
+        app:layout_heightPercent="15%"
+        app:layout_marginLeftPercent="65%"
+        app:layout_marginTopPercent="47%"
+        app:layout_widthPercent="25%"/>
+
+    <ImageView
+        android:id="@+id/ivFifthImage"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@mipmap/s_2_5"
+
+        app:layout_heightPercent="10%"
+        app:layout_marginLeftPercent="77%"
+        app:layout_marginTopPercent="30%"
+        app:layout_widthPercent="15%"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+
+        android:gravity="center"
+
+        android:text="@string/text_e_commerce"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_large"
+
+        app:layout_heightPercent="15%"
+        app:layout_marginBottomPercent="11%"
+        app:layout_widthPercent="45%"/>
+</android.support.percent.PercentRelativeLayout>
