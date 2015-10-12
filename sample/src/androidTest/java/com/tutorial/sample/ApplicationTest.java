@@ -1,4 +1,4 @@
-package com.cleveroad.custompagerpresentation;
+package com.tutorial.sample;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
