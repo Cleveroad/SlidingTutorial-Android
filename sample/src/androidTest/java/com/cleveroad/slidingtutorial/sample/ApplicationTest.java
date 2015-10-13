@@ -1,4 +1,4 @@
-package com.tutorial.sample;
+package com.cleveroad.slidingtutorial.sample;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,7 +1,6 @@
-package com.tutorial.sample;
+package com.cleveroad.slidingtutorial.sample;
 
 
-import com.cleveroad.custompagerpresentation.R;
 import com.cleveroad.slidingtutorial.PageFragment;
 import com.cleveroad.slidingtutorial.PresentationPagerFragment;
 

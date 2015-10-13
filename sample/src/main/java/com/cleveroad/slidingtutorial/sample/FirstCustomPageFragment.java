@@ -1,24 +1,23 @@
-package com.tutorial.sample;
+package com.cleveroad.slidingtutorial.sample;
 
-import com.cleveroad.custompagerpresentation.R;
 import com.cleveroad.slidingtutorial.PageFragment;
 import com.cleveroad.slidingtutorial.TransformItem;
 
-public class SecondCustomPageFragment extends PageFragment {
+public class FirstCustomPageFragment extends PageFragment {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.fragment_page_second;
+        return R.layout.fragment_page_first;
     }
 
     @Override
     protected int getBackgroundColorResId() {
-        return android.R.color.holo_green_dark;
+        return android.R.color.holo_orange_dark;
     }
 
     @Override
     public int getRootResId() {
-        return R.id.rootSecondPage;
+        return R.id.rootFirstPage;
     }
 
     @Override

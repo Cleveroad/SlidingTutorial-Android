@@ -1,12 +1,10 @@
-package com.tutorial.sample;
+package com.cleveroad.slidingtutorial.sample;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.cleveroad.custompagerpresentation.R;
-import com.tutorial.sample.CustomPresentationPagerFragment;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
