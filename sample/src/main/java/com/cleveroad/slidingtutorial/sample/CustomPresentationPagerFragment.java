@@ -1,6 +1,5 @@
 package com.cleveroad.slidingtutorial.sample;
 
-
 import com.cleveroad.slidingtutorial.PageFragment;
 import com.cleveroad.slidingtutorial.PresentationPagerFragment;
 
