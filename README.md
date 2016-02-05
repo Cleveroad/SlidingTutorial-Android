@@ -2,8 +2,6 @@
 
 ###Simple library that helps developers to create awesome sliding android app tutorial.
 
-<img src="https://www.cleveroad.com/public/comercial/SlidingTutorial.gif" />
-
 Read our <a href="https://www.cleveroad.com/blog/case-study-sliding-tutorial-for-android-by-cleveroad">Case Study: Sliding tutorial for Android by Cleveroad</a>
 
 Applied parallax effects will make your product presentation look like Google apps tutorial.
