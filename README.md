@@ -125,16 +125,16 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 | v.0.9   | First public release            |
 
 ## Migrations from v.0.9 to v.0.9.1
-#####CirclePageIndicator
+####CirclePageIndicator
 This class is final now. Make sure you're not extending from it.
 
-#####LayersHolder
+####LayersHolder
 This class is package-local now. Make sure you're not using it.
 
-#####PageFragment
+####PageFragment
 **getRootResId()** and **getBackgroundColorResId()** methods are deprecated. You can remove them now. To specify page's color see **PresentationPagerFragment.getPageColor(int)** method.
 
-#####PresentationPagerFragment
+####PresentationPagerFragment
 **getPageFragments()** method is deprecated. You can remove it now. Use **getPagesCount()** and **getPage(int)** methods instead. 
 **NOTE:** make sure you're returning new fragment instance when displaying tutorial with infinite scroll enabled.
 
