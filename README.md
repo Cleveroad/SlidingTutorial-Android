@@ -16,9 +16,9 @@ All you need to do is:
 
 First, add gradle dependency with command:<br>
 ```groovy
-	dependencies {
-	    compile 'com.cleveroad:slidingtutorial:0.9'
-	}
+dependencies {
+    compile 'com.cleveroad:slidingtutorial:0.9.1'
+}
 ``` 
 
 After you have to create each fragment that must extend from PageFragment. Also you have to create your xml file with images.
@@ -28,21 +28,13 @@ public class FirstCustomPageFragment extends PageFragment {
 
     @Override
     protected int getLayoutResId() {
+        // layout id of fragment
         return R.layout.fragment_page_first;
     }
 
     @Override
-    protected int getBackgroundColorResId() {
-        return android.R.color.holo_orange_dark;
-    }
-
-    @Override
-    public int getRootResId() {
-        return R.id.rootFirstPage;
-    }
-
-    @Override
     protected TransformItem[] provideTransformItems() {
+        // list of transformation items
         return new TransformItem[]{
                 new TransformItem(R.id.ivFirstImage, true, 20),
                 new TransformItem(R.id.ivSecondImage, false, 6),
@@ -63,35 +55,88 @@ Then you should provide these fragments in main slidingtutroial fragment
 public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 
     @Override
-    protected List<? extends PageFragment> getPageFragments() {
-        List<PageFragment> pageFragments = new ArrayList<>();
-        pageFragments.add(new FirstCustomPageFragment());
-        pageFragments.add(new SecondCustomPageFragment());
-        pageFragments.add(new ThirdCustomPageFragment());
-        return pageFragments;
-    }
-
-    @Override
     public int getLayoutResId() {
+        // layout id of fragment
         return R.layout.fragment_presentation;
     }
 
     @Override
     public int getViewPagerResId() {
+        // id of view pager
         return R.id.viewPager;
     }
 
     @Override
     public int getIndicatorResId() {
+        // id of circular indicator
         return R.id.indicator;
     }
 
     @Override
     public int getButtonSkipResId() {
+        // id of skip button
         return R.id.tvSkip;
+    }
+
+    @Override
+    protected int getPagesCount() {
+        // total number of pages
+        return 3;
+    }
+
+    @Override
+    protected PageFragment getPage(int position) {
+        // get page for position
+        if (position == 0)
+            return new FirstCustomPageFragment();
+        if (position == 1)
+            return new SecondCustomPageFragment();
+        if (position == 2)
+            return new ThirdCustomPageFragment();
+        throw new IllegalArgumentException("Unknown position: " + position);
+    }
+
+    @ColorInt
+    @Override
+    protected int getPageColor(int position) {
+        // get color of page
+        if (position == 0)
+            return ContextCompat.getColor(getContext(), android.R.color.holo_orange_dark);
+        if (position == 1)
+            return ContextCompat.getColor(getContext(), android.R.color.holo_green_dark);
+        if (position == 2)
+            return ContextCompat.getColor(getContext(), android.R.color.holo_blue_dark);
+        return Color.TRANSPARENT;
+    }
+
+    @Override
+    protected boolean isInfiniteScrollEnabled() {
+        // enable/disable infinite scroll behavior
+        return true;
     }
 }
 ```
+
+## Changelog
+
+| Version | Changes                         |
+| v.0.9.1 | Added infinite scroll behavior  |
+| v.0.9   | First public release            |
+|-|-|
+
+## Migrations from v.0.9 to v.0.9.1
+#####CirclePageIndicator
+This class is final now. Make sure you're not extending from it.
+
+#####LayersHolder
+This class is package-local now. Make sure you're not using it.
+
+#####PageFragment
+**getRootResId()** and **getBackgroundColorResId()** methods are deprecated. You can remove them now. To specify page's color see **PresentationPagerFragment.getPageColor(int)** method.
+
+#####PresentationPagerFragment
+**getPageFragments()** method is deprecated. You can remove it now. Use **getPagesCount()** and **getPage(int)** methods instead. 
+**NOTE:** make sure you're returning new fragment instance when displaying tutorial with infinite scroll enabled.
 
 ## Support
 If you have any questions regarding the use of this tutorial, please contact us for support
@@ -108,7 +153,7 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 
         The MIT License (MIT)
 
-        Copyright (c) 2015 Cleveroad
+        Copyright (c) 2015-2016 Cleveroad
 
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal

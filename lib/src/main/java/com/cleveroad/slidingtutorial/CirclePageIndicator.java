@@ -39,7 +39,7 @@ import static android.widget.LinearLayout.VERTICAL;
  * Draws circles (one for each view). The current view position is filled and
  * others are only stroked.
  */
-class CirclePageIndicator extends View implements ViewPager.OnPageChangeListener {
+public final class CirclePageIndicator extends View implements ViewPager.OnPageChangeListener {
 	private float mRadius;
 	private final Paint mPaintPageFill = new Paint(ANTI_ALIAS_FLAG);
 	private final Paint mPaintStroke = new Paint(ANTI_ALIAS_FLAG);
