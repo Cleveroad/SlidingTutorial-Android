@@ -23,14 +23,12 @@
  */
 package com.cleveroad.slidingtutorial;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,36 +40,35 @@ import android.view.ViewGroup;
  */
 public abstract class PageFragment extends Fragment {
 
-    protected LayersHolder holder;
+	private LayersHolder holder;
 
-    protected abstract TransformItem[] provideTransformItems();
+	protected abstract TransformItem[] provideTransformItems();
 
-    @LayoutRes
-    protected abstract int getLayoutResId();
+	@LayoutRes
+	protected abstract int getLayoutResId();
 
-    @IdRes
-    public abstract int getRootResId();
+	@IdRes
+	@Deprecated
+	protected int getRootResId() {
+		return 0;
+	}
 
-    @ColorRes
-    protected abstract int getBackgroundColorResId();
+	@ColorRes
+	@Deprecated
+	protected int getBackgroundColorResId() {
+		return 0;
+	}
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(getLayoutResId(), container, false);
-        holder = provideLayersHolder(view);
-        return view;
-    }
+	@Nullable
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(getLayoutResId(), container, false);
+		holder = new LayersHolder(view, provideTransformItems());
+		view.setTag(R.id.page_fragment, this);
+		return view;
+	}
 
-    public int getBackgroundColor(Context context) {
-        return ContextCompat.getColor(context, getBackgroundColorResId());
-    }
-
-    protected void transformPage(View view, float position) {
-        holder.transformPage(view.getWidth(), position);
-    }
-
-    private LayersHolder provideLayersHolder(View view) {
-        return new LayersHolder(view, provideTransformItems());
-    }
+	void transformPage(View view, float position) {
+		holder.transformPage(view.getWidth(), position);
+	}
 }

@@ -27,6 +27,7 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Wrapper for ViewPager that has overridden {@link PagerAdapter}. In order page indicator
@@ -34,82 +35,91 @@ import android.view.View;
  * {@link ViewPagerWrapper.PagerAdapterWrapper} has overridden
  * {@link PagerAdapter#getCount()} method.
  */
-public class ViewPagerWrapper extends ViewPager {
-    private ViewPager.OnPageChangeListener listener;
-    private PagerAdapter pagerAdapter;
-    private ViewPager delegate;
+class ViewPagerWrapper extends ViewPager {
 
-    public ViewPagerWrapper(Context context) {
-        super(context);
-    }
+	private PagerAdapterWrapper pagerAdapter;
+	private ViewPager delegate;
 
-    public ViewPagerWrapper(Context context, ViewPager viewPager) {
-        super(context);
-        this.delegate = viewPager;
-        delegate.addOnPageChangeListener(new OnPageChangeListenerWrapper());
-    }
+	public ViewPagerWrapper(Context context) {
+		super(context);
+	}
 
-    @Override
-    public PagerAdapter getAdapter() {
-        if (pagerAdapter == null) {
-            pagerAdapter = new PagerAdapterWrapper(delegate.getAdapter());
-        }
+	public ViewPagerWrapper(Context context, ViewPager viewPager) {
+		super(context);
+		this.delegate = viewPager;
+	}
 
-        return pagerAdapter;
-    }
+	@Override
+	public PagerAdapter getAdapter() {
+		if (pagerAdapter == null) {
+			pagerAdapter = new PagerAdapterWrapper(delegate.getAdapter());
+		}
 
-    @Override
-    public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
-        this.listener = listener;
-    }
+		return pagerAdapter;
+	}
 
-    @Override
-    public void addOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
-        this.listener = listener;
-    }
+	@SuppressWarnings("deprecation")
+	@Override
+	public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
+		delegate.addOnPageChangeListener(listener);
+	}
 
-    private class OnPageChangeListenerWrapper implements ViewPager.OnPageChangeListener {
+	@Override
+	public void addOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
+		delegate.addOnPageChangeListener(listener);
+	}
 
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            int penultimatePosition = getAdapter().getCount() - 1;
-            if (position >= penultimatePosition) {
-                listener.onPageScrolled(penultimatePosition, 0, 0);
-            } else {
-                listener.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
-        }
+	@Override
+	public void removeOnPageChangeListener(OnPageChangeListener listener) {
+		delegate.removeOnPageChangeListener(listener);
+	}
 
-        @Override
-        public void onPageSelected(int position) {
-            listener.onPageSelected(position);
-        }
+	@Override
+	public void clearOnPageChangeListeners() {
+		delegate.clearOnPageChangeListeners();
+	}
 
-        @Override
-        public void onPageScrollStateChanged(int state) {
-            listener.onPageScrollStateChanged(state);
-        }
-    }
+	/**
+	 * PagerAdapterWrapper that has overridden {@link PagerAdapter#getCount()} method, in order
+	 * to reduce numbers of pages by one.
+	 */
+	private static class PagerAdapterWrapper extends PagerAdapter {
+		private PagerAdapter delegate;
 
-    /**
-     * PagerAdapterWrapper that has overridden {@link PagerAdapter#getCount()} method, in order
-     * to reduce numbers of pages by one.
-     */
-    class PagerAdapterWrapper extends PagerAdapter {
-        PagerAdapter delegate;
+		public PagerAdapterWrapper(PagerAdapter pagerAdapter) {
+			this.delegate = pagerAdapter;
+		}
 
-        public PagerAdapterWrapper(PagerAdapter pagerAdapter) {
-            this.delegate = pagerAdapter;
-        }
+		@Override
+		public int getCount() {
+			return delegate.getCount() - 1;
+		}
 
-        @Override
-        public int getCount() {
-            return delegate.getCount() - 1;
-        }
+		@Override
+		public boolean isViewFromObject(View view, Object object) {
+			return delegate.isViewFromObject(view, object);
+		}
 
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return delegate.isViewFromObject(view, object);
-        }
-    }
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			return delegate.instantiateItem(container, position);
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public Object instantiateItem(View container, int position) {
+			return delegate.instantiateItem(container, position);
+		}
+
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			delegate.destroyItem(container, position, object);
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public void destroyItem(View container, int position, Object object) {
+			delegate.destroyItem(container, position, object);
+		}
+	}
 }
