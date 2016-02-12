@@ -25,6 +25,7 @@ package com.cleveroad.slidingtutorial;
 
 import android.animation.ArgbEvaluator;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -33,7 +34,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,166 +44,194 @@ import java.util.List;
  */
 public abstract class PresentationPagerFragment extends Fragment implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
-    private ViewPager viewPager;
-    private View bSkip;
-    private CirclePageIndicator indicator;
+	private ViewPager viewPager;
+	private View bSkip;
+	private CirclePageIndicator indicator;
 
-    private List<? extends PageFragment> pageFragments;
-    private List<Integer> colors = new ArrayList<>();
-    private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
+	private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
 
-    public PresentationPagerFragment() {
-    }
+	public PresentationPagerFragment() {
+	}
 
-    public abstract int getLayoutResId();
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+	}
 
-    public abstract int getViewPagerResId();
-
-    public abstract int getIndicatorResId();
-
-    public abstract int getButtonSkipResId();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(getLayoutResId(), container, false);
-        viewPager = (ViewPager) view.findViewById(getViewPagerResId());
-        indicator = (CirclePageIndicator) view.findViewById(getIndicatorResId());
-        bSkip = view.findViewById(getButtonSkipResId());
-        return view;
-    }
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(getLayoutResId(), container, false);
+		viewPager = (ViewPager) view.findViewById(getViewPagerResId());
+		indicator = (CirclePageIndicator) view.findViewById(getIndicatorResId());
+		bSkip = view.findViewById(getButtonSkipResId());
+		return view;
+	}
 
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        pageFragments = getPageFragments();
-        viewPager.setAdapter(new PresentationAdapter(getChildFragmentManager(), pageFragments));
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		viewPager.setAdapter(new PresentationAdapter(getChildFragmentManager()));
+		if (isInfiniteScrollEnabled()) {
+			viewPager.setCurrentItem(Integer.MAX_VALUE / 2);
+		}
+		indicator.setViewPager(new ViewPagerWrapper(getContext(), viewPager), getPagesCount());
+		viewPager.addOnPageChangeListener(this);
+		viewPager.setPageTransformer(true, new FragmentTransformer());
 
-        indicator.setViewPager(new ViewPagerWrapper(getContext(), viewPager));
+		bSkip.setOnClickListener(this);
+	}
 
-        viewPager.addOnPageChangeListener(this);
-        viewPager.setPageTransformer(true, new FragmentTransformer());
+	@Override
+	public void onClick(View v) {
+		if (v.getId() == getButtonSkipResId()) {
+			removeFragmentFromScreen();
+		}
+	}
 
-        bSkip.setOnClickListener(this);
+	/**
+	 * According to position and positionOffset changing background color. If last position then
+	 * change root view alpha.
+	 */
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+		if (isInfiniteScrollEnabled() && getPagesCount() != 0) {
+			position %= getPagesCount();
+		}
+		int nextColorPosition = position + 1;
+		if (nextColorPosition >= getPagesCount()) {
+			nextColorPosition = 0;
+		}
+		if (position < (viewPager.getAdapter().getCount() - 1)) {
+			viewPager.setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset, getPageColor(position), getPageColor(nextColorPosition)));
+		} else if (!isInfiniteScrollEnabled() && position == getPagesCount() - 1) {
+			viewPager.setBackgroundColor(getPageColor(position));
+			if (getView() != null) {
+				getView().setAlpha(1 - positionOffset);
+			}
+		}
+	}
 
-        setUpColors();
-    }
+	/**
+	 * When last position will be reached then remove fragment from the screen.
+	 */
+	@Override
+	public void onPageSelected(int position) {
+		if (!isInfiniteScrollEnabled() && position == getPagesCount()) {
+			removeFragmentFromScreen();
+		}
+	}
 
-    /**
-     * Set up background colors list.
-     */
-    private void setUpColors() {
-        for (PageFragment fragment : pageFragments) {
-            int backgroundColor = fragment.getBackgroundColor(getActivity());
+	@Override
+	public void onPageScrollStateChanged(int state) {
 
-            if (!colors.contains(backgroundColor)) {
-                colors.add(backgroundColor);
-            }
-        }
-    }
+	}
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == getButtonSkipResId()) {
-            removeFragmentFromScreen();
-        }
-    }
+	private void removeFragmentFromScreen() {
+		getActivity().getSupportFragmentManager()
+				.beginTransaction()
+				.remove(PresentationPagerFragment.this)
+				.commitAllowingStateLoss();
+	}
 
-    /**
-     * According to position and positionOffset changing background color. If last position then
-     * change root view alpha.
-     */
-    @SuppressWarnings("ConstantConditions")
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (position < (viewPager.getAdapter().getCount() - 1) && position < (colors.size() - 1)) {
-            viewPager.setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset, colors.get(position), colors.get(position + 1)));
-        } else if (position == pageFragments.size() - 1) {
-            viewPager.setBackgroundColor(colors.get(colors.size() - 1));
-            if (getView() != null) getView().setAlpha(1 - positionOffset);
-        }
-    }
+	/**
+	 * Obtain custom page fragment list for presentation view pager.
+	 *
+	 * @return list of custom page fragments.
+	 */
+	@Deprecated
+	protected List<? extends PageFragment> getPageFragments() {
+		return Collections.emptyList();
+	}
 
-    /**
-     * When last position will be reached then remove fragment from the screen.
-     */
-    @Override
-    public void onPageSelected(int position) {
-        if (position == pageFragments.size()) {
-            removeFragmentFromScreen();
-        }
-    }
+	protected abstract int getLayoutResId();
 
-    @Override
-    public void onPageScrollStateChanged(int state) {
+	protected abstract int getViewPagerResId();
 
-    }
+	protected abstract int getIndicatorResId();
 
-    private void removeFragmentFromScreen() {
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .remove(PresentationPagerFragment.this)
-                .commitAllowingStateLoss();
-    }
+	protected abstract int getButtonSkipResId();
 
-    /**
-     * Obtain custom page fragment list for presentation view pager.
-     *
-     * @return list of custom page fragments.
-     */
-    protected abstract List<? extends PageFragment> getPageFragments();
+	/**
+	 * Enable or disable infinite scroll. Default value is false.
+	 *
+	 * @return true to enable infinite scroll, false otherwise.
+	 */
+	protected boolean isInfiniteScrollEnabled() {
+		return false;
+	}
 
+	/**
+	 * Get total pages count.
+	 *
+	 * @return pages count
+	 */
+	protected abstract int getPagesCount();
 
-    /**
-     * Implementation of {@link FragmentPagerAdapter} that in addition add empty last fragment.
-     */
-    private class PresentationAdapter extends FragmentPagerAdapter {
-        private final Fragment emptyFragment = new Fragment();
-        private List<? extends PageFragment> pageFragments;
+	/**
+	 * Get specific page by position index.
+	 *
+	 * @param position index of page
+	 * @return page at specified position
+	 */
+	protected abstract PageFragment getPage(int position);
 
-        public PresentationAdapter(FragmentManager fm, List<? extends PageFragment> pageFragments) {
-            super(fm);
-            this.pageFragments = pageFragments;
-        }
+	/**
+	 * Get page color.
+	 *
+	 * @param position index of page
+	 * @return color of page
+	 */
+	@ColorInt
+	protected abstract int getPageColor(int position);
 
-        @Override
-        public Fragment getItem(int position) {
-            if (position < pageFragments.size()) {
-                return pageFragments.get(position);
-            } else if (position == pageFragments.size()) {
-                return emptyFragment;
-            } else {
-                throw new IllegalArgumentException("Position does not found");
-            }
-        }
+	/**
+	 * Implementation of {@link FragmentPagerAdapter} that in addition add empty last fragment.
+	 */
+	private class PresentationAdapter extends FragmentPagerAdapter {
+		private final Fragment emptyFragment = new Fragment();
 
-        @Override
-        public int getCount() {
-            return pageFragments.size() + 1;
-        }
-    }
+		public PresentationAdapter(FragmentManager fm) {
+			super(fm);
+		}
 
-    /**
-     * Implementation of {@link android.support.v4.view.ViewPager.PageTransformer} that dispatch
-     * transform page event whenever a visible/attached page is scrolled.
-     */
-    class FragmentTransformer implements ViewPager.PageTransformer {
+		@Override
+		public Fragment getItem(int position) {
+			if (isInfiniteScrollEnabled()) {
+				position %= getPagesCount();
+			}
+			if (position < getPagesCount()) {
+				return getPage(position);
+			} else if (position == getPagesCount()) {
+				return emptyFragment;
+			} else {
+				throw new IllegalArgumentException("Invalid position: " + position);
+			}
+		}
 
-        public void transformPage(View view, float position) {
-            if (position <= 1 && pageFragments != null) {
-                for (PageFragment pageFragment : pageFragments) {
-                    if (pageFragment.getRootResId() == view.getId()) {
-                        pageFragment.transformPage(view, position);
-                        break;
-                    }
-                }
-            }
-        }
-    }
+		@Override
+		public int getCount() {
+			if (getPagesCount() == 0)
+				return 0;
+			if (isInfiniteScrollEnabled())
+				return Integer.MAX_VALUE;
+			return getPagesCount() + 1;
+		}
+	}
+
+	/**
+	 * Implementation of {@link android.support.v4.view.ViewPager.PageTransformer} that dispatch
+	 * transform page event whenever a visible/attached page is scrolled.
+	 */
+	class FragmentTransformer implements ViewPager.PageTransformer {
+
+		public void transformPage(View view, float position) {
+			Object obj = view.getTag(R.id.page_fragment);
+			if (obj instanceof PageFragment) {
+				((PageFragment) obj).transformPage(view, position);
+			}
+		}
+	}
 }
