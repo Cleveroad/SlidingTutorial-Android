@@ -132,10 +132,13 @@ This class is final now. Make sure you're not extending from it.
 This class is package-local now. Make sure you're not using it.
 
 ####PageFragment
-**getRootResId()** and **getBackgroundColorResId()** methods are deprecated. You can remove them now. To specify page's color see **PresentationPagerFragment.getPageColor(int)** method.
+**getRootResId()** and **getBackgroundColorResId()** methods are deprecated. You can remove them now. To specify page's color use **PresentationPagerFragment.getPageColor(int)** method.
 
 ####PresentationPagerFragment
 **getPageFragments()** method is deprecated. You can remove it now. Use **getPagesCount()** and **getPage(int)** methods instead. 
+
+Added **isInfinityScrollEnabled()** method. Override it and return `true` to enable this feature.
+
 **NOTE:** make sure you're returning new fragment instance when displaying tutorial with infinite scroll enabled.
 
 ## Support
