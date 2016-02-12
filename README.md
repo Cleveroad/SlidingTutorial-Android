@@ -120,9 +120,9 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 ## Changelog
 
 | Version | Changes                         |
+| --- | --- |
 | v.0.9.1 | Added infinite scroll behavior  |
 | v.0.9   | First public release            |
-|-|-|
 
 ## Migrations from v.0.9 to v.0.9.1
 #####CirclePageIndicator
