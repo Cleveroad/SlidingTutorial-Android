@@ -86,7 +86,7 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == getButtonSkipResId()) {
-			if (!onSkipButtonClicked()) {
+			if (!onSkipButtonClicked(v)) {
 				removeFragmentFromScreen();
 			}
 		}
@@ -191,9 +191,10 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 
 	/**
 	 * Called when user pressed Skip button. Default behavior: remove presentation fragment.
+	 * @param skipButton skip button
 	 * @return true if you consumed click listener and implemented your own behavior, false otherwise
 	 */
-	protected boolean onSkipButtonClicked() {
+	protected boolean onSkipButtonClicked(View skipButton) {
 		return false;
 	}
 
