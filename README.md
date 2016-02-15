@@ -17,7 +17,7 @@ All you need to do is:
 First, add gradle dependency with command:<br>
 ```groovy
 dependencies {
-    compile 'com.cleveroad:slidingtutorial:0.9.1'
+    compile 'com.cleveroad:slidingtutorial:0.9.2'
 }
 ``` 
 
