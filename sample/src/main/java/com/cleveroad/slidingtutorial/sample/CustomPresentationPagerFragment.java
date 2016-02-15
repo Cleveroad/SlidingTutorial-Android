@@ -3,6 +3,7 @@ package com.cleveroad.slidingtutorial.sample;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 import android.widget.Toast;
 
 import com.cleveroad.slidingtutorial.PageFragment;
@@ -44,7 +45,7 @@ public class CustomPresentationPagerFragment extends SimplePagerFragment {
 	}
 
 	@Override
-	protected boolean onSkipButtonClicked() {
+	protected boolean onSkipButtonClicked(View skipButton) {
 		Toast.makeText(getContext(), "Skip button clicked", Toast.LENGTH_SHORT).show();
 		return true;
 	}

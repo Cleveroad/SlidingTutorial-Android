@@ -116,7 +116,7 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
     }
     
     @Override
-	protected boolean onSkipButtonClicked() {
+	protected boolean onSkipButtonClicked(View skipButton) {
 		// your own behavior goes here
 		// ...
 		// return true to consume click event, false otherwise
