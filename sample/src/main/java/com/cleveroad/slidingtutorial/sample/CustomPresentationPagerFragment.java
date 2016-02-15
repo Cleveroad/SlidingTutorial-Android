@@ -3,31 +3,12 @@ package com.cleveroad.slidingtutorial.sample;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.cleveroad.slidingtutorial.PageFragment;
-import com.cleveroad.slidingtutorial.PresentationPagerFragment;
+import com.cleveroad.slidingtutorial.SimplePagerFragment;
 
-public class CustomPresentationPagerFragment extends PresentationPagerFragment {
-
-	@Override
-	public int getLayoutResId() {
-		return R.layout.fragment_presentation;
-	}
-
-	@Override
-	public int getViewPagerResId() {
-		return R.id.viewPager;
-	}
-
-	@Override
-	public int getIndicatorResId() {
-		return R.id.indicator;
-	}
-
-	@Override
-	public int getButtonSkipResId() {
-		return R.id.tvSkip;
-	}
+public class CustomPresentationPagerFragment extends SimplePagerFragment {
 
 	@Override
 	protected int getPagesCount() {
@@ -59,6 +40,12 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 
 	@Override
 	protected boolean isInfiniteScrollEnabled() {
+		return true;
+	}
+
+	@Override
+	protected boolean onSkipButtonClicked() {
+		Toast.makeText(getContext(), "Skip button clicked", Toast.LENGTH_SHORT).show();
 		return true;
 	}
 }

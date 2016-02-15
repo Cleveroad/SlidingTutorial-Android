@@ -86,7 +86,9 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == getButtonSkipResId()) {
-			removeFragmentFromScreen();
+			if (!onSkipButtonClicked()) {
+				removeFragmentFromScreen();
+			}
 		}
 	}
 
@@ -188,6 +190,14 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 	protected abstract int getPageColor(int position);
 
 	/**
+	 * Called when user pressed Skip button. Default behavior: remove presentation fragment.
+	 * @return true if you consumed click listener and implemented your own behavior, false otherwise
+	 */
+	protected boolean onSkipButtonClicked() {
+		return false;
+	}
+
+	/**
 	 * Implementation of {@link FragmentPagerAdapter} that in addition add empty last fragment.
 	 */
 	private class PresentationAdapter extends FragmentPagerAdapter {
@@ -225,7 +235,7 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 	 * Implementation of {@link android.support.v4.view.ViewPager.PageTransformer} that dispatch
 	 * transform page event whenever a visible/attached page is scrolled.
 	 */
-	class FragmentTransformer implements ViewPager.PageTransformer {
+	private class FragmentTransformer implements ViewPager.PageTransformer {
 
 		public void transformPage(View view, float position) {
 			Object obj = view.getTag(R.id.page_fragment);
