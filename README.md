@@ -114,6 +114,14 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
         // enable/disable infinite scroll behavior
         return true;
     }
+    
+    @Override
+	protected boolean onSkipButtonClicked() {
+		// your own behavior goes here
+		// ...
+		// return true to consume click event, false otherwise
+		return true;
+	}
 }
 ```
 
@@ -121,6 +129,7 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 
 | Version | Changes                         |
 | --- | --- |
+| v.0.9.2 | Added onSkipButtonClciked method and SimplePagerFragment |
 | v.0.9.1 | Added infinite scroll behavior  |
 | v.0.9   | First public release            |
 
