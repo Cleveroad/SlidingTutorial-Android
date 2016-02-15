@@ -31,10 +31,10 @@
             android:layout_marginRight="10dp"
             android:fontFamily="sans-serif-light"
             android:padding="10dp"
-            android:text="Skip"
+            android:text="@string/skip"
             android:textColor="@android:color/white"
             android:textSize="21sp"
-            tools:ignore="HardcodedText,UnusedAttribute"/>
+            tools:ignore="UnusedAttribute"/>
 
         <com.cleveroad.slidingtutorial.CirclePageIndicator
             android:id="@+id/indicator"
