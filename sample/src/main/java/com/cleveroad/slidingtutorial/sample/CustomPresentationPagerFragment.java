@@ -13,11 +13,12 @@ public class CustomPresentationPagerFragment extends SimplePagerFragment {
 
 	@Override
 	protected int getPagesCount() {
-		return 3;
+		return 6;
 	}
 
 	@Override
 	protected PageFragment getPage(int position) {
+		position %= 3;
 		if (position == 0)
 			return new FirstCustomPageFragment();
 		if (position == 1)
@@ -36,6 +37,12 @@ public class CustomPresentationPagerFragment extends SimplePagerFragment {
 			return ContextCompat.getColor(getContext(), android.R.color.holo_green_dark);
 		if (position == 2)
 			return ContextCompat.getColor(getContext(), android.R.color.holo_blue_dark);
+		if (position == 3)
+			return ContextCompat.getColor(getContext(), android.R.color.holo_red_dark);
+		if (position == 4)
+			return ContextCompat.getColor(getContext(), android.R.color.holo_purple);
+		if (position == 5)
+			return ContextCompat.getColor(getContext(), android.R.color.darker_gray);
 		return Color.TRANSPARENT;
 	}
 

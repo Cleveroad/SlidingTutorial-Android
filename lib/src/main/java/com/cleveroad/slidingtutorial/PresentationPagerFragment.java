@@ -74,7 +74,9 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 		super.onViewCreated(view, savedInstanceState);
 		viewPager.setAdapter(new PresentationAdapter(getChildFragmentManager()));
 		if (isInfiniteScrollEnabled()) {
-			viewPager.setCurrentItem(Integer.MAX_VALUE / 2);
+			int pos = Integer.MAX_VALUE / 2;
+			pos -= pos % getPagesCount();
+			viewPager.setCurrentItem(pos);
 		}
 		indicator.setViewPager(new ViewPagerWrapper(getContext(), viewPager), getPagesCount());
 		viewPager.addOnPageChangeListener(this);
@@ -104,7 +106,7 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 		}
 		int nextColorPosition = position + 1;
 		if (nextColorPosition >= getPagesCount()) {
-			nextColorPosition = 0;
+			nextColorPosition %= getPagesCount();
 		}
 		if (position < (viewPager.getAdapter().getCount() - 1)) {
 			viewPager.setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset, getPageColor(position), getPageColor(nextColorPosition)));
