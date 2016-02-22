@@ -17,7 +17,7 @@ All you need to do is:
 First, add gradle dependency with command:<br>
 ```groovy
 dependencies {
-    compile 'com.cleveroad:slidingtutorial:0.9.1'
+    compile 'com.cleveroad:slidingtutorial:0.9.3'
 }
 ``` 
 
@@ -116,12 +116,12 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
     }
     
     @Override
-	protected boolean onSkipButtonClicked() {
-		// your own behavior goes here
-		// ...
-		// return true to consume click event, false otherwise
-		return true;
-	}
+    protected boolean onSkipButtonClicked() {
+        // your own behavior goes here
+        // ...
+        // return true to consume click event, false otherwise
+        return true;
+    }
 }
 ```
 
@@ -129,7 +129,8 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 
 | Version | Changes                         |
 | --- | --- |
-| v.0.9.2 | Added onSkipButtonClciked method and SimplePagerFragment |
+| v.0.9.3 | Fixed issue with wrong page showed at startup if pages count not equals 3 |
+| v.0.9.2 | Added onSkipButtonClicked method and SimplePagerFragment |
 | v.0.9.1 | Added infinite scroll behavior  |
 | v.0.9   | First public release            |
 
