@@ -64,7 +64,7 @@ public abstract class PageFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(getLayoutResId(), container, false);
 		holder = new LayersHolder(view, provideTransformItems());
-		view.setTag(R.id.page_fragment, this);
+		view.setTag(R.id.st_page_fragment, this);
 		return view;
 	}
 

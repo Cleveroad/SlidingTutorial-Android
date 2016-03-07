@@ -17,7 +17,7 @@ All you need to do is:
 First, add gradle dependency with command:<br>
 ```groovy
 dependencies {
-    compile 'com.cleveroad:slidingtutorial:0.9.3'
+    compile 'com.cleveroad:slidingtutorial:0.9.4'
 }
 ``` 
 
@@ -129,10 +129,27 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 
 | Version | Changes                         |
 | --- | --- |
+| v.0.9.4 | Renamed all attributes; all resources marked as private |
 | v.0.9.3 | Fixed issue with wrong page showed at startup if pages count not equals 3 |
 | v.0.9.2 | Added onSkipButtonClicked method and SimplePagerFragment |
 | v.0.9.1 | Added infinite scroll behavior  |
 | v.0.9   | First public release            |
+
+## Migrations from v.0.9.3 to v.0.9.4
+* All resources marked as private. Make sure you're not using any resource (strings, dimens, etc) from this library.
+* All attributes were renamed, prefix `st_` added. Add this prefix to any custom XML attribute you used. Example:
+```XML
+    <com.cleveroad.slidingtutorial.CirclePageIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:st_fillColor="@android:color/white"
+        app:st_pageColor="@android:color/secondary_text_light_nodisable"
+        app:st_radius="4dp"
+        app:st_strokeColor="#00000000"
+        app:st_strokeWidth="0dp"/>
+```
 
 ## Migrations from v.0.9 to v.0.9.1
 ####CirclePageIndicator

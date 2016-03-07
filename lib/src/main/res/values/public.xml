@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="st_page_fragment" type="id" />
+    <public type="string" name="st_app_name" />
 </resources>
