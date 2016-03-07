@@ -69,29 +69,29 @@ public final class CirclePageIndicator extends View implements ViewPager.OnPageC
 
 		//Load defaults from resources
 		final Resources res = getResources();
-		final int defaultPageColor = ContextCompat.getColor(context, R.color.default_circle_indicator_page_color);
-		final int defaultFillColor = ContextCompat.getColor(context, R.color.default_circle_indicator_fill_color);
-		final int defaultOrientation = res.getInteger(R.integer.default_circle_indicator_orientation);
-		final int defaultStrokeColor = ContextCompat.getColor(context, R.color.default_circle_indicator_stroke_color);
-		final float defaultStrokeWidth = res.getDimension(R.dimen.default_circle_indicator_stroke_width);
-		final float defaultRadius = res.getDimension(R.dimen.default_circle_indicator_radius);
-		final boolean defaultCentered = res.getBoolean(R.bool.default_circle_indicator_centered);
-		final boolean defaultSnap = res.getBoolean(R.bool.default_circle_indicator_snap);
+		final int defaultPageColor = ContextCompat.getColor(context, R.color.st_default_circle_indicator_page_color);
+		final int defaultFillColor = ContextCompat.getColor(context, R.color.st_default_circle_indicator_fill_color);
+		final int defaultOrientation = res.getInteger(R.integer.st_default_circle_indicator_orientation);
+		final int defaultStrokeColor = ContextCompat.getColor(context, R.color.st_default_circle_indicator_stroke_color);
+		final float defaultStrokeWidth = res.getDimension(R.dimen.st_default_circle_indicator_stroke_width);
+		final float defaultRadius = res.getDimension(R.dimen.st_default_circle_indicator_radius);
+		final boolean defaultCentered = res.getBoolean(R.bool.st_default_circle_indicator_centered);
+		final boolean defaultSnap = res.getBoolean(R.bool.st_default_circle_indicator_snap);
 
 		//Retrieve styles attributes
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CirclePageIndicator, defStyle, 0);
 
-		mCentered = a.getBoolean(R.styleable.CirclePageIndicator_centered, defaultCentered);
+		mCentered = a.getBoolean(R.styleable.CirclePageIndicator_st_centered, defaultCentered);
 		mOrientation = a.getInt(R.styleable.CirclePageIndicator_android_orientation, defaultOrientation);
 		mPaintPageFill.setStyle(Style.FILL);
-		mPaintPageFill.setColor(a.getColor(R.styleable.CirclePageIndicator_pageColor, defaultPageColor));
+		mPaintPageFill.setColor(a.getColor(R.styleable.CirclePageIndicator_st_pageColor, defaultPageColor));
 		mPaintStroke.setStyle(Style.STROKE);
-		mPaintStroke.setColor(a.getColor(R.styleable.CirclePageIndicator_strokeColor, defaultStrokeColor));
-		mPaintStroke.setStrokeWidth(a.getDimension(R.styleable.CirclePageIndicator_strokeWidth, defaultStrokeWidth));
+		mPaintStroke.setColor(a.getColor(R.styleable.CirclePageIndicator_st_strokeColor, defaultStrokeColor));
+		mPaintStroke.setStrokeWidth(a.getDimension(R.styleable.CirclePageIndicator_st_strokeWidth, defaultStrokeWidth));
 		mPaintFill.setStyle(Style.FILL);
-		mPaintFill.setColor(a.getColor(R.styleable.CirclePageIndicator_fillColor, defaultFillColor));
-		mRadius = a.getDimension(R.styleable.CirclePageIndicator_radius, defaultRadius);
-		mSnap = a.getBoolean(R.styleable.CirclePageIndicator_snap, defaultSnap);
+		mPaintFill.setColor(a.getColor(R.styleable.CirclePageIndicator_st_fillColor, defaultFillColor));
+		mRadius = a.getDimension(R.styleable.CirclePageIndicator_st_radius, defaultRadius);
+		mSnap = a.getBoolean(R.styleable.CirclePageIndicator_st_snap, defaultSnap);
 
 		Drawable background = a.getDrawable(R.styleable.CirclePageIndicator_android_background);
 		if (background != null) {

@@ -241,7 +241,7 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 	private class FragmentTransformer implements ViewPager.PageTransformer {
 
 		public void transformPage(View view, float position) {
-			Object obj = view.getTag(R.id.page_fragment);
+			Object obj = view.getTag(R.id.st_page_fragment);
 			if (obj instanceof PageFragment) {
 				((PageFragment) obj).transformPage(view, position);
 			}

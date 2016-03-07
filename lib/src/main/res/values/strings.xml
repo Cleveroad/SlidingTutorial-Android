@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">SlidingTutorialLibrary</string>
-    <string name="skip">Skip</string>
+    <string name="st_app_name">SlidingTutorialLibrary</string>
+    <string name="st_skip">Skip</string>
 </resources>

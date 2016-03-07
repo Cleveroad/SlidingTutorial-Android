@@ -7,7 +7,7 @@ public abstract class SimplePagerFragment extends PresentationPagerFragment {
 
 	@Override
 	public int getLayoutResId() {
-		return R.layout.fragment_presentation;
+		return R.layout.st_fragment_presentation;
 	}
 
 	@Override

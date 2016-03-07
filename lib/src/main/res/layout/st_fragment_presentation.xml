@@ -31,7 +31,7 @@
             android:layout_marginRight="10dp"
             android:fontFamily="sans-serif-light"
             android:padding="10dp"
-            android:text="@string/skip"
+            android:text="@string/st_skip"
             android:textColor="@android:color/white"
             android:textSize="21sp"
             tools:ignore="UnusedAttribute"/>
@@ -41,11 +41,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:fillColor="@android:color/white"
-            app:pageColor="@android:color/secondary_text_light_nodisable"
-            app:radius="4dp"
-            app:strokeColor="#00000000"
-            app:strokeWidth="0dp"/>
+            app:st_fillColor="@android:color/white"
+            app:st_pageColor="@android:color/secondary_text_light_nodisable"
+            app:st_radius="4dp"
+            app:st_strokeColor="#00000000"
+            app:st_strokeWidth="0dp"/>
     </FrameLayout>
 
 </FrameLayout>
