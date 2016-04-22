@@ -24,4 +24,9 @@ public abstract class SimplePagerFragment extends PresentationPagerFragment {
 	public int getButtonSkipResId() {
 		return R.id.tvSkip;
 	}
+
+    @Override
+    protected int getSeparatorResId() {
+        return R.id.separator;
+    }
 }
