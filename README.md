@@ -17,7 +17,7 @@ All you need to do is:
 First, add gradle dependency with command:<br>
 ```groovy
 dependencies {
-    compile 'com.cleveroad:slidingtutorial:0.9.4'
+    compile 'com.cleveroad:slidingtutorial:0.9.5'
 }
 ``` 
 
@@ -129,6 +129,7 @@ public class CustomPresentationPagerFragment extends PresentationPagerFragment {
 
 | Version | Changes                         |
 | --- | --- |
+| v.0.9.5 | Added getters for views. Possible fix for manifest merging issues |
 | v.0.9.4 | Renamed all attributes; all resources marked as private |
 | v.0.9.3 | Fixed issue with wrong page showed at startup if pages count not equals 3 |
 | v.0.9.2 | Added onSkipButtonClicked method and SimplePagerFragment |

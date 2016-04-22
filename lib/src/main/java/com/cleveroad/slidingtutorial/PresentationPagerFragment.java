@@ -26,6 +26,8 @@ package com.cleveroad.slidingtutorial;
 import android.animation.ArgbEvaluator;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -46,6 +48,7 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 
 	private ViewPager viewPager;
 	private View bSkip;
+    private View separator;
 	private CirclePageIndicator indicator;
 
 	private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
@@ -65,6 +68,7 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 		viewPager = (ViewPager) view.findViewById(getViewPagerResId());
 		indicator = (CirclePageIndicator) view.findViewById(getIndicatorResId());
 		bSkip = view.findViewById(getButtonSkipResId());
+        separator = view.findViewById(getSeparatorResId());
 		return view;
 	}
 
@@ -93,6 +97,38 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 			}
 		}
 	}
+
+    /**
+     * Get line separator view.
+     * @return line separator view
+     */
+    public View getSeparator() {
+        return separator;
+    }
+
+    /**
+     * Get view pager.
+     * @return view pager
+     */
+    public ViewPager getViewPager() {
+        return viewPager;
+    }
+
+    /**
+     * Get skip button.
+     * @return skip button
+     */
+    public View getSkipButton() {
+        return bSkip;
+    }
+
+    /**
+     * Get view pager indicator.
+     * @return view pager indicator
+     */
+    public CirclePageIndicator getPagerIndicator() {
+        return indicator;
+    }
 
 	/**
 	 * According to position and positionOffset changing background color. If last position then
@@ -150,13 +186,20 @@ public abstract class PresentationPagerFragment extends Fragment implements View
 		return Collections.emptyList();
 	}
 
+    @LayoutRes
 	protected abstract int getLayoutResId();
 
+    @IdRes
 	protected abstract int getViewPagerResId();
 
+    @IdRes
 	protected abstract int getIndicatorResId();
 
+    @IdRes
 	protected abstract int getButtonSkipResId();
+
+    @IdRes
+    protected abstract int getSeparatorResId();
 
 	/**
 	 * Enable or disable infinite scroll. Default value is false.
