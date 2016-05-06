@@ -11,7 +11,7 @@ The invention is going to ease the problem of structural design but not to limit
 
 Read our <strong><a href="https://www.cleveroad.com/blog/case-study-sliding-tutorial-for-android-by-cleveroad">Case Study: Sliding tutorial for Android by Cleveroad</a></strong> to make sure that you don’t miss a detail:
 
-[![Article image](/images/article.png)](https://www.cleveroad.com/blog/case-study-audio-widget-overlay-view-by-cleveroad)
+[![Article image](/images/article.png)](https://www.cleveroad.com/blog/case-study-sliding-tutorial-for-android-by-cleveroad)
 <br/>
 
 Applied parallax effects will make your product presentation look like Google apps tutorial.
