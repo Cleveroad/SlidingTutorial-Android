@@ -1,9 +1,18 @@
 ##SlidingTutorial [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome) <img src="https://www.cleveroad.com/public/comercial/label-android.svg" height="20"> <a href="https://www.cleveroad.com/?utm_source=github&utm_medium=label&utm_campaign=contacts"><img src="https://www.cleveroad.com/public/comercial/label-cleveroad.svg" height="20"></a>
+![Header image](/images/header.jpg)
 
-###Simple library that helps developers to create awesome sliding android app tutorial.
-<img src="https://www.cleveroad.com/public/comercial/SlidingTutorial.gif" />
+## Cleveroad introduces Sliding Tutorial Library for Android
 
-Read our <a href="https://www.cleveroad.com/blog/case-study-sliding-tutorial-for-android-by-cleveroad">Case Study: Sliding tutorial for Android by Cleveroad</a>
+Hey guys, hope you haven’t started developing a tutorial for your Android app yet, as we have already completed a part of your job. Don’t worry, we act from good motives only. Our aim is to help you create a sliding tutorial in a fast and simple manner. So we’ve done some work and voila!. A simple Android Sliding Tutorial library is at your service.
+
+![Demo image](/images/demo.gif)
+
+The invention is going to ease the problem of structural design but not to limit a stretch of your imagination at the same time. We took care of the suitability aspect. So, your app is not going to look alien among other Android elements. 
+
+Read our <strong><a href="https://www.cleveroad.com/blog/case-study-sliding-tutorial-for-android-by-cleveroad">Case Study: Sliding tutorial for Android by Cleveroad</a></strong> to make sure that you don’t miss a detail:
+
+[![Article image](/images/article.png)](https://www.cleveroad.com/blog/case-study-audio-widget-overlay-view-by-cleveroad)
+<br/>
 
 Applied parallax effects will make your product presentation look like Google apps tutorial.
 
@@ -11,6 +20,10 @@ All you need to do is:
 <br>1. Create background designs for each screen of your tutorial (assistance with <a href="https://www.cleveroad.com/services/design/mobile-design">mobile design</a>)
 <br>2. Create icons for each screen of your tutorial
 <br>3. Follow the instructions below
+
+[![Awesome](/images/logo-footer.png)](https://www.cleveroad.com/?utm_source=github&utm_medium=label&utm_campaign=contacts)
+
+
 
 ##Using
 
