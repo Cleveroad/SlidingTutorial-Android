@@ -3,7 +3,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="text_web_ceo">WEB CEO</string>
+    <string name="text_web_ceo">WEB ANALYTICS</string>
     <string name="text_web_dev">WEB DEVELOPER</string>
-    <string name="text_e_commerce">e-commerce</string>
+    <string name="text_e_commerce">e-Commerce</string>
 </resources>
