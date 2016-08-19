@@ -37,16 +37,12 @@
             android:textSize="21sp"
             tools:ignore="UnusedAttribute"/>
 
-        <com.cleveroad.slidingtutorial.CirclePageIndicator
+        <com.cleveroad.slidingtutorial.ViewPagerIndicator
             android:id="@+id/indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:st_fillColor="@android:color/white"
-            app:st_pageColor="@android:color/secondary_text_light_nodisable"
-            app:st_radius="4dp"
-            app:st_strokeColor="#00000000"
-            app:st_strokeWidth="0dp"/>
+            android:layout_gravity="center"/>
+
     </FrameLayout>
 
 </FrameLayout>

@@ -1,5 +1,8 @@
 package com.cleveroad.slidingtutorial.sample;
 
+import android.support.annotation.NonNull;
+
+import com.cleveroad.slidingtutorial.Direction;
 import com.cleveroad.slidingtutorial.PageFragment;
 import com.cleveroad.slidingtutorial.TransformItem;
 
@@ -10,17 +13,18 @@ public class SecondCustomPageFragment extends PageFragment {
 		return R.layout.fragment_page_second;
 	}
 
-	@Override
-	protected TransformItem[] provideTransformItems() {
+	@NonNull
+    @Override
+	protected TransformItem[] getTransformItems() {
 		return new TransformItem[]{
-				new TransformItem(R.id.ivFirstImage, true, 20),
-				new TransformItem(R.id.ivSecondImage, false, 6),
-				new TransformItem(R.id.ivThirdImage, true, 8),
-				new TransformItem(R.id.ivFourthImage, false, 10),
-				new TransformItem(R.id.ivFifthImage, false, 3),
-				new TransformItem(R.id.ivSixthImage, false, 9),
-				new TransformItem(R.id.ivSeventhImage, false, 14),
-				new TransformItem(R.id.ivEighthImage, false, 7)
+				TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 20/100f),
+				TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 6/100f),
+				TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 8/100f),
+				TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 10/100f),
+				TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 3/100f),
+				TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 9/100f),
+				TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 14/100f),
+				TransformItem.create(R.id.ivEighthImage, Direction.LEFT_TO_RIGHT, 7/100f)
 		};
 	}
 }

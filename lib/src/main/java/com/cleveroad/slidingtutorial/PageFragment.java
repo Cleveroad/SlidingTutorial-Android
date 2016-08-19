@@ -23,52 +23,103 @@
  */
 package com.cleveroad.slidingtutorial;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
-import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Implementation of {@link android.support.v4.app.Fragment} that contains {@link LayersHolder} and
- * implement create view functionality. Also provide {@link PageFragment#getBackgroundColorResId()}
- * and {@link PageFragment#getRootResId()} for {@link PresentationPagerFragment}
- */
-public abstract class PageFragment extends Fragment {
+import static com.cleveroad.slidingtutorial.ValidationUtil.checkNotNull;
 
-	private LayersHolder holder;
+public class PageFragment extends Fragment {
 
-	protected abstract TransformItem[] provideTransformItems();
+    private static final String EXTRA_PAGE_LAYOUT_RES = ExtraUtils.getExtra("PAGE_LAYOUT_RES");
+    private static final String EXTRA_TRANSFORM_ITEMS = ExtraUtils.getExtra("TRANSFORM_ITEMS");
 
-	@LayoutRes
-	protected abstract int getLayoutResId();
+    @LayoutRes
+    private int pageLayoutResId = 0;
+    private TransformItem[] transformItems;
 
-	@IdRes
-	@Deprecated
-	protected int getRootResId() {
-		return 0;
-	}
+    public static PageFragment newInstance(@NonNull PageOptions pageOptions) {
+        return newInstance(pageOptions.getPageLayoutResId(), checkNotNull(pageOptions.getTransformItems()));
+    }
 
-	@ColorRes
-	@Deprecated
-	protected int getBackgroundColorResId() {
-		return 0;
-	}
+    public static PageFragment newInstance(@LayoutRes int pageLayoutRes, @NonNull TransformItem[] transformItems) {
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_PAGE_LAYOUT_RES, pageLayoutRes);
+        args.putParcelableArray(EXTRA_TRANSFORM_ITEMS, checkNotNull(transformItems));
+        PageFragment fragment = new PageFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
-	@Nullable
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Bundle args = getArguments();
+        if (args != null) {
+            if (args.containsKey(EXTRA_PAGE_LAYOUT_RES)) {
+                pageLayoutResId = args.getInt(EXTRA_PAGE_LAYOUT_RES);
+            }
+            if (args.containsKey(EXTRA_TRANSFORM_ITEMS)) {
+                transformItems = (TransformItem[]) args.getParcelableArray(EXTRA_TRANSFORM_ITEMS);
+            }
+        } else {
+            pageLayoutResId = getLayoutResId();
+            transformItems = getTransformItems();
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(getLayoutResId(), container, false);
-		holder = new LayersHolder(view, provideTransformItems());
+        if (pageLayoutResId == 0) {
+            throw new IllegalStateException("Page layout resource id not specified.");
+        }
+        if (transformItems == null) {
+            throw new IllegalStateException("Transform items array not specified.");
+        }
+
+        View view = inflater.inflate(pageLayoutResId, container, false);
 		view.setTag(R.id.st_page_fragment, this);
+
+        for (TransformItem transformItem : transformItems) {
+            transformItem.setView(view.findViewById(transformItem.getViewResId()));
+        }
+
 		return view;
 	}
 
-	void transformPage(View view, float position) {
-		holder.transformPage(view.getWidth(), position);
-	}
+    /**
+     * Method that apply a custom transformation to the page views
+     *
+     * @param pageWidth pageWidth
+     * @param position  Position of page relative to the current front-and-center
+     *                  position of the pager. 0 is front and center. 1 is one full
+     *                  page position to the right, and -1 is one page position to the left.
+     */
+    final void transformPage(int pageWidth, float position) {
+        for (TransformItem transformItem : transformItems) {
+            float translationX = position * pageWidth * transformItem.getShiftCoefficient();
+            if (transformItem.getDirection() == Direction.RIGHT_TO_LEFT) {
+                translationX = - translationX;
+            }
+            transformItem.getView().setTranslationX(translationX);
+        }
+    }
+
+    @LayoutRes
+    protected int getLayoutResId() {
+        return pageLayoutResId;
+    }
+
+    @NonNull
+    protected TransformItem[] getTransformItems() {
+        return transformItems;
+    }
 }

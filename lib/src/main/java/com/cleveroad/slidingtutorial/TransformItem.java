@@ -23,45 +23,83 @@
  */
 package com.cleveroad.slidingtutorial;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.view.View;
 
 /**
  * Class that represents the item that will be moved by associated characteristics like
- * {@link TransformItem#isReverseShift()} and {@link TransformItem#getShiftCoefficient()}.
+ * {@link TransformItem#getDirection()} ()} and {@link TransformItem#getShiftCoefficient()}.
  * <p/>
  * Also contains {@link TransformItem#getViewResId()} and {@link TransformItem#getView()} that will be moved;
  */
-public class TransformItem {
+public class TransformItem implements Parcelable {
+
 	@IdRes
-	private int viewResId;
-	private boolean reverseShift;
-	private int shiftCoefficient;
-	private View view;
+	private int mViewResId;
+	private Direction mDirection;
+	private float mShiftCoefficient;
+	private View mView;
 
-	public TransformItem(@IdRes int viewResId, boolean reverseShift, int shiftCoefficient) {
-		this.viewResId = viewResId;
-		this.reverseShift = reverseShift;
-		this.shiftCoefficient = shiftCoefficient;
+    public static TransformItem create(@IdRes int viewResId, Direction direction, float shiftCoefficient) {
+        return new TransformItem(viewResId, direction, shiftCoefficient);
+    }
+
+	private TransformItem(@IdRes int viewResId, Direction direction, float shiftCoefficient) {
+		this.mViewResId = viewResId;
+		this.mDirection = direction;
+		this.mShiftCoefficient = shiftCoefficient;
 	}
 
-	public int getViewResId() {
-		return viewResId;
+    public int getViewResId() {
+		return mViewResId;
 	}
 
-	public boolean isReverseShift() {
-		return reverseShift;
-	}
+    public Direction getDirection() {
+        return mDirection;
+    }
 
-	public int getShiftCoefficient() {
-		return shiftCoefficient;
+    public float getShiftCoefficient() {
+		return mShiftCoefficient;
 	}
 
 	View getView() {
-		return view;
+		return mView;
 	}
 
 	void setView(View view) {
-		this.view = view;
+		this.mView = view;
 	}
+
+    protected TransformItem(Parcel in) {
+        mViewResId = in.readInt();
+        mDirection = Direction.valueOf(in.readString());
+        mShiftCoefficient = in.readFloat();
+    }
+
+    public static final Creator<TransformItem> CREATOR = new Creator<TransformItem>() {
+        @Override
+        public TransformItem createFromParcel(Parcel in) {
+            return new TransformItem(in);
+        }
+
+        @Override
+        public TransformItem[] newArray(int size) {
+            return new TransformItem[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mViewResId);
+        dest.writeString(mDirection.name());
+        dest.writeFloat(mShiftCoefficient);
+    }
+
 }
