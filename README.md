@@ -50,14 +50,14 @@ public class FirstCustomPageFragment extends PageFragment {
     protected TransformItem[] provideTransformItems() {
         // list of transformation items
         return new TransformItem[]{
-                new TransformItem(R.id.ivFirstImage, true, 20),
-                new TransformItem(R.id.ivSecondImage, false, 6),
-                new TransformItem(R.id.ivThirdImage, true, 8),
-                new TransformItem(R.id.ivFourthImage, false, 10),
-                new TransformItem(R.id.ivFifthImage, false, 3),
-                new TransformItem(R.id.ivSixthImage, false, 9),
-                new TransformItem(R.id.ivSeventhImage, false, 14),
-                new TransformItem(R.id.ivEighthImage, false, 7)
+                TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f),
+                TransformItem.create(R.id.ivSecondImage, Direction.RIGHT_TO_LEFT, 0.06f),
+                TransformItem.create(R.id.ivThirdImage, Direction.LEFT_TO_RIGHT, 0.08f),
+                TransformItem.create(R.id.ivFourthImage, Direction.RIGHT_TO_LEFT, 0.1f),
+                TransformItem.create(R.id.ivFifthImage, Direction.RIGHT_TO_LEFT, 0.03f),
+                TransformItem.create(R.id.ivSixthImage, Direction.RIGHT_TO_LEFT, 0.09f),
+                TransformItem.create(R.id.ivSeventhImage, Direction.RIGHT_TO_LEFT, 0.14f),
+                TransformItem.create(R.id.ivEighthImage, Direction.RIGHT_TO_LEFT, 0.07f)
         };
     }
 }
