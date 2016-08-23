@@ -1,7 +1,7 @@
 /*
  *   The MIT License (MIT)
  *
- *   Copyright (c) 2016 Cleveroad
+ *   Copyright (c) 2015 Cleveroad
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -21,20 +21,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
-package com.cleveroad.slidingtutorial;
+package com.cleveroad.slidingtutorial.sample.renderer;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.support.annotation.NonNull;
 
-/**
- * {@link PageOptions} provider
- */
-public interface TutorialPageOptionsProvider {
+import com.cleveroad.slidingtutorial.Renderer;
 
-    /**
-     * Provide {@link PageOptions} by position.
-     * @param position current page position
-     * @return returns {@link PageOptions} instance
-     */
-    @NonNull
-    PageOptions provide(int position);
+/**
+ * {@link Renderer} implementation for drawing rhombus shape indicators.
+ */
+public class RhombusRenderer implements Renderer {
+
+    private static final float ANGLE_45 = 45f;
+
+    public static RhombusRenderer create() {
+        return new RhombusRenderer();
+    }
+
+    private RhombusRenderer() {
+    }
+
+    @Override
+    public void draw(@NonNull Canvas canvas, @NonNull RectF elementBounds, @NonNull Paint paint, boolean isActive) {
+        canvas.save();
+        canvas.rotate(ANGLE_45, elementBounds.centerX(), elementBounds.centerY());
+        canvas.drawRect(elementBounds, paint);
+        canvas.restore();
+    }
 }

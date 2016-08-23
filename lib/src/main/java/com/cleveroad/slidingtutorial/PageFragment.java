@@ -1,7 +1,7 @@
 /*
  *   The MIT License (MIT)
  *
- *   Copyright (c) 2015 Cleveroad
+ *   Copyright (c) 2016 Cleveroad
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,9 @@ import android.view.ViewGroup;
 
 import static com.cleveroad.slidingtutorial.ValidationUtil.checkNotNull;
 
+/**
+ * Single page for {@link TutorialFragment}.
+ */
 public class PageFragment extends Fragment {
 
     private static final String EXTRA_PAGE_LAYOUT_RES = ExtraUtils.getExtra("PAGE_LAYOUT_RES");
@@ -57,6 +60,9 @@ public class PageFragment extends Fragment {
         return fragment;
     }
 
+    public PageFragment() {
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -66,7 +72,8 @@ public class PageFragment extends Fragment {
                 pageLayoutResId = args.getInt(EXTRA_PAGE_LAYOUT_RES);
             }
             if (args.containsKey(EXTRA_TRANSFORM_ITEMS)) {
-                transformItems = (TransformItem[]) args.getParcelableArray(EXTRA_TRANSFORM_ITEMS);
+                transformItems = ParcelableUtils.getParcelableArray(args, EXTRA_TRANSFORM_ITEMS,
+                        TransformItem.class, TransformItem[].class);
             }
         } else {
             pageLayoutResId = getLayoutResId();
@@ -74,7 +81,6 @@ public class PageFragment extends Fragment {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

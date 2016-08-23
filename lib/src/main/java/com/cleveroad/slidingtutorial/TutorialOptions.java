@@ -1,3 +1,26 @@
+/*
+ *   The MIT License (MIT)
+ *
+ *   Copyright (c) 2016 Cleveroad
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ *   The above copyright notice and this permission notice shall be included in all
+ *   copies or substantial portions of the Software.
+ *
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *   SOFTWARE.
+ */
 package com.cleveroad.slidingtutorial;
 
 import android.content.Context;
@@ -8,7 +31,7 @@ import android.view.View;
  * Class contains configuration for {@link TutorialFragment}.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class TutorialOptions {
+public final class TutorialOptions {
 
     private boolean mAutoRemoveTutorialFragment;
     private boolean mUseInfiniteScroll;
@@ -68,14 +91,25 @@ public class TutorialOptions {
     }
 
     @NonNull
-    public TutorialPageProvider getTutorialPageProvider() {
+    TutorialPageProvider getTutorialPageProvider() {
         return mTutorialPageProvider;
+    }
+
+    /**
+     * Create new {@link Builder} instance.
+     *
+     * @param context {@link Context} instance
+     * @return {@link Builder} instance
+     */
+    public static Builder newBuilder(@NonNull Context context) {
+        ValidationUtil.checkNotNull(context, "Context can't be null.");
+        return new Builder(context);
     }
 
     /**
      * Builder for creating {@link TutorialOptions} which using in {@link TutorialFragment}
      */
-    public static class Builder {
+    public final static class Builder {
         private boolean mAutoRemoveTutorialFragment;
         private boolean mUseInfiniteScroll;
         private int mPagesCount;
@@ -85,7 +119,7 @@ public class TutorialOptions {
         private TutorialPageProvider mTutorialPageProvider;
         private Context mContext;
 
-        public Builder(@NonNull Context context) {
+        private Builder(@NonNull Context context) {
             mContext = ValidationUtil.checkNotNull(context);
         }
 
@@ -120,6 +154,7 @@ public class TutorialOptions {
 
         /**
          * Set flag, which indicate does need to remove {@link TutorialFragment} when end is reached.
+         * By default is {@link Boolean#FALSE}.
          *
          * @param autoRemoveTutorialFragment boolean flag
          * @return current {@link Builder}
@@ -131,6 +166,7 @@ public class TutorialOptions {
 
         /**
          * Set flag, which indicate using infinite scroll.
+         * By default is {@link Boolean#FALSE}.
          *
          * @param useInfiniteScroll boolean flag
          * @return current {@link Builder}
@@ -175,11 +211,18 @@ public class TutorialOptions {
 
         /**
          * Set configuration for indicator.
+         * If any wasn't specify - use default configuration:
+         * <ul>
+         * <li>elementColor         : {@link android.graphics.Color#DKGRAY}</li>
+         * <li>selectedElementColor : {@link android.graphics.Color#WHITE}</li>
+         * <li>elementSize          : {@link com.cleveroad.slidingtutorial.R.dimen#st_indicator_size_default} = 4dp</li>
+         * <li>setElementSpacing    : {@link com.cleveroad.slidingtutorial.R.dimen#st_indicator_spacing_default} = 4dp</li>
+         * </ul>
          *
-         * @param indicatorOptions {@link IndicatorOptions} instance, which
+         * @param indicatorOptions {@link IndicatorOptions} instance with configuration.
          */
         public Builder setIndicatorOptions(@NonNull IndicatorOptions indicatorOptions) {
-            mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions);
+            mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions, "IndicatorOptions can't be null.");
             return this;
         }
 
@@ -221,7 +264,6 @@ public class TutorialOptions {
          * @return returns {@link TutorialOptions} instance
          */
         public TutorialOptions build() {
-            ValidationUtil.checkNotNull(mContext, "Context can't be null.");
             if (mIndicatorOptions == null) {
                 mIndicatorOptions = IndicatorOptions.provideDefault(mContext);
             }

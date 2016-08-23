@@ -1,7 +1,7 @@
 /*
  *   The MIT License (MIT)
  *
- *   Copyright (c) 2015 Cleveroad
+ *   Copyright (c) 2016 Cleveroad
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@ package com.cleveroad.slidingtutorial;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -34,43 +35,51 @@ import android.view.View;
  * <p/>
  * Also contains {@link TransformItem#getViewResId()} and {@link TransformItem#getView()} that will be moved;
  */
-public class TransformItem implements Parcelable {
+@SuppressWarnings("WeakerAccess")
+public final class TransformItem implements Parcelable {
 
-	@IdRes
-	private int mViewResId;
-	private Direction mDirection;
-	private float mShiftCoefficient;
-	private View mView;
+    @IdRes
+    private int mViewResId;
+    private Direction mDirection;
+    private float mShiftCoefficient;
+    private View mView;
 
-    public static TransformItem create(@IdRes int viewResId, Direction direction, float shiftCoefficient) {
+    /**
+     * Create new {@link TransformItem} instance.
+     *
+     * @param viewResId        resource view id
+     * @param direction        {@link Direction} of translation
+     * @param shiftCoefficient speed translation coefficient
+     */
+    public static TransformItem create(@IdRes int viewResId, @NonNull Direction direction, float shiftCoefficient) {
         return new TransformItem(viewResId, direction, shiftCoefficient);
     }
 
-	private TransformItem(@IdRes int viewResId, Direction direction, float shiftCoefficient) {
-		this.mViewResId = viewResId;
-		this.mDirection = direction;
-		this.mShiftCoefficient = shiftCoefficient;
-	}
+    private TransformItem(@IdRes int viewResId, Direction direction, float shiftCoefficient) {
+        this.mViewResId = viewResId;
+        this.mDirection = direction;
+        this.mShiftCoefficient = shiftCoefficient;
+    }
 
-    public int getViewResId() {
-		return mViewResId;
-	}
+    int getViewResId() {
+        return mViewResId;
+    }
 
-    public Direction getDirection() {
+    Direction getDirection() {
         return mDirection;
     }
 
-    public float getShiftCoefficient() {
-		return mShiftCoefficient;
-	}
+    float getShiftCoefficient() {
+        return mShiftCoefficient;
+    }
 
-	View getView() {
-		return mView;
-	}
+    View getView() {
+        return mView;
+    }
 
-	void setView(View view) {
-		this.mView = view;
-	}
+    void setView(View view) {
+        this.mView = view;
+    }
 
     protected TransformItem(Parcel in) {
         mViewResId = in.readInt();

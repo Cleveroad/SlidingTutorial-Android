@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,15 +13,17 @@ import com.cleveroad.slidingtutorial.Direction;
 import com.cleveroad.slidingtutorial.IndicatorOptions;
 import com.cleveroad.slidingtutorial.PageFragment;
 import com.cleveroad.slidingtutorial.PageOptions;
-import com.cleveroad.slidingtutorial.Renderer;
 import com.cleveroad.slidingtutorial.TransformItem;
 import com.cleveroad.slidingtutorial.TutorialFragment;
 import com.cleveroad.slidingtutorial.TutorialOptions;
 import com.cleveroad.slidingtutorial.TutorialPageOptionsProvider;
 import com.cleveroad.slidingtutorial.TutorialPageProvider;
+import com.cleveroad.slidingtutorial.sample.renderer.RhombusRenderer;
 
-public class CustomTutorialFragment extends TutorialFragment {
+public class CustomTutorialFragment extends TutorialFragment
+        implements TutorialFragment.OnTutorialPageChangeListener {
 
+    private static final String TAG = "CustomTutorialFragment";
     private static final int TOTAL_PAGES = 6;
     private static final int ACTUAL_PAGES_COUNT = 3;
 
@@ -54,7 +57,7 @@ public class CustomTutorialFragment extends TutorialFragment {
                     break;
                 }
                 case 1: {
-                    pageLayoutResId = R.layout.fragment_page_third;
+                    pageLayoutResId = R.layout.fragment_page_second;
                     tutorialItems = new TransformItem[]{
                             TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
                             TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
@@ -113,7 +116,7 @@ public class CustomTutorialFragment extends TutorialFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (pagesColors == null) {
-            pagesColors = new int[]{
+            pagesColors = new int[] {
                     ContextCompat.getColor(getContext(), android.R.color.holo_orange_dark),
                     ContextCompat.getColor(getContext(), android.R.color.holo_green_dark),
                     ContextCompat.getColor(getContext(), android.R.color.holo_blue_dark),
@@ -122,25 +125,34 @@ public class CustomTutorialFragment extends TutorialFragment {
                     ContextCompat.getColor(getContext(), android.R.color.darker_gray)
             };
         }
+        addOnTutorialPageChangeListener(this);
     }
 
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return new TutorialOptions.Builder(getContext())
-                .isAutoRemoveTutorialFragment(false)
-                .isUseInfiniteScroll(true)
+        return TutorialOptions.newBuilder(getContext())
+                .isAutoRemoveTutorialFragment(true)
+                .isUseInfiniteScroll(false)
                 .setPagesColors(pagesColors)
                 .setPagesCount(TOTAL_PAGES)
-                //.setTutorialPageProvider(mTutorialPageOptionsProvider)
-                .setIndicatorOptions(new IndicatorOptions.Builder(getContext())
-                        .setElementSize(10f)
+                .setTutorialPageProvider(mTutorialPageOptionsProvider)
+                .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
+                        .setElementSizeRes(R.dimen.indicator_size)
                         .setElementSpacing(2f)
-                        .setElementColor(Color.CYAN)
-                        .setSelectedElementColor(Color.GREEN)
-                        .setRenderer(Renderer.Factory.provideSquareRenderer())
+                        .setElementColorRes(android.R.color.darker_gray)
+                        .setSelectedElementColor(Color.LTGRAY)
+                        .setRenderer(RhombusRenderer.create())
                         .build())
-                .setTutorialPageProvider(mTutorialPageProvider)
+                //.setTutorialPageProvider(mTutorialPageProvider)
                 .onSkipClickListener(mOnSkipClickListener)
                 .build();
+    }
+
+    @Override
+    public void onPageChanged(int position) {
+        Log.i(TAG, "onPageChanged: position = " + position);
+        if (position == TutorialFragment.EMPTY_FRAGMENT_POSITION) {
+            Log.i(TAG, "onPageChanged: Empty fragment is visible");
+        }
     }
 }

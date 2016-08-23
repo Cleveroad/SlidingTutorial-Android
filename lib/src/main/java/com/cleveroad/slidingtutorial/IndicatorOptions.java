@@ -1,6 +1,7 @@
 package com.cleveroad.slidingtutorial;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
@@ -9,9 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Class contains configuration for {@link ViewPagerIndicator}.
+ * Class contains configuration for {@link TutorialPageIndicator}.
  */
-public class IndicatorOptions {
+public final class IndicatorOptions {
 
     @ColorInt
     private int mElementColor;
@@ -25,10 +26,22 @@ public class IndicatorOptions {
 
     private Renderer mRenderer;
 
-    static IndicatorOptions provideDefault(@NonNull Context context) {
+    /**
+     * Provide default configuration for indicator:
+     * <ul>
+     * <li>elementColor         : {@link android.graphics.Color#DKGRAY}</li>
+     * <li>selectedElementColor : {@link android.graphics.Color#WHITE}</li>
+     * <li>elementSize          : {@link com.cleveroad.slidingtutorial.R.dimen#st_indicator_size_default} = 4dp</li>
+     * <li>setElementSpacing    : {@link com.cleveroad.slidingtutorial.R.dimen#st_indicator_spacing_default} = 4dp</li>
+     * </ul>
+     *
+     * @param context {@link Context} instance
+     * @return default {@link IndicatorOptions} configuration for {@link TutorialPageIndicator}
+     */
+    public static IndicatorOptions provideDefault(@NonNull Context context) {
         return new Builder(context)
-                .setElementColorRes(android.R.color.secondary_text_dark_nodisable)
-                .setSelectedElementColorRes(android.R.color.white)
+                .setElementColor(Color.DKGRAY)
+                .setSelectedElementColor(Color.WHITE)
                 .setElementSizeRes(R.dimen.st_indicator_size_default)
                 .setElementSpacingRes(R.dimen.st_indicator_spacing_default)
                 .build();
@@ -65,18 +78,29 @@ public class IndicatorOptions {
         return mRenderer;
     }
 
-    public static class Builder {
+    /**
+     * Create new {@link IndicatorOptions.Builder} instance.
+     *
+     * @param context {@link Context} instance
+     * @return {@link IndicatorOptions.Builder} instance
+     */
+    public static Builder newBuilder(@NonNull Context context) {
+        ValidationUtil.checkNotNull(context, "Context can't be null.");
+        return new Builder(context);
+    }
+
+    public final static class Builder {
         @ColorInt
-        private int mSelectedElementColor = ViewPagerIndicator.NO_VALUE;
+        private int mSelectedElementColor = TutorialPageIndicator.NO_COLOR;
         @ColorInt
-        private int mElementColor = ViewPagerIndicator.NO_VALUE;
-        private float mElementSize = ViewPagerIndicator.NO_VALUE;
-        private float mElementSpacing = ViewPagerIndicator.NO_VALUE;
+        private int mElementColor = TutorialPageIndicator.NO_COLOR;
+        private float mElementSize = TutorialPageIndicator.NO_VALUE;
+        private float mElementSpacing = TutorialPageIndicator.NO_VALUE;
         private Renderer mRenderer = null;
         private Context mContext;
 
-        public Builder(@NonNull Context context) {
-            mContext = ValidationUtil.checkNotNull(context, "Context can't be null.");
+        private Builder(@NonNull Context context) {
+            mContext = context;
         }
 
         /**

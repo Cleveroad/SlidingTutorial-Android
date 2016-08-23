@@ -1,7 +1,7 @@
 /*
  *   The MIT License (MIT)
  *
- *   Copyright (c) 2015 Cleveroad
+ *   Copyright (c) 2016 Cleveroad
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 package com.cleveroad.slidingtutorial;
 
 import android.animation.ArgbEvaluator;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
@@ -37,21 +38,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Base Fragment that contains {@link ViewPager} and where happens most logic like dispatching
  * transform event to child fragments, changing background color, and located page mPageIndicator.
  */
-@SuppressWarnings("unused")
-public abstract class TutorialFragment extends Fragment implements ViewPager.OnPageChangeListener {
+@SuppressWarnings({"unused", "SimplifiableIfStatement"})
+public abstract class TutorialFragment extends Fragment {
+
+    /**
+     * Position of empty fragment, which used for smooth move to content after tutorial.
+     */
+    public static int EMPTY_FRAGMENT_POSITION = -1;
 
     private ViewPager mViewPager;
     private View mButtonSkip;
     private View mSeparator;
-    private ViewPagerIndicator mPageIndicator;
-
+    private TutorialPageIndicator mPageIndicator;
+    private TutorialAdapter mTutorialAdapter;
     private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
-
     private TutorialOptions mTutorialOptions;
+    private List<OnTutorialPageChangeListener> mOnTutorialPageChangeListeners = new ArrayList<>();
+
+    private final DataSetObserver mDataSetObservable = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            mPageIndicator.setPagesCount(mTutorialAdapter.getRealPagesCount());
+            mPageIndicator.postInvalidate();
+        }
+    };
 
     public TutorialFragment() {
     }
@@ -69,15 +87,16 @@ public abstract class TutorialFragment extends Fragment implements ViewPager.OnP
         mTutorialOptions = provideTutorialOptions();
 
         mViewPager = (ViewPager) view.findViewById(getViewPagerResId());
-        mPageIndicator = (ViewPagerIndicator) view.findViewById(getIndicatorResId());
+        mPageIndicator = (TutorialPageIndicator) view.findViewById(getIndicatorResId());
         mButtonSkip = view.findViewById(getButtonSkipResId());
         mSeparator = view.findViewById(getSeparatorResId());
 
-        mViewPager.setAdapter(new TutorialAdapter(getChildFragmentManager()));
-        mViewPager.addOnPageChangeListener(this);
+        mTutorialAdapter = new TutorialAdapter(getChildFragmentManager());
+        mTutorialAdapter.registerDataSetObserver(mDataSetObservable);
+        mViewPager.setAdapter(mTutorialAdapter);
         mViewPager.setPageTransformer(true, new FragmentTransformer());
-        ViewPager.OnPageChangeListener onPageChangeListener = new CustomPageChangeListener();
-        mPageIndicator.initWith(mViewPager, onPageChangeListener, mTutorialOptions.getIndicatorOptions());
+        mViewPager.addOnPageChangeListener(new InternalHelperPageChangeDecorator());
+        mPageIndicator.initWith(mTutorialOptions.getIndicatorOptions(), mTutorialOptions.getPagesCount());
 
         mButtonSkip.setOnClickListener(mTutorialOptions.getOnSkipClickListener());
 
@@ -94,10 +113,18 @@ public abstract class TutorialFragment extends Fragment implements ViewPager.OnP
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        mTutorialAdapter.unregisterDataSetObserver(mDataSetObservable);
+        mViewPager.clearOnPageChangeListeners();
+        mOnTutorialPageChangeListeners.clear();
+        super.onDestroyView();
+    }
+
     /**
-     * Get line mSeparator view.
+     * Get line separator view.
      *
-     * @return line mSeparator view
+     * @return line separator view
      */
     public View getSeparator() {
         return mSeparator;
@@ -130,51 +157,34 @@ public abstract class TutorialFragment extends Fragment implements ViewPager.OnP
         return mPageIndicator;
     }
 
-    /**
-     * According to position and positionOffset changing background color. If last position then
-     * change root view alpha.
-     */
-    @SuppressWarnings("ConstantConditions")
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (mTutorialOptions.isUseInfiniteScroll() && mTutorialOptions.getPagesCount() != 0) {
-            position %= mTutorialOptions.getPagesCount();
-        }
-        int nextColorPosition = position + 1;
-        if (nextColorPosition >= mTutorialOptions.getPagesCount()) {
-            nextColorPosition %= mTutorialOptions.getPagesCount();
-        }
-
-        if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount() - 1) {
-            mViewPager.setBackgroundColor(getPageColor(position));
-            if (getView() != null) {
-                getView().setAlpha(1 - positionOffset);
-            }
-        } else if (position < mTutorialOptions.getPagesCount()) {
-            mViewPager.setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset, getPageColor(position), getPageColor(nextColorPosition)));
-        }
-    }
-
-    /**
-     * When last position will be reached then remove fragment from the screen.
-     */
-    @Override
-    public void onPageSelected(int position) {
-        if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
-            removeFragmentFromScreen();
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-        /* NOP */
-    }
-
     private void removeFragmentFromScreen() {
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .remove(TutorialFragment.this)
                 .commitAllowingStateLoss();
+    }
+
+    /**
+     * Add {@link OnTutorialPageChangeListener} to listen page change events.
+     *
+     * @param listener implementation of  {@link OnTutorialPageChangeListener} to add
+     * @return is 'listener' parameter was added
+     */
+    public boolean addOnTutorialPageChangeListener(@NonNull OnTutorialPageChangeListener listener) {
+        if (!mOnTutorialPageChangeListeners.contains(listener)) {
+            return mOnTutorialPageChangeListeners.add(listener);
+        }
+        return false;
+    }
+
+    /**
+     * Remove {@link OnTutorialPageChangeListener}.
+     *
+     * @param listener {@link OnTutorialPageChangeListener} to remove
+     * @return is 'listener' parameter was removed
+     */
+    public boolean removeOnTutorialPageChangeListener(@NonNull OnTutorialPageChangeListener listener) {
+        return mOnTutorialPageChangeListeners.remove(listener);
     }
 
     @LayoutRes
@@ -204,6 +214,7 @@ public abstract class TutorialFragment extends Fragment implements ViewPager.OnP
 
     /**
      * Get current {@link TutorialOptions} configuration.
+     *
      * @return {@link TutorialOptions} instance
      */
     @NonNull
@@ -247,12 +258,15 @@ public abstract class TutorialFragment extends Fragment implements ViewPager.OnP
 
         @Override
         public Fragment getItem(int position) {
+            int realPagesCount = getRealPagesCount();
             if (mTutorialOptions.isUseInfiniteScroll()) {
-                position %= mTutorialOptions.getPagesCount();
+                position %= realPagesCount;
             }
-            if (position < mTutorialOptions.getPagesCount()) {
+            if (position < realPagesCount) {
                 return getPage(position);
-            } else if (position == mTutorialOptions.getPagesCount()) {
+            } else if (mTutorialOptions.isAutoRemoveTutorialFragment() &&
+                    !mTutorialOptions.isUseInfiniteScroll() &&
+                    position >= realPagesCount) {
                 return emptyFragment;
             } else {
                 throw new IllegalArgumentException("Invalid position: " + position);
@@ -295,33 +309,92 @@ public abstract class TutorialFragment extends Fragment implements ViewPager.OnP
         }
     }
 
+    /**
+     * Callback interface for responding to changing state of the selected {@link PageFragment} page.
+     */
     public interface OnTutorialPageChangeListener {
-        void onTutorialPageChanged(int position);
+
+        /**
+         * This method will be invoked when a new page becomes selected. Animation is not
+         * necessarily complete.
+         *
+         * @param position Position index of the new selected page.
+         */
+        void onPageChanged(int position);
+
     }
 
-    private class CustomPageChangeListener implements ViewPager.OnPageChangeListener {
+    interface IndicatorPageListener {
 
-        private ViewPager.OnPageChangeListener inner;
+        /**
+         * This method will be invoked when the current page is scrolled, either as part
+         * of a programmatically initiated smooth scroll or a user initiated touch scroll.
+         *
+         * @param position         Position index of the first page currently being displayed.
+         *                         Page position+1 will be visible if positionOffset is nonzero.
+         * @param positionOffset   Value from [0, 1) indicating the offset from the page at position.
+         * @param isInfiniteScroll flag for indicating infinite scroll
+         */
+        void onPageScrolled(int position, float positionOffset, boolean isInfiniteScroll);
+    }
 
-        public void setInner(ViewPager.OnPageChangeListener inner) {
-            this.inner = inner;
+    private class InternalHelperPageChangeDecorator implements ViewPager.OnPageChangeListener {
+
+        private InternalHelperPageChangeDecorator() {
+            //no instance
         }
 
+        /**
+         * According to position and positionOffset changing background color. If last position then
+         * change root view alpha, also forward callback to ViewPagerIndicator.
+         */
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            if (mTutorialOptions.isUseInfiniteScroll()) {
+            // Color change
+            int tempPos = position;
+            if (mTutorialOptions.isUseInfiniteScroll() && mTutorialOptions.getPagesCount() != 0) {
+                tempPos %= mTutorialOptions.getPagesCount();
+            }
+            int nextColorPosition = tempPos + 1;
+            if (nextColorPosition >= mTutorialOptions.getPagesCount()) {
+                nextColorPosition %= mTutorialOptions.getPagesCount();
+            }
+            if (!mTutorialOptions.isUseInfiniteScroll() &&
+                    mTutorialOptions.isAutoRemoveTutorialFragment() &&
+                    tempPos == mTutorialOptions.getPagesCount() - 1) {
+                mViewPager.setBackgroundColor(getPageColor(tempPos));
+                if (getView() != null) {
+                    getView().setAlpha(1f - positionOffset);
+                }
+            } else if (tempPos < mTutorialOptions.getPagesCount()) {
+                mViewPager.setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset, getPageColor(tempPos), getPageColor(nextColorPosition)));
+            }
 
+            // ViewPageIndicator callback forward
+            mPageIndicator.onPageScrolled(position % mTutorialOptions.getPagesCount(),
+                    positionOffset, mTutorialOptions.isUseInfiniteScroll());
+        }
+
+        /**
+         * When last position will be reached then remove fragment from the screen, also forward
+         * callback to all OnTutorialPageChangeListeners.
+         */
+        @Override
+        public void onPageSelected(int position) {
+            // Forward callback to all OnTutorialPageChangeListeners
+            int pos = position == mTutorialOptions.getPagesCount() ? EMPTY_FRAGMENT_POSITION : position;
+            for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
+                onTutorialPageChangeListener.onPageChanged(pos);
+            }
+            // If we reach end of tutorial and flag isAutoRemoveTutorialFragment is true - remove TutorialFragment
+            if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
+                removeFragmentFromScreen();
             }
         }
 
         @Override
-        public void onPageSelected(int position) {
-
-        }
-
-        @Override
         public void onPageScrollStateChanged(int state) {
-
+            /* NOP */
         }
     }
 }

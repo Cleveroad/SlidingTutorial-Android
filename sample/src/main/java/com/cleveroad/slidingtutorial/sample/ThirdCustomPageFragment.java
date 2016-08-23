@@ -17,13 +17,13 @@ public class ThirdCustomPageFragment extends PageFragment {
     @Override
 	protected TransformItem[] getTransformItems() {
 		return new TransformItem[]{
-				TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 20/100f),
-				TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 6/100f),
-				TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 8/100f),
-				TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 10/100f),
-				TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 3/100f),
-				TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 9/100f),
-				TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 14/100f),
+				TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
+				TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
+				TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.08f),
+				TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.1f),
+				TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.03f),
+				TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
+				TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f),
 		};
 	}
 }
