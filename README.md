@@ -36,7 +36,7 @@ dependencies {
 ``` 
 
 There are two common variants of using library: via [TutorialPageProvider] and via [TutorialPageOptionsProvider].
-##### Via TutorialPageProvider
+### Via TutorialPageProvider
 You have to create page fragments where each fragment must extend from [PageFragment], override [PageFragment#getLayoutResId()] and [PageFragment#getTransformItems()]. Also you have to create your layout xml file with images.
 
 ```java
@@ -98,7 +98,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 }
 ```
 
-##### Via TutorialPageProvider
+### Via TutorialPageProvider
 Or you can create [TutorialPageOptionsProvider] and set it up to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]. It will automatically provide [PageFragment] instance with specified [PageOptions] configuration.
 
 ```java
@@ -175,7 +175,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 ```
 
 ## Customization
-##### Set up skip button click listener
+### Set up skip button click listener
 You have to implement *OnClickListener* interface and provide it to [TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]. Example:
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
@@ -194,7 +194,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 }
 ```
 
-##### Set up pages colors 
+### Set up pages colors 
 Just provide array of color values to [TutorialOptions.Builder#setPagesColors(int array)]. Array with colors **must have length equal to pages size**.
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
@@ -213,13 +213,13 @@ public class CustomTutorialFragment extends TutorialFragment {
     }
 }
 ```
-##### Infinite scroll
+### Infinite scroll
 To loop tutorial pages you have set [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to **Boolean**#*TRUE*.
 
-##### Auto remove TutorialFragment - scroll from last tutorial page to your content
+### Auto remove TutorialFragment - scroll from last tutorial page to your content
 If you want to provide smooth transition from last tutorial page to content - just set up [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to **Boolean**#*TRUE*.
 
-##### Indicator view customization
+### Indicator view customization
 There is [IndicatorOptions] class for configuration indicator view. Here's example:
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
@@ -245,7 +245,7 @@ Also in sample module there are two implementaions:
 * [DrawableRenderer]
 * [RhombusRenderer]
 
-##### Add OnTutorialPageChangeListener
+### Add OnTutorialPageChangeListener
 You can listen change page listener - just implement [TutorialFragment.OnTutorialPageChangeListener] and add listener via [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]. To remove listener use [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)].
 ```java
 public class CustomTutorialFragment extends TutorialFragment
