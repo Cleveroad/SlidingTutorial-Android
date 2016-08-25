@@ -37,8 +37,6 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 <br><a href="https://twitter.com/CleveroadInc">Twitter account</a>
 <br><a href="https://plus.google.com/+CleveroadInc/">Google+ account</a>
 
-[migration manuals]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/MIGRATION.md
-[changelog history]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/CHANGELOG.md
 [SimplePageFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/SimplePageFragment.java
 [PageFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java
 [PageFragment#getLayoutResId()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java#L123
