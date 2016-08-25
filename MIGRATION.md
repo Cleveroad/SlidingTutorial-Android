@@ -2,16 +2,15 @@
 ![Header image](/images/header.jpg)
 
 ## Migrations from v.0.9.5 to v.1.0.0
-1. You must change creation TransformItem from `new TransformItem(R.id.ivFirstImage, true, 20)` to `TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f)`, where 2-nd parameter now is **Direction** of view translation and 3-rd parameter is *shiftCoefficient*.
-2. Your fragment with tutorial must extend **TutorialFragment** instead of **PresentationPagerFragment**.
-3. In your **TutorialFragment** successor fragment must implement #*provideTutorialOptions()* method that returns TutorialOptions instance.
-4. In **TutorialOptions**.**Builder**#setTutorialPageProvider(**TutorialPageProvider**)* you must specify **TutorialPageProvider** instance. For example:
+1. You must change creation [TransformItem] from `new TransformItem(R.id.ivFirstImage, true, 20)` to `TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f)`, where 2-nd parameter now is [Direction] of view translation and 3-rd parameter is *shiftCoefficient*.
+2. Your fragment with tutorial must extend [TutorialFragment] instead of **PresentationPagerFragment**.
+3. In your [TutorialFragment] successor fragment must implement [TutorialFragment#provideTutorialOptions()] method that returns [TutorialOptions] instance.
+4. In [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)] you must specify [TutorialPageProvider] instance. For example:
 ```java
 private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvider() {
         @NonNull
         @Override
         public PageFragment providePage(int position) {
-            position %= ACTUAL_PAGES_COUNT;
             switch (position) {
                 case 0:
                     return new FirstCustomPageFragment();
@@ -85,6 +84,7 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 [TransformItem]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TransformItem.java
 [TransformItem#create(int,Direction,float)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TransformItem.java#L54
 [TutorialFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java
+[TutorialFragment#provideTutorialOptions()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L247
 [TutorialFragment.OnTutorialPageChangeListener]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L315
 [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L173
 [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L186

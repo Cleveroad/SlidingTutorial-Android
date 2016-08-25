@@ -5,27 +5,27 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 
 /**
- * Basic implementation of {@link PageFragment}.
+ * Basic implementation of {@link PageSupportFragment}.
  */
-public class SimplePageFragment extends PageFragment {
+public class SimplePageSupportFragment extends PageSupportFragment {
 
     private static final String EXTRA_PAGE_LAYOUT_RES = ExtraUtils.getExtra("PAGE_LAYOUT_RES");
     private static final String EXTRA_TRANSFORM_ITEMS = ExtraUtils.getExtra("TRANSFORM_ITEMS");
 
-    public static PageFragment newInstance(@NonNull PageOptions pageOptions) {
+    public static PageSupportFragment newInstance(@NonNull PageOptions pageOptions) {
         return newInstance(pageOptions.getPageLayoutResId(), ValidationUtil.checkNotNull(pageOptions.getTransformItems()));
     }
 
-    public static PageFragment newInstance(@LayoutRes int pageLayoutRes, @NonNull TransformItem[] transformItems) {
+    public static PageSupportFragment newInstance(@LayoutRes int pageLayoutRes, @NonNull TransformItem[] transformItems) {
         Bundle args = new Bundle();
         args.putInt(EXTRA_PAGE_LAYOUT_RES, pageLayoutRes);
         args.putParcelableArray(EXTRA_TRANSFORM_ITEMS, ValidationUtil.checkNotNull(transformItems));
-        PageFragment fragment = new SimplePageFragment();
+        PageSupportFragment fragment = new SimplePageSupportFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public SimplePageFragment() {
+    public SimplePageSupportFragment() {
     }
 
     @Override

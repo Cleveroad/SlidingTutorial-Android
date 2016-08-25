@@ -1,10 +1,12 @@
-package com.cleveroad.slidingtutorial.sample;
+package com.cleveroad.slidingtutorial.sample.support;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+import com.cleveroad.slidingtutorial.sample.R;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +29,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     public void replaceTutorialFragment() {
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, new CustomTutorialFragment())
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new CustomTutorialSupportFragment())
                 .commit();
     }
 

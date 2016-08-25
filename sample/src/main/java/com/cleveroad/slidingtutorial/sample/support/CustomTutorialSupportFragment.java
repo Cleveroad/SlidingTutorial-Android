@@ -1,4 +1,4 @@
-package com.cleveroad.slidingtutorial.sample;
+package com.cleveroad.slidingtutorial.sample.support;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,27 +12,27 @@ import android.widget.Toast;
 import com.cleveroad.slidingtutorial.Direction;
 import com.cleveroad.slidingtutorial.IndicatorOptions;
 import com.cleveroad.slidingtutorial.OnTutorialPageChangeListener;
-import com.cleveroad.slidingtutorial.PageFragment;
 import com.cleveroad.slidingtutorial.PageOptions;
+import com.cleveroad.slidingtutorial.PageSupportFragment;
 import com.cleveroad.slidingtutorial.TransformItem;
-import com.cleveroad.slidingtutorial.TutorialFragment;
 import com.cleveroad.slidingtutorial.TutorialOptions;
 import com.cleveroad.slidingtutorial.TutorialPageOptionsProvider;
-import com.cleveroad.slidingtutorial.TutorialPageProvider;
+import com.cleveroad.slidingtutorial.TutorialPageSupportProvider;
 import com.cleveroad.slidingtutorial.TutorialSupportFragment;
+import com.cleveroad.slidingtutorial.sample.R;
 import com.cleveroad.slidingtutorial.sample.renderer.RhombusRenderer;
 
-public class CustomTutorialFragment extends TutorialFragment
+public class CustomTutorialSupportFragment extends TutorialSupportFragment
         implements OnTutorialPageChangeListener {
 
-    private static final String TAG = "CustomTutorialFragment";
+    private static final String TAG = "CustomTutorialSFragment";
     private static final int TOTAL_PAGES = 6;
     private static final int ACTUAL_PAGES_COUNT = 3;
 
     private final View.OnClickListener mOnSkipClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), "Skip button clicked", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Skip button clicked", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -94,18 +94,18 @@ public class CustomTutorialFragment extends TutorialFragment
         }
     };
 
-    private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvider() {
+    private final TutorialPageSupportProvider mTutorialPageProvider = new TutorialPageSupportProvider() {
         @NonNull
         @Override
-        public PageFragment providePage(int position) {
+        public PageSupportFragment providePage(int position) {
             position %= ACTUAL_PAGES_COUNT;
             switch (position) {
                 case 0:
-                    return new FirstCustomPageFragment();
+                    return new FirstCustomPageSupportFragment();
                 case 1:
-                    return new SecondCustomPageFragment();
+                    return new SecondCustomPageSupportFragment();
                 case 2:
-                    return new ThirdCustomPageFragment();
+                    return new ThirdCustomPageSupportFragment();
                 default:
                     throw new IllegalArgumentException("Unknown position: " + position);
             }
@@ -119,12 +119,12 @@ public class CustomTutorialFragment extends TutorialFragment
         super.onCreate(savedInstanceState);
         if (pagesColors == null) {
             pagesColors = new int[] {
-                    ContextCompat.getColor(getActivity(), android.R.color.holo_orange_dark),
-                    ContextCompat.getColor(getActivity(), android.R.color.holo_green_dark),
-                    ContextCompat.getColor(getActivity(), android.R.color.holo_blue_dark),
-                    ContextCompat.getColor(getActivity(), android.R.color.holo_red_dark),
-                    ContextCompat.getColor(getActivity(), android.R.color.holo_purple),
-                    ContextCompat.getColor(getActivity(), android.R.color.darker_gray)
+                    ContextCompat.getColor(getContext(), android.R.color.holo_orange_dark),
+                    ContextCompat.getColor(getContext(), android.R.color.holo_green_dark),
+                    ContextCompat.getColor(getContext(), android.R.color.holo_blue_dark),
+                    ContextCompat.getColor(getContext(), android.R.color.holo_red_dark),
+                    ContextCompat.getColor(getContext(), android.R.color.holo_purple),
+                    ContextCompat.getColor(getContext(), android.R.color.darker_gray)
             };
         }
         addOnTutorialPageChangeListener(this);
@@ -132,20 +132,20 @@ public class CustomTutorialFragment extends TutorialFragment
 
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return TutorialOptions.newBuilder(getActivity())
+        return TutorialOptions.newBuilder(getContext())
                 .setUseAutoRemoveTutorialFragment(true)
                 .setUseInfiniteScroll(false)
                 .setPagesColors(pagesColors)
                 .setPagesCount(TOTAL_PAGES)
-                .setTutorialPageProvider(mTutorialPageOptionsProvider)
-                .setIndicatorOptions(IndicatorOptions.newBuilder(getActivity())
+                //.setTutorialPageSupportProvider(mTutorialPageOptionsProvider)
+                .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
                         .setElementSizeRes(R.dimen.indicator_size)
                         .setElementSpacingRes(R.dimen.indicator_spacing)
                         .setElementColorRes(android.R.color.darker_gray)
                         .setSelectedElementColor(Color.LTGRAY)
                         .setRenderer(RhombusRenderer.create())
                         .build())
-                //.setTutorialPageProvider(mTutorialPageProvider)
+                .setTutorialSupportPageProvider(mTutorialPageProvider)
                 .onSkipClickListener(mOnSkipClickListener)
                 .build();
     }

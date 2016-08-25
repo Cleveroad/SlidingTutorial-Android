@@ -26,7 +26,7 @@ package com.cleveroad.slidingtutorial;
 import android.support.annotation.LayoutRes;
 
 /**
- * Class contains configuration for creating {@link PageFragment} instances.
+ * Class contains configuration for creating {@link PageFragment} and {@link PageSupportFragment} instances.
  */
 public class PageOptions {
 

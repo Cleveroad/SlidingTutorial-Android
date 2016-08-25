@@ -24,16 +24,15 @@
 package com.cleveroad.slidingtutorial;
 
 import android.animation.ArgbEvaluator;
-import android.annotation.TargetApi;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.database.DataSetObserver;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,9 +45,8 @@ import java.util.List;
  * Base Fragment that contains {@link ViewPager} and where happens most logic like dispatching
  * transform event to child fragments, changing background color, and located page indicator.
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 @SuppressWarnings({"unused", "SimplifiableIfStatement"})
-public abstract class TutorialFragment extends Fragment {
+public abstract class TutorialSupportFragment extends Fragment {
 
     /**
      * Position of empty fragment, which used for smooth move to content after tutorial.
@@ -73,7 +71,7 @@ public abstract class TutorialFragment extends Fragment {
         }
     };
 
-    public TutorialFragment() {
+    public TutorialSupportFragment() {
     }
 
     @Override
@@ -93,9 +91,7 @@ public abstract class TutorialFragment extends Fragment {
         mButtonSkip = view.findViewById(getButtonSkipResId());
         mSeparator = view.findViewById(getSeparatorResId());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mTutorialAdapter = new TutorialAdapter(getChildFragmentManager());
-        }
+        mTutorialAdapter = new TutorialAdapter(getChildFragmentManager());
         mTutorialAdapter.registerDataSetObserver(mDataSetObservable);
         mViewPager.setAdapter(mTutorialAdapter);
         mViewPager.setPageTransformer(true, new FragmentTransformer());
@@ -162,9 +158,9 @@ public abstract class TutorialFragment extends Fragment {
     }
 
     private void removeFragmentFromScreen() {
-        getActivity().getFragmentManager()
+        getActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .remove(TutorialFragment.this)
+                .remove(TutorialSupportFragment.this)
                 .commitAllowingStateLoss();
     }
 
@@ -233,9 +229,9 @@ public abstract class TutorialFragment extends Fragment {
      * @return page at specified position
      */
     @SuppressWarnings("ConstantConditions")
-    protected PageFragment getPage(int position) {
+    protected PageSupportFragment getPage(int position) {
         position %= mTutorialOptions.getPagesCount();
-        return mTutorialOptions.getTutorialPageProvider().providePage(position);
+        return mTutorialOptions.getTutorialPageSupportProvider().providePage(position);
     }
 
     /**
@@ -308,24 +304,10 @@ public abstract class TutorialFragment extends Fragment {
 
         public void transformPage(View view, float position) {
             Object obj = view.getTag(R.id.st_page_fragment);
-            if (obj instanceof PageFragment) {
-                ((PageFragment) obj).transformPage(view.getWidth(), position);
+            if (obj instanceof PageSupportFragment) {
+                ((PageSupportFragment) obj).transformPage(view.getWidth(), position);
             }
         }
-    }
-
-    interface IndicatorPageListener {
-
-        /**
-         * This method will be invoked when the current page is scrolled, either as part
-         * of a programmatically initiated smooth scroll or a user initiated touch scroll.
-         *
-         * @param position         Position index of the first page currently being displayed.
-         *                         Page position+1 will be visible if positionOffset is nonzero.
-         * @param positionOffset   Value from [0, 1) indicating the offset from the page at position.
-         * @param isInfiniteScroll flag for indicating infinite scroll
-         */
-        void onPageScrolled(int position, float positionOffset, boolean isInfiniteScroll);
     }
 
     private class InternalHelperPageChangeDecorator implements ViewPager.OnPageChangeListener {

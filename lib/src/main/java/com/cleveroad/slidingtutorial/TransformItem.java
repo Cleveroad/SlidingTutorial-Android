@@ -78,7 +78,7 @@ public final class TransformItem implements Parcelable {
     }
 
     void setView(View view) {
-        this.mView = view;
+        mView = view;
     }
 
     protected TransformItem(Parcel in) {

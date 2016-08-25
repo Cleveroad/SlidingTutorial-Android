@@ -176,7 +176,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 
 ## Customization
 ### Set up skip button click listener
-You have to implement *OnClickListener* interface and provide it to [TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]. Example:
+You have to implement *View.OnClickListener* interface and provide it to [TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]. Example:
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
     @Override
@@ -195,7 +195,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 ```
 
 ### Set up pages colors 
-Just provide array of color values to [TutorialOptions.Builder#setPagesColors(int array)]. Array with colors **must have length equal to pages size**.
+Just provide array of color values to [TutorialOptions.Builder#setPagesColors(int array)]. The array with colors **must have length equal to pages size**.
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
 
@@ -233,20 +233,21 @@ public class CustomTutorialFragment extends TutorialFragment {
                         .setSelectedElementColor(android.R.color.white)
                         .setRenderer(Drawable.create(getContext()))
                         .build())
+                // set up other configuration ...
                 .build();
     }
 }
 ```
 As you can see, you can specify *element size*, *element spacing* (aka padding), *element color*, *selected element color*, and implementation of [Renderer] interface. There are 2 default implementation inside [Renderer.Factory]:
-* [Renderer.Factory#newCircleRenderer()]
-* [Renderer.Factory#newSquareRenderer()]
+* [Renderer.Factory#newCircleRenderer()] - draw indicators with circle shape
+* [Renderer.Factory#newSquareRenderer()] - draw indicators with square shape
 
 Also in sample module there are two implementaions:
-* [DrawableRenderer]
-* [RhombusRenderer]
+* [DrawableRenderer] - draw indicators with drawable background
+* [RhombusRenderer] - draw indicators with rhombus shape
 
 ### Add OnTutorialPageChangeListener
-You can listen change page listener - just implement [TutorialFragment.OnTutorialPageChangeListener] and add listener via [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]. To remove listener use [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)].
+You can listen change page events - just implement [TutorialFragment.OnTutorialPageChangeListener] and add listener via [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]. To remove listener use [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)].
 ```java
 public class CustomTutorialFragment extends TutorialFragment
         implements TutorialFragment.OnTutorialPageChangeListener {
@@ -271,16 +272,15 @@ public class CustomTutorialFragment extends TutorialFragment
 ``` 
 
 ## Migrations from v.0.9.5 to v.1.0.0
-1. You must change creation TransformItem from `new TransformItem(R.id.ivFirstImage, true, 20)` to `TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f)`, where 2-nd parameter now is **Direction** of view translation and 3-rd parameter is *shiftCoefficient*.
-2. Your fragment with tutorial must extend **TutorialFragment** instead of **PresentationPagerFragment**.
-3. In your **TutorialFragment** successor fragment must implement #*provideTutorialOptions()* method that returns TutorialOptions instance.
-4. In **TutorialOptions**.**Builder**#setTutorialPageProvider(**TutorialPageProvider**)* you must specify **TutorialPageProvider** instance. For example:
+1. You must change creation [TransformItem] from `new TransformItem(R.id.ivFirstImage, true, 20)` to `TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f)`, where 2-nd parameter now is [Direction] of view translation and 3-rd parameter is *shiftCoefficient*.
+2. Your fragment with tutorial must extend [TutorialFragment] instead of **PresentationPagerFragment**.
+3. In your [TutorialFragment] successor fragment must implement [TutorialFragment#provideTutorialOptions()] method that returns [TutorialOptions] instance.
+4. In [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)] you must specify [TutorialPageProvider] instance. For example:
 ```java
 private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvider() {
         @NonNull
         @Override
         public PageFragment providePage(int position) {
-            position %= ACTUAL_PAGES_COUNT;
             switch (position) {
                 case 0:
                     return new FirstCustomPageFragment();
@@ -344,26 +344,27 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 [IndicatorOptions.Builder]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/IndicatorOptions.java#L92
 [PageOptions]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageOptions.java
 [Renderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java
-[Renderer.Factory]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L46
-[Renderer.Factory#newCircleRenderer()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L54
-[Renderer.Factory#newSquareRenderer()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L75
-[DrawableRenderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/sample/src/main/java/com/cleveroad/slidingtutorial/sample/renderer/DrawableRenderer.java
-[RhombusRenderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/sample/src/main/java/com/cleveroad/slidingtutorial/sample/renderer/RhombusRenderer.java
+[Renderer.Factory]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L46
+[Renderer.Factory#newCircleRenderer()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L54
+[Renderer.Factory#newSquareRenderer()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L75
+[DrawableRenderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/sample/src/main/java/com/cleveroad/slidingtutorial/sample/renderer/DrawableRenderer.java
+[RhombusRenderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/sample/src/main/java/com/cleveroad/slidingtutorial/sample/renderer/RhombusRenderer.java
 [TransformItem]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TransformItem.java
-[TransformItem#create(int,Direction,float)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TransformItem.java#L54
+[TransformItem#create(int,Direction,float)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TransformItem.java#L54
 [TutorialFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java
-[TutorialFragment.OnTutorialPageChangeListener]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L315
-[TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L173
-[TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L186
+[TutorialFragment#provideTutorialOptions()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L247
+[TutorialFragment.OnTutorialPageChangeListener]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L315
+[TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L173
+[TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L186
 [TutorialOptions]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java
 [TutorialOptions.Builder]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L112
-[TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L237
-[TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L256
-[TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L207
-[TutorialOptions.Builder#setPagesColors(int array)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L196
-[TutorialOptions.Builder#setPagesCount(int)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L185
-[TutorialOptions.Builder#setUseInfiniteScroll(boolean)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L174
-[TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L162
+[TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L237
+[TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L256
+[TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L207
+[TutorialOptions.Builder#setPagesColors(int array)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L196
+[TutorialOptions.Builder#setPagesCount(int)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L185
+[TutorialOptions.Builder#setUseInfiniteScroll(boolean)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L174
+[TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L162
 [TutorialPageIndicator]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageIndicator.java
 [TutorialPageOptionsProvider]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageOptionsProvider.java
 [TutorialPageProvider]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageProvider.java
