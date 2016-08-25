@@ -55,12 +55,7 @@ public interface Renderer {
             return new Renderer() {
                 @Override
                 public void draw(@NonNull Canvas canvas, @NonNull RectF elementBounds, @NonNull Paint paint, boolean isActive) {
-                    float radius;
-                    if (elementBounds.width() < elementBounds.height()) {
-                        radius = elementBounds.width();
-                    } else {
-                        radius = elementBounds.height();
-                    }
+                    float radius = Math.min(elementBounds.width(), elementBounds.height());
                     radius /= 2f;
                     canvas.drawCircle(elementBounds.centerX(), elementBounds.centerY(), radius, paint);
                 }

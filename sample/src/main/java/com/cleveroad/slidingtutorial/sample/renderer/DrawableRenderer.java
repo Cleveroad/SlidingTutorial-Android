@@ -24,7 +24,6 @@
 package com.cleveroad.slidingtutorial.sample.renderer;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -34,33 +33,30 @@ import android.support.v4.content.ContextCompat;
 
 import com.cleveroad.slidingtutorial.Renderer;
 import com.cleveroad.slidingtutorial.sample.R;
-import com.cleveroad.slidingtutorial.sample.util.DrawableUtils;
 
 /**
  * {@link Renderer} implementation for drawing indicators with bitmap.
  */
 @SuppressWarnings("WeakerAccess")
-public class BitmapRenderer implements Renderer {
+public class DrawableRenderer implements Renderer {
 
-    private Context mContext;
-    private Paint mBitmapPaint;
+    private Drawable mDrawableActive;
+    private Drawable mDrawable;
 
-    public static BitmapRenderer create(@NonNull Context context) {
-        return new BitmapRenderer(context);
+    public static DrawableRenderer create(@NonNull Context context) {
+        return new DrawableRenderer(context);
     }
 
-    private BitmapRenderer(@NonNull Context context) {
-        mContext = context;
-        mBitmapPaint = new Paint();
-        mBitmapPaint.setAntiAlias(true);
-        mBitmapPaint.setFilterBitmap(true);
+    private DrawableRenderer(@NonNull Context context) {
+        mDrawableActive = ContextCompat.getDrawable(context, R.drawable.vec_checkbox_fill_circle_outline);
+        mDrawable = ContextCompat.getDrawable(context, R.drawable.vec_checkbox_blank_circle_outline);
     }
 
     @Override
     public void draw(@NonNull Canvas canvas, @NonNull RectF elementBounds, @NonNull Paint paint, boolean isActive) {
-        Drawable drawable = ContextCompat.getDrawable(mContext, isActive ?
-                R.drawable.vec_checkbox_fill_circle_outline : R.drawable.vec_checkbox_blank_circle_outline);
-        Bitmap bitmap = DrawableUtils.getBitmapByDrawable(drawable);
-        canvas.drawBitmap(bitmap, null, elementBounds, mBitmapPaint);
+        Drawable drawable = isActive ? mDrawableActive : mDrawable;
+        drawable.setBounds((int) elementBounds.left, (int) elementBounds.top,
+                (int) elementBounds.right, (int) elementBounds.bottom);
+        drawable.draw(canvas);
     }
 }

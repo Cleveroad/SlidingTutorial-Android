@@ -386,7 +386,7 @@ public abstract class TutorialFragment extends Fragment {
             for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
                 onTutorialPageChangeListener.onPageChanged(pos);
             }
-            // If we reach end of tutorial and flag isAutoRemoveTutorialFragment is true - remove TutorialFragment
+            // If we reach end of tutorial and flag isUseAutoRemoveTutorialFragment is true - remove TutorialFragment
             if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
                 removeFragmentFromScreen();
             }

@@ -32,6 +32,7 @@ public interface TutorialPageProvider {
 
     /**
      * Provide {@link PageFragment} by position.
+     *
      * @param position current page position
      * @return returns {@link PageFragment} instance
      */

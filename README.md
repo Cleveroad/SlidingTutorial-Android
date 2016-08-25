@@ -28,28 +28,29 @@ All you need to do is:
 
 ## Using
 
-First, add gradle dependency with command:
+First, add gradle dependency into your build.gradle:
 ```groovy
 dependencies {
     compile 'com.cleveroad:slidingtutorial:1.0.0'
 }
 ``` 
 
-After you have to create each fragment that must extend from **PageFragment**. Also you have to create your xml file with images.
+There are two common variants of using library: via [TutorialPageProvider] and via [TutorialPageOptionsProvider].
+##### Via TutorialPageProvider
+You have to create page fragments where each fragment must extend from [PageFragment], override [PageFragment#getLayoutResId()] and [PageFragment#getTransformItems()]. Also you have to create your layout xml file with images.
 
 ```java
 public class FirstCustomPageFragment extends PageFragment {
 
     @Override
     protected int getLayoutResId() {
-        // layout id of fragment
         return R.layout.fragment_page_first;
     }
 
     @Override
     protected TransformItem[] provideTransformItems() {
-        // list of transformation items
-        return new TransformItem[]{
+        return new TransformItem[] {
+                // TransformItem.create(view for transform, moving direction, shift coefficient)
                 TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f),
                 TransformItem.create(R.id.ivSecondImage, Direction.RIGHT_TO_LEFT, 0.06f),
                 TransformItem.create(R.id.ivThirdImage, Direction.LEFT_TO_RIGHT, 0.08f),
@@ -63,14 +64,17 @@ public class FirstCustomPageFragment extends PageFragment {
 }
 ```
 
-And specify **TutorialPageProvider** in main **TutorialFragment** fragment.
+Set up [TutorialPageProvider] instance to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)].
 
 ```java
-private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvider() {
+public class CustomTutorialFragment extends TutorialFragment {
+
+    private static final int TOTAL_PAGES = 3;
+
+    private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvider() {
         @NonNull
         @Override
         public PageFragment providePage(int position) {
-            position %= ACTUAL_PAGES_COUNT;
             switch (position) {
                 case 0:
                     return new FirstCustomPageFragment();
@@ -78,118 +82,194 @@ private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvi
                     return new SecondCustomPageFragment();
                 case 2:
                     return new ThirdCustomPageFragment();
+                default:
+                    throw new IllegalArgumentException("Unknown position: " + position);
             }
         }
     };
-```
 
-Or you can provide **TutorialPageOptionsProvider** instance in main TutorialFragment fragment that responds for creating **PageFragment** instances with provided **PageOptions** configuration.
+    private int[] pagesColors = new int[] { Color.RED, Color.DKGRAY, Color.BLUE };
 
-```java
-private final TutorialPageOptionsProvider mTutorialPageOptionsProvider = new TutorialPageOptionsProvider() {
-    @NonNull
     @Override
-    public PageOptions provide(int position) {
-        @LayoutRes int pageLayoutResId;
-        TransformItem[] tutorialItems;
-        position %= ACTUAL_PAGES_COUNT;
-        switch (position) {
-            case 0: {
-                pageLayoutResId = R.layout.fragment_page_first;
-                tutorialItems = new TransformItem[]{
-                        TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f),
-                        TransformItem.create(R.id.ivSecondImage, Direction.RIGHT_TO_LEFT, 0.06f),
-                        TransformItem.create(R.id.ivThirdImage, Direction.LEFT_TO_RIGHT, 0.08f),
-                        TransformItem.create(R.id.ivFourthImage, Direction.RIGHT_TO_LEFT, 0.1f),
-                        TransformItem.create(R.id.ivFifthImage, Direction.RIGHT_TO_LEFT, 0.03f),
-                        TransformItem.create(R.id.ivSixthImage, Direction.RIGHT_TO_LEFT, 0.09f),
-                        TransformItem.create(R.id.ivSeventhImage, Direction.RIGHT_TO_LEFT, 0.14f),
-                        TransformItem.create(R.id.ivEighthImage, Direction.RIGHT_TO_LEFT, 0.07f)
-                };
-                break;
-            }
-            case 1: {
-                pageLayoutResId = R.layout.fragment_page_second;
-                tutorialItems = new TransformItem[]{
-                        TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
-                        TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
-                        TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.08f),
-                        TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.1f),
-                        TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.03f),
-                        TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
-                        TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f),
-                        TransformItem.create(R.id.ivEighthImage, Direction.LEFT_TO_RIGHT, 0.07f)
-                };
-                break;
-            }
-            case 2: {
-                pageLayoutResId = R.layout.fragment_page_third;
-                tutorialItems = new TransformItem[]{
-                        TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
-                        TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
-                        TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.08f),
-                        TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.1f),
-                        TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.03f),
-                        TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
-                        TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f)
-                };
-                break;
-            }
-            default: {
-                throw new IllegalStateException("Invalid position");
-            }
-        }
-
-        return PageOptions.create(pageLayoutResId, position, tutorialItems);
+    protected TutorialOptions provideTutorialOptions() {
+        return TutorialOptions.newBuilder(getContext())
+                .setPagesColors(pagesColors)
+                .setPagesCount(TOTAL_PAGES)
+                .setTutorialPageProvider(mTutorialPageProvider)
+                .build();
     }
-};
-```
-
-All the stuff then use while creating **TutorialOptions** instance using **TutorialOptions**.**Builder** inside **TutorialFragment**#*provideTutorialOptions* method implementation. For example with using **TutorialPageProvider**:
-```java
-@Override
-protected TutorialOptions provideTutorialOptions() {
-    return TutorialOptions.newBuilder(getContext())
-            .isAutoRemoveTutorialFragment(true)
-            .setPagesColors(pagesColors)
-            .setPagesCount(TOTAL_PAGES)
-            .setTutorialPageProvider(mTutorialPageProvider)
-            .onSkipClickListener(mOnSkipClickListener)
-            .build();
 }
 ```
 
-Example with specifying **TutorialPageOptionsProvider**:
+##### Via TutorialPageProvider
+Or you can create [TutorialPageOptionsProvider] and set it up to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]. It will automatically provide [PageFragment] instance with specified [PageOptions] configuration.
+
 ```java
-@Override
-protected TutorialOptions provideTutorialOptions() {
-    return TutorialOptions.newBuilder(getContext())
-            .isAutoRemoveTutorialFragment(true)
-            .setPagesColors(pagesColors)
-            .setPagesCount(TOTAL_PAGES)
-            .onSkipClickListener(mOnSkipClickListener)
-            .build();
+public class CustomTutorialFragment extends TutorialFragment {
+
+    private static final int TOTAL_PAGES = 3;
+
+    private final TutorialPageOptionsProvider mTutorialPageOptionsProvider = new TutorialPageOptionsProvider() {
+        @NonNull
+        @Override
+        public PageOptions provide(int position) {
+            @LayoutRes int pageLayoutResId;
+            TransformItem[] tutorialItems;
+            switch (position) {
+                case 0: {
+                    pageLayoutResId = R.layout.fragment_page_first;
+                    tutorialItems = new TransformItem[]{
+                            TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f),
+                            TransformItem.create(R.id.ivSecondImage, Direction.RIGHT_TO_LEFT, 0.06f),
+                            TransformItem.create(R.id.ivThirdImage, Direction.LEFT_TO_RIGHT, 0.08f),
+                            TransformItem.create(R.id.ivFourthImage, Direction.RIGHT_TO_LEFT, 0.1f),
+                            TransformItem.create(R.id.ivFifthImage, Direction.RIGHT_TO_LEFT, 0.03f),
+                            TransformItem.create(R.id.ivSixthImage, Direction.RIGHT_TO_LEFT, 0.09f),
+                            TransformItem.create(R.id.ivSeventhImage, Direction.RIGHT_TO_LEFT, 0.14f),
+                            TransformItem.create(R.id.ivEighthImage, Direction.RIGHT_TO_LEFT, 0.07f)
+                    };
+                    break;
+                }
+                case 1: {
+                    pageLayoutResId = R.layout.fragment_page_second;
+                    tutorialItems = new TransformItem[]{
+                            TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
+                            TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
+                            TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.08f),
+                            TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.1f),
+                            TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.03f),
+                            TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
+                            TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f),
+                            TransformItem.create(R.id.ivEighthImage, Direction.LEFT_TO_RIGHT, 0.07f)
+                    };
+                    break;
+                }
+                case 2: {
+                    pageLayoutResId = R.layout.fragment_page_third;
+                    tutorialItems = new TransformItem[]{
+                            TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
+                            TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
+                            TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.08f),
+                            TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.1f),
+                            TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.03f),
+                            TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
+                            TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f)
+                    };
+                    break;
+                }
+                default: {
+                    throw new IllegalStateException("Invalid position");
+                }
+            }
+
+            return PageOptions.create(pageLayoutResId, position, tutorialItems);
+        }
+    };
+
+    @Override
+    protected TutorialOptions provideTutorialOptions() {
+        return TutorialOptions.newBuilder(getContext())
+                .setPagesCount(TOTAL_PAGES)
+                .setTutorialPageProvider(mTutorialPageOptionsProvider)
+                .build();
+    }
+}
+
+```
+
+## Customization
+##### Set up skip button click listener
+You have to implement *OnClickListener* interface and provide it to [TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]. Example:
+```java
+public class CustomTutorialFragment extends TutorialFragment {
+    @Override
+    protected TutorialOptions provideTutorialOptions() {
+        return TutorialOptions.newBuilder(getContext())
+                .setOnSkipClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(), "Skip button clicked", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                // set up other configuration ...
+                .build();
+    }
 }
 ```
 
-Also you can configure **TutorialPageIndicator** view via **IndicatorOptions**. For example (inside **TutorialFragment**#*provideTutorialOptions* method implementation):
+##### Set up pages colors 
+Just provide array of color values to [TutorialOptions.Builder#setPagesColors(int array)]. Array with colors **must have length equal to pages size**.
 ```java
-@Override
-protected TutorialOptions provideTutorialOptions() {
-    return TutorialOptions.newBuilder(getContext())
-            .isAutoRemoveTutorialFragment(true)
-            .setPagesColors(pagesColors)
-            .setPagesCount(TOTAL_PAGES)
-            .setTutorialPageProvider(mTutorialPageOptionsProvider)
-            .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
-                    .setElementSizeRes(R.dimen.indicator_size)
-                    .setElementSpacing(2f)
-                    .setElementColorRes(android.R.color.darker_gray)
-                    .setSelectedElementColor(Color.LTGRAY)
-                    .setRenderer(RhombusRenderer.create())
-                    .build())
-            .onSkipClickListener(mOnSkipClickListener)
-            .build();
+public class CustomTutorialFragment extends TutorialFragment {
+
+    private static final int TOTAL_PAGES = 3;
+
+    private int[] pagesColors = new int[] { Color.RED, Color.BLUE, Color.DKGRAY };
+
+    @Override
+    protected TutorialOptions provideTutorialOptions() {
+        return TutorialOptions.newBuilder(getContext())
+                .setPagesCount(TOTAL_PAGES)
+                .setPagesColors(pagesColors)
+                // set up other configuration ...
+                .build();
+    }
+}
+```
+##### Infinite scroll
+To loop tutorial pages you have set [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to **Boolean**#*TRUE*.
+
+##### Auto remove TutorialFragment - scroll from last tutorial page to your content
+If you want to provide smooth transition from last tutorial page to content - just set up [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to **Boolean**#*TRUE*.
+
+##### Indicator view customization
+There is [IndicatorOptions] class for configuration indicator view. Here's example:
+```java
+public class CustomTutorialFragment extends TutorialFragment {
+    @Override
+    protected TutorialOptions provideTutorialOptions() {
+        return TutorialOptions.newBuilder(getContext())
+                .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
+                        .setElementSizeRes(R.dimen.indicator_size)
+                        .setElementSpacingRes(R.dimen.indicator_spacing)
+                        .setElementColorRes(android.R.color.darker_gray)
+                        .setSelectedElementColor(android.R.color.white)
+                        .setRenderer(BitmapRenderer.create(getContext()))
+                        .build())
+                .build();
+    }
+}
+```
+As you can see, you can specify *element size*, *element spacing* (aka padding), *element color*, *selected element color*, and implementation of [Renderer] interface. There are 2 default implementation inside [Renderer.Factory]:
+* [Renderer.Factory#newCircleRenderer()]
+* [Renderer.Factory#newSquareRenderer()]
+
+Also in sample module there are two implementaions:
+* [DrawableRenderer]
+* [RhombusRenderer]
+
+##### Add OnTutorialPageChangeListener
+You can listen change page listener - just implement [TutorialFragment.OnTutorialPageChangeListener] and add listener via [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]. To remove listener use [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)].
+```java
+public class CustomTutorialFragment extends TutorialFragment
+        implements TutorialFragment.OnTutorialPageChangeListener {
+
+    private static final String TAG = "CustomTutorialFragment";
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addOnTutorialPageChangeListener(this);
+    }
+
+    @Override
+    public void onPageChanged(int position) {
+        Log.i(TAG, "onPageChanged: position = " + position);
+        if (position == TutorialFragment.EMPTY_FRAGMENT_POSITION) {
+            Log.i(TAG, "onPageChanged: Empty fragment is visible");
+        }
+    }
+
 }
 ```
 
@@ -197,7 +277,7 @@ protected TutorialOptions provideTutorialOptions() {
 
 Version | Changes
 ---     | ---
-v.1.0.0 | Library fully refactored. See full [1.0.0 Changelog](#100_Changelog_233)
+v.1.0.0 | Library fully refactored. See full [1.0.0 Changelog](#100_Changelog)
 v.0.9.5 | Added getters for views. Possible fix for manifest merging issues
 v.0.9.4 | Renamed all attributes; all resources marked as private |
 v.0.9.3 | Fixed issue with wrong page showed at startup if pages count not equals 3 
@@ -206,18 +286,18 @@ v.0.9.1 | Added infinite scroll behavior
 v.0.9   | First public release      
 
 ## 1.0.0 Changelog
-* Renamed **PresentationPagerFragment** to **TutorialFragment**.
-* Maked **PageFragment** not abstract with default implementaion for **PageFragment*#*getLayoutResId()* and **PageFragment**#*getTransformItems()*.
-* Removed capability to create new instance of **TransformItem** via `new`. Added fabric static method **TransformItem**#*create(PageOptions)* and **TransformItem**#*create(int,TransformItem[])*.
-* Created **OnTutorialPageChangeListener** to listen change page events. 
-* Use **TutorialFragment**#*addOnTutorialPageChangeListener()* and **TutorialFragment**#*addOnTutorialPageChangeListener()* to add/remove listener. 
-* Created **TutorialOptions** to configure **TutorialFragment**. 
-* Created **TutorialPageOptionsProvider** and **PageOptions** to provide and configure **PageFragment** instances.
-* Created **TutorialPageProvider** to provide **PageFragment** instances.
+* Renamed **PresentationPagerFragment** to [TutorialFragment].
+* Made [PageFragment] not abstract with default implementaion for [PageFragment#getLayoutResId()] and [PageFragment#getTransformItems()].
+* Removed capability to create new instance of [TransformItem] via `new`. Added fabric static method [TransformItem#create(int,Direction,float)].
+* Created [OnTutorialPageChangeListener] to listen change page events.
+* Use [TutorialFragment#addOnTutorialPageChangeListener()] and [TutorialFragment#removeOnTutorialPageChangeListener()] to add/remove listener. 
+* Created [TutorialOptions] to configure [TutorialFragment].
+* Created [TutorialPageOptionsProvider] and [PageOptions] to provide and configure [PageFragment] instances.
+* Created [TutorialPageProvider] to provide [PageFragment] instances.
 * Removed **CirclePageIndicator**.
-* Created **TutorialPageIndicator** view.
-* Created **IndicatorOptions** to configure **TutorialPageIndicator** view.
-* Created **Renderer** interface that responds for drawing single indicator item. There are 2 default implementaion: **Renderer**.**Factory**#*newCircleRenderer()* and **Renderer**.**Factory**#*newSquareRenderer()*.
+* Created [TutorialPageIndicator] view.
+* Created [IndicatorOptions] to configure [TutorialPageIndicator] view.
+* Created [Renderer] interface that responds for drawing single indicator item. There are 2 default implementaion: [Renderer.Factory#newCircleRenderer()] and [Renderer.Factory#newSquareRenderer()].
 
 
 ## Migrations from v.0.9.5 to v.1.0.0
@@ -312,3 +392,35 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
         LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
+
+[PageFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java
+[PageFragment#getLayoutResId()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java#L123
+[PageFragment#getTransformItems()]: hhttps://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java#L128
+[Direction]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Direction.java
+[IndicatorOptions]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/IndicatorOptions.java
+[IndicatorOptions.Builder]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/IndicatorOptions.java#L92
+[PageOptions]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageOptions.java
+[Renderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java
+[Renderer.Factory]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L46
+[Renderer.Factory#newCircleRenderer()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L54
+[Renderer.Factory#newSquareRenderer()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Renderer.java#L75
+[DrawableRenderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/sample/src/main/java/com/cleveroad/slidingtutorial/sample/renderer/DrawableRenderer.java
+[RhombusRenderer]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/sample/src/main/java/com/cleveroad/slidingtutorial/sample/renderer/RhombusRenderer.java
+[TransformItem]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TransformItem.java
+[TransformItem#create(int,Direction,float)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TransformItem.java#L54
+[TutorialFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java
+[TutorialFragment.OnTutorialPageChangeListener]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L315
+[TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L173
+[TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L186
+[TutorialOptions]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java
+[TutorialOptions.Builder]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L112
+[TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L237
+[TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L256
+[TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L207
+[TutorialOptions.Builder#setPagesColors(int array)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L196
+[TutorialOptions.Builder#setPagesCount(int)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L185
+[TutorialOptions.Builder#setUseInfiniteScroll(boolean)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L174
+[TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L162
+[TutorialPageIndicator]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageIndicator.java
+[TutorialPageOptionsProvider]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageOptionsProvider.java
+[TutorialPageProvider]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageProvider.java

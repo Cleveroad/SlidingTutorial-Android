@@ -42,7 +42,7 @@ public final class TutorialOptions {
     private TutorialPageProvider mTutorialPageProvider;
 
     static TutorialOptions create(@NonNull Builder builder) {
-        return new TutorialOptions(builder.isAutoRemoveTutorialFragment(),
+        return new TutorialOptions(builder.isUseAutoRemoveTutorialFragment(),
                 builder.isUseInfiniteScroll(), builder.getPagesCount(), builder.getPagesColors(),
                 builder.getOnSkipClickListener(), builder.getTutorialPageProvider(),
                 builder.getIndicatorOptions());
@@ -123,7 +123,7 @@ public final class TutorialOptions {
             mContext = ValidationUtil.checkNotNull(context);
         }
 
-        boolean isAutoRemoveTutorialFragment() {
+        boolean isUseAutoRemoveTutorialFragment() {
             return mAutoRemoveTutorialFragment;
         }
 
@@ -159,7 +159,7 @@ public final class TutorialOptions {
          * @param autoRemoveTutorialFragment boolean flag
          * @return current {@link Builder}
          */
-        public Builder isAutoRemoveTutorialFragment(boolean autoRemoveTutorialFragment) {
+        public Builder setUseAutoRemoveTutorialFragment(boolean autoRemoveTutorialFragment) {
             mAutoRemoveTutorialFragment = autoRemoveTutorialFragment;
             return this;
         }
@@ -171,7 +171,7 @@ public final class TutorialOptions {
          * @param useInfiniteScroll boolean flag
          * @return current {@link Builder}
          */
-        public Builder isUseInfiniteScroll(boolean useInfiniteScroll) {
+        public Builder setUseInfiniteScroll(boolean useInfiniteScroll) {
             mUseInfiniteScroll = useInfiniteScroll;
             return this;
         }
@@ -239,7 +239,7 @@ public final class TutorialOptions {
                 @NonNull
                 @Override
                 public PageFragment providePage(int position) {
-                    return PageFragment.newInstance(tutorialPageOptionsProvider.provide(position));
+                    return SimplePageFragment.newInstance(tutorialPageOptionsProvider.provide(position));
                 }
             };
             return this;

@@ -23,7 +23,6 @@
  */
 package com.cleveroad.slidingtutorial;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -33,73 +32,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import static com.cleveroad.slidingtutorial.ValidationUtil.checkNotNull;
-
 /**
  * Single page for {@link TutorialFragment}.
  */
-public class PageFragment extends Fragment {
-
-    private static final String EXTRA_PAGE_LAYOUT_RES = ExtraUtils.getExtra("PAGE_LAYOUT_RES");
-    private static final String EXTRA_TRANSFORM_ITEMS = ExtraUtils.getExtra("TRANSFORM_ITEMS");
-
-    @LayoutRes
-    private int pageLayoutResId = 0;
-    private TransformItem[] transformItems;
-
-    public static PageFragment newInstance(@NonNull PageOptions pageOptions) {
-        return newInstance(pageOptions.getPageLayoutResId(), checkNotNull(pageOptions.getTransformItems()));
-    }
-
-    public static PageFragment newInstance(@LayoutRes int pageLayoutRes, @NonNull TransformItem[] transformItems) {
-        Bundle args = new Bundle();
-        args.putInt(EXTRA_PAGE_LAYOUT_RES, pageLayoutRes);
-        args.putParcelableArray(EXTRA_TRANSFORM_ITEMS, checkNotNull(transformItems));
-        PageFragment fragment = new PageFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public PageFragment() {
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Bundle args = getArguments();
-        if (args != null) {
-            if (args.containsKey(EXTRA_PAGE_LAYOUT_RES)) {
-                pageLayoutResId = args.getInt(EXTRA_PAGE_LAYOUT_RES);
-            }
-            if (args.containsKey(EXTRA_TRANSFORM_ITEMS)) {
-                transformItems = ParcelableUtils.getParcelableArray(args, EXTRA_TRANSFORM_ITEMS,
-                        TransformItem.class, TransformItem[].class);
-            }
-        } else {
-            pageLayoutResId = getLayoutResId();
-            transformItems = getTransformItems();
-        }
-    }
+public abstract class PageFragment extends Fragment {
 
     @Nullable
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (pageLayoutResId == 0) {
-            throw new IllegalStateException("Page layout resource id not specified.");
-        }
-        if (transformItems == null) {
-            throw new IllegalStateException("Transform items array not specified.");
-        }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(getLayoutResId(), container, false);
+        view.setTag(R.id.st_page_fragment, this);
 
-        View view = inflater.inflate(pageLayoutResId, container, false);
-		view.setTag(R.id.st_page_fragment, this);
-
-        for (TransformItem transformItem : transformItems) {
+        for (TransformItem transformItem : getTransformItems()) {
             transformItem.setView(view.findViewById(transformItem.getViewResId()));
         }
 
-		return view;
-	}
+        return view;
+    }
 
     /**
      * Method that apply a custom transformation to the page views
@@ -110,22 +59,18 @@ public class PageFragment extends Fragment {
      *                  page position to the right, and -1 is one page position to the left.
      */
     final void transformPage(int pageWidth, float position) {
-        for (TransformItem transformItem : transformItems) {
+        for (TransformItem transformItem : getTransformItems()) {
             float translationX = position * pageWidth * transformItem.getShiftCoefficient();
             if (transformItem.getDirection() == Direction.RIGHT_TO_LEFT) {
-                translationX = - translationX;
+                translationX = -translationX;
             }
             transformItem.getView().setTranslationX(translationX);
         }
     }
 
     @LayoutRes
-    protected int getLayoutResId() {
-        return pageLayoutResId;
-    }
+    protected abstract int getLayoutResId();
 
     @NonNull
-    protected TransformItem[] getTransformItems() {
-        return transformItems;
-    }
+    protected abstract TransformItem[] getTransformItems();
 }

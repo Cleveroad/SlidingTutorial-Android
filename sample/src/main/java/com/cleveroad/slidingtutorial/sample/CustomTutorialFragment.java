@@ -131,14 +131,14 @@ public class CustomTutorialFragment extends TutorialFragment
     @Override
     protected TutorialOptions provideTutorialOptions() {
         return TutorialOptions.newBuilder(getContext())
-                .isAutoRemoveTutorialFragment(true)
-                .isUseInfiniteScroll(false)
+                .setUseAutoRemoveTutorialFragment(true)
+                .setUseInfiniteScroll(false)
                 .setPagesColors(pagesColors)
                 .setPagesCount(TOTAL_PAGES)
                 .setTutorialPageProvider(mTutorialPageOptionsProvider)
                 .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
                         .setElementSizeRes(R.dimen.indicator_size)
-                        .setElementSpacing(2f)
+                        .setElementSpacingRes(R.dimen.indicator_spacing)
                         .setElementColorRes(android.R.color.darker_gray)
                         .setSelectedElementColor(Color.LTGRAY)
                         .setRenderer(RhombusRenderer.create())
