@@ -88,12 +88,9 @@ public class CustomTutorialFragment extends TutorialFragment {
         }
     };
 
-    private int[] pagesColors = new int[] { Color.RED, Color.DKGRAY, Color.BLUE };
-
     @Override
     protected TutorialOptions provideTutorialOptions() {
         return TutorialOptions.newBuilder(getContext())
-                .setPagesColors(pagesColors)
                 .setPagesCount(TOTAL_PAGES)
                 .setTutorialPageProvider(mTutorialPageProvider)
                 .build();
