@@ -98,7 +98,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 }
 ```
 
-### Via TutorialPageProvider
+### Via TutorialPageOptionsProvider
 Or you can create [TutorialPageOptionsProvider] and set it up to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]. It will automatically provide [PageFragment] instance with specified [PageOptions] configuration.
 
 ```java
