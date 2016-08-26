@@ -16,7 +16,6 @@ public class CustomTutorialFragment extends TutorialSupportFragment {
         @NonNull
         @Override
         public Fragment providePage(int position) {
-            position %= ACTUAL_PAGES_COUNT;
             switch (position) {
                 case 0:
                     return new FirstCustomPageFragment();
@@ -55,21 +54,21 @@ public class CustomTutorialFragment extends TutorialSupportFragment {
 4. In [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)] you must specify [TutorialPageProvider] instance. For example:
 ```java
 private final TutorialPageProvider<Fragment> mTutorialPageProvider = new TutorialPageProvider<Fragment>() {
-        @NonNull
-        @Override
-        public Fragment providePage(int position) {
-            switch (position) {
-                case 0:
-                    return new FirstCustomPageFragment();
-                case 1:
-                    return new SecondCustomPageFragment();
-                case 2:
-                    return new ThirdCustomPageFragment();
-                default:
-                    throw new IllegalArgumentException("Unknown position: " + position);
-            }
+    @NonNull
+    @Override
+    public Fragment providePage(int position) {
+        switch (position) {
+            case 0:
+                return new FirstCustomPageFragment();
+            case 1:
+                return new SecondCustomPageFragment();
+            case 2:
+                return new ThirdCustomPageFragment();
+            default:
+                throw new IllegalArgumentException("Unknown position: " + position);
         }
-    };
+    }
+};
 ```
 
 ## Migrations from v.0.9.3 to v.0.9.4

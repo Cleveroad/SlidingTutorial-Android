@@ -64,7 +64,7 @@ public class FirstCustomPageFragment extends PageFragment {
 }
 ```
 
-Set up [TutorialPageProvider] instance to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)].
+Pass [TutorialPageProvider] instance to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)].
 
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
@@ -99,8 +99,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 ```
 
 ### Via TutorialPageOptionsProvider
-Or you can create [TutorialPageOptionsProvider] and set it up to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]. It will automatically provide [PageFragment] instance with specified [PageOptions] configuration.
-
+Or you can create [TutorialPageOptionsProvider] and pass it to [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]. It will automatically provide [PageFragment] instance with specified [PageOptions] configuration.
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
 
@@ -155,7 +154,7 @@ public class CustomTutorialFragment extends TutorialFragment {
                     break;
                 }
                 default: {
-                    throw new IllegalStateException("Invalid position");
+                    throw new IllegalArgumentException("Unknown position: " + position);
                 }
             }
 
@@ -181,7 +180,7 @@ That's all.
 
 
 ## Customization
-### Set up skip button click listener
+### Setup skip button click listener
 You have to implement *View.OnClickListener* interface and provide it to [TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]. Example:
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
@@ -194,14 +193,14 @@ public class CustomTutorialFragment extends TutorialFragment {
                         Toast.makeText(getContext(), "Skip button clicked", Toast.LENGTH_SHORT).show();
                     }
                 })
-                // set up other configuration ...
+                // setup other configuration ...
                 .build();
     }
 }
 ```
 
-### Set up pages colors 
-Just provide array of color values to [TutorialOptions.Builder#setPagesColors(int array)]. The array with colors **must have length equal to pages size**.
+### Setup pages colors 
+Just provide array of color values to [TutorialOptions.Builder#setPagesColors(int array)]. The array with colors **must have length equal to pages count**.
 ```java
 public class CustomTutorialFragment extends TutorialFragment {
 
@@ -214,16 +213,16 @@ public class CustomTutorialFragment extends TutorialFragment {
         return newTutorialOptionsBuilder(getContext())
                 .setPagesCount(TOTAL_PAGES)
                 .setPagesColors(pagesColors)
-                // set up other configuration ...
+                // setup other configuration ...
                 .build();
     }
 }
 ```
 ### Infinite scroll
-To loop tutorial pages you have set [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to **Boolean**#*TRUE*.
+To loop tutorial pages you have set [TutorialOptions.Builder#setUseInfiniteScroll(boolean)] to `true`.
 
 ### Auto remove TutorialFragment - scroll from last tutorial page to your content
-If you want to provide smooth transition from last tutorial page to content - just set up [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to **Boolean**#*TRUE*.
+If you want to provide smooth transition from last tutorial page to content - just setup [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to `true`.
 
 ### Indicator view customization
 There is [IndicatorOptions] class for configuration indicator view. Here's example:
@@ -239,7 +238,7 @@ public class CustomTutorialFragment extends TutorialFragment {
                         .setSelectedElementColor(android.R.color.white)
                         .setRenderer(Drawable.create(getContext()))
                         .build())
-                // set up other configuration ...
+                // setup other configuration ...
                 .build();
     }
 }
@@ -253,7 +252,7 @@ Also in sample module there are two implementaions:
 * [RhombusRenderer] - draw indicators with rhombus shape
 
 ### Add OnTutorialPageChangeListener
-You can listen change page events - just implement [TutorialFragment.OnTutorialPageChangeListener] and add listener via [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]. To remove listener use [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)].
+You can listen change page events - just implement [OnTutorialPageChangeListener] and add listener via [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]. To remove listener use [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)]. In [OnTutorialPageChangeListener#onPageChanged(int)] method you will receive a page index every time page changes. If you enabled [TutorialOptions.Builder#setUseAutoRemoveTutorialFragment(boolean)] to true, you will receive `TutorialFragment.EMPTY_FRAGMENT_POSITION` (or `TutorialSupportFragment.EMPTY_FRAGMENT_POSITION` if you are using support library) as page index.
 ```java
 public class CustomTutorialFragment extends TutorialFragment
         implements OnTutorialPageChangeListener {
@@ -339,6 +338,7 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 [TutorialFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java
 [TutorialFragment#provideTutorialOptions()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L239
 [OnTutorialPageChangeListener]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/OnTutorialPageChangeListener.java
+[OnTutorialPageChangeListener#onPageChanged(int)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/feature/refactor/lib/src/main/java/com/cleveroad/slidingtutorial/OnTutorialPageChangeListener.java#L37
 [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L168
 [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L178
 [TutorialSupportFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialSupportFragment.java

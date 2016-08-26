@@ -86,7 +86,7 @@ public class CustomTutorialFragment extends TutorialFragment
                     break;
                 }
                 default: {
-                    throw new IllegalStateException("Invalid position");
+                    throw new IllegalArgumentException("Unknown position: " + position);
                 }
             }
 

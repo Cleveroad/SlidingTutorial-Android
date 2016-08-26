@@ -86,7 +86,7 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
                     break;
                 }
                 default: {
-                    throw new IllegalStateException("Invalid position");
+                    throw new IllegalArgumentException("Unknown position: " + position);
                 }
             }
 
@@ -106,8 +106,9 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
                     return new SecondCustomPageSupportFragment();
                 case 2:
                     return new ThirdCustomPageSupportFragment();
-                default:
+                default: {
                     throw new IllegalArgumentException("Unknown position: " + position);
+                }
             }
         }
     };
