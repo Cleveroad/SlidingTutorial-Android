@@ -41,30 +41,27 @@ public final class TutorialOptions {
     private View.OnClickListener mOnSkipClickListener;
     private IndicatorOptions mIndicatorOptions;
     private TutorialPageProvider mTutorialPageProvider;
-    private TutorialPageSupportProvider mTutorialPageSupportProvider;
 
+    @SuppressWarnings("unchecked")
     static TutorialOptions create(@NonNull Builder builder) {
         return new TutorialOptions(builder.isUseAutoRemoveTutorialFragment(),
                 builder.isUseInfiniteScroll(), builder.getPagesCount(), builder.getPagesColors(),
                 builder.getOnSkipClickListener(), builder.getTutorialPageProvider(),
-                builder.getTutorialPageSupportProvider(), builder.getIndicatorOptions());
+                builder.getIndicatorOptions());
     }
 
     private TutorialOptions(boolean autoRemoveTutorialFragment, boolean useInfiniteScroll,
                             int pagesCount, @NonNull int[] pagesColors,
                             @NonNull View.OnClickListener onSkipClickListener,
                             @NonNull TutorialPageProvider tutorialPageProvider,
-                            @Nullable TutorialPageSupportProvider tutorialPageSupportProvider,
                             @NonNull IndicatorOptions indicatorOptions) {
         mAutoRemoveTutorialFragment = autoRemoveTutorialFragment;
         mUseInfiniteScroll = useInfiniteScroll;
-        mPagesCount = ValidationUtil.checkPagesCount(pagesCount);
-        ValidationUtil.checkNotNull(pagesColors, "Pages color array can't be null");
+        mPagesCount = pagesCount;
         mPagesColors = ValidationUtil.checkPagesColorsSize(pagesCount, pagesColors);
-        mTutorialPageProvider = tutorialPageProvider;
-        mTutorialPageSupportProvider = tutorialPageSupportProvider;
+        mTutorialPageProvider = ValidationUtil.checkNotNull(tutorialPageProvider, "TutorialPageProvider can't be null");
         mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions);
-        mOnSkipClickListener = ValidationUtil.checkNotNull(onSkipClickListener);
+        mOnSkipClickListener = onSkipClickListener;
     }
 
     boolean isAutoRemoveTutorialFragment() {
@@ -79,12 +76,12 @@ public final class TutorialOptions {
         return mPagesCount;
     }
 
-    @NonNull
+    @Nullable
     View.OnClickListener getOnSkipClickListener() {
         return mOnSkipClickListener;
     }
 
-    @NonNull
+    @Nullable
     int[] getPagesColors() {
         return mPagesColors;
     }
@@ -94,43 +91,39 @@ public final class TutorialOptions {
         return mIndicatorOptions;
     }
 
-    @Nullable
+    @NonNull
     TutorialPageProvider getTutorialPageProvider() {
         return mTutorialPageProvider;
     }
 
-    @Nullable
-    public TutorialPageSupportProvider getTutorialPageSupportProvider() {
-        return mTutorialPageSupportProvider;
-    }
-
     /**
-     * Create new {@link Builder} instance.
+     * Create new {@link TutorialOptions.Builder} instance.
      *
      * @param context {@link Context} instance
-     * @return {@link Builder} instance
+     * @return {@link TutorialOptions.Builder} instance
      */
-    public static Builder newBuilder(@NonNull Context context) {
+    static <T> TutorialOptions.Builder<T> newTutorialOptionsBuilder(@NonNull Context context, Class<T> pClass) {
         ValidationUtil.checkNotNull(context, "Context can't be null.");
-        return new Builder(context);
+        return new TutorialOptions.Builder<>(context, pClass);
     }
 
     /**
      * Builder for creating {@link TutorialOptions} which using in {@link TutorialSupportFragment}
      */
-    public final static class Builder {
+    public final static class Builder<TFragment> {
+        private final Class<TFragment> mClass;
         private boolean mAutoRemoveTutorialFragment;
         private boolean mUseInfiniteScroll;
         private int mPagesCount;
         private int[] mPagesColors;
         private View.OnClickListener mOnSkipClickListener;
         private IndicatorOptions mIndicatorOptions;
-        private TutorialPageProvider mTutorialPageProvider;
-        private TutorialPageSupportProvider mTutorialPageSupportProvider;
+        private TutorialPageProvider<TFragment> mTutorialPageProvider;
         private Context mContext;
 
-        private Builder(@NonNull Context context) {
+        private Builder(@NonNull Context context, Class<TFragment> aClass) {
             mContext = ValidationUtil.checkNotNull(context);
+            mClass = aClass;
         }
 
         boolean isUseAutoRemoveTutorialFragment() {
@@ -149,12 +142,8 @@ public final class TutorialOptions {
             return mPagesColors;
         }
 
-        TutorialPageProvider getTutorialPageProvider() {
+        TutorialPageProvider<TFragment> getTutorialPageProvider() {
             return mTutorialPageProvider;
-        }
-
-        TutorialPageSupportProvider getTutorialPageSupportProvider() {
-            return mTutorialPageSupportProvider;
         }
 
         IndicatorOptions getIndicatorOptions() {
@@ -172,7 +161,7 @@ public final class TutorialOptions {
          * @param autoRemoveTutorialFragment boolean flag
          * @return current {@link Builder}
          */
-        public Builder setUseAutoRemoveTutorialFragment(boolean autoRemoveTutorialFragment) {
+        public Builder<TFragment> setUseAutoRemoveTutorialFragment(boolean autoRemoveTutorialFragment) {
             mAutoRemoveTutorialFragment = autoRemoveTutorialFragment;
             return this;
         }
@@ -184,7 +173,7 @@ public final class TutorialOptions {
          * @param useInfiniteScroll boolean flag
          * @return current {@link Builder}
          */
-        public Builder setUseInfiniteScroll(boolean useInfiniteScroll) {
+        public Builder<TFragment> setUseInfiniteScroll(boolean useInfiniteScroll) {
             mUseInfiniteScroll = useInfiniteScroll;
             return this;
         }
@@ -195,7 +184,7 @@ public final class TutorialOptions {
          * @param pagesCount pages count
          * @return current {@link Builder}
          */
-        public Builder setPagesCount(int pagesCount) {
+        public Builder<TFragment> setPagesCount(int pagesCount) {
             mPagesCount = pagesCount;
             return this;
         }
@@ -206,7 +195,7 @@ public final class TutorialOptions {
          * @param pagesColors pages colors array
          * @return current {@link Builder}
          */
-        public Builder setPagesColors(@NonNull int[] pagesColors) {
+        public Builder<TFragment> setPagesColors(@NonNull int[] pagesColors) {
             mPagesColors = pagesColors;
             return this;
         }
@@ -217,7 +206,7 @@ public final class TutorialOptions {
          * @param onSkipClickListener instance {@link android.view.View.OnClickListener}
          * @return current {@link Builder}
          */
-        public Builder onSkipClickListener(@NonNull View.OnClickListener onSkipClickListener) {
+        public Builder<TFragment> onSkipClickListener(@NonNull View.OnClickListener onSkipClickListener) {
             mOnSkipClickListener = onSkipClickListener;
             return this;
         }
@@ -234,7 +223,7 @@ public final class TutorialOptions {
          *
          * @param indicatorOptions {@link IndicatorOptions} instance with configuration.
          */
-        public Builder setIndicatorOptions(@NonNull IndicatorOptions indicatorOptions) {
+        public Builder<TFragment> setIndicatorOptions(@NonNull IndicatorOptions indicatorOptions) {
             mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions, "IndicatorOptions can't be null.");
             return this;
         }
@@ -245,14 +234,20 @@ public final class TutorialOptions {
          *
          * @param tutorialPageOptionsProvider pages options provider
          * @return current {@link Builder}
-         * @see #setTutorialSupportPageProvider(TutorialPageSupportProvider)
+         * @see #setTutorialPageProvider(TutorialPageProvider)
          */
-        public Builder setTutorialPageProvider(@NonNull final TutorialPageOptionsProvider tutorialPageOptionsProvider) {
-            mTutorialPageProvider = new TutorialPageProvider() {
+        public Builder<TFragment> setTutorialPageProvider(@NonNull final TutorialPageOptionsProvider tutorialPageOptionsProvider) {
+            mTutorialPageProvider = new TutorialPageProvider<TFragment>() {
+                @SuppressWarnings("unchecked")
                 @NonNull
                 @Override
-                public PageFragment providePage(int position) {
-                    return SimplePageFragment.newInstance(tutorialPageOptionsProvider.provide(position));
+                public TFragment providePage(int position) {
+                    if (android.app.Fragment.class.equals(mClass)) {
+                        return (TFragment) SimplePageFragment.newInstance(tutorialPageOptionsProvider.provide(position));
+                    } else if (android.support.v4.app.Fragment.class.equals(mClass)) {
+                        return (TFragment) SimplePageSupportFragment.newInstance(tutorialPageOptionsProvider.provide(position));
+                    }
+                    throw new IllegalArgumentException("Invalid type of fragment.");
                 }
             };
             return this;
@@ -266,40 +261,8 @@ public final class TutorialOptions {
          * @return current {@link Builder}
          * @see #setTutorialPageProvider(TutorialPageOptionsProvider)
          */
-        public Builder setTutorialPageProvider(@NonNull TutorialPageProvider tutorialPageProvider) {
+        public Builder<TFragment> setTutorialPageProvider(@NonNull TutorialPageProvider<TFragment> tutorialPageProvider) {
             mTutorialPageProvider = tutorialPageProvider;
-            return this;
-        }
-
-        /**
-         * Set {@link TutorialPageOptionsProvider} for providing page options like page layout id, transform items.
-         * Using this method override previous provider from {@link #setTutorialSupportPageProvider(TutorialPageSupportProvider)}.
-         *
-         * @param tutorialPageOptionsProvider pages options provider
-         * @return current {@link Builder}
-         * @see #setTutorialSupportPageProvider(TutorialPageSupportProvider)
-         */
-        public Builder setTutorialPageSupportProvider(@NonNull final TutorialPageOptionsProvider tutorialPageOptionsProvider) {
-            mTutorialPageSupportProvider = new TutorialPageSupportProvider() {
-                @NonNull
-                @Override
-                public PageSupportFragment providePage(int position) {
-                    return SimplePageSupportFragment.newInstance(tutorialPageOptionsProvider.provide(position));
-                }
-            };
-            return this;
-        }
-
-        /**
-         * Set {@link TutorialPageSupportProvider} for providing support page fragments.
-         * Using this method override previous provider from {@link #setTutorialPageProvider(TutorialPageOptionsProvider)}.
-         *
-         * @param tutorialPageProvider pages fragment provider
-         * @return current {@link Builder}
-         * @see #setTutorialPageProvider(TutorialPageOptionsProvider)
-         */
-        public Builder setTutorialSupportPageProvider(@NonNull TutorialPageSupportProvider tutorialPageProvider) {
-            mTutorialPageSupportProvider = tutorialPageProvider;
             return this;
         }
 

@@ -26,16 +26,16 @@ package com.cleveroad.slidingtutorial;
 import android.support.annotation.NonNull;
 
 /**
- * {@link PageFragment} instance provider
+ * {@link TFragment} instance provider
  */
-public interface TutorialPageProvider {
+public interface TutorialPageProvider<TFragment> {
 
     /**
-     * Provide {@link PageFragment} by position.
+     * Provide {@link TFragment} by position.
      *
      * @param position current page position
-     * @return returns {@link PageFragment} instance
+     * @return returns {@link TFragment} instance
      */
     @NonNull
-    PageFragment providePage(int position);
+    TFragment providePage(int position);
 }

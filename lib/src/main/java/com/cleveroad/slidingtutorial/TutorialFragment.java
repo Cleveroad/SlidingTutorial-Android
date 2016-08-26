@@ -23,105 +23,103 @@
  */
 package com.cleveroad.slidingtutorial;
 
-import android.animation.ArgbEvaluator;
-import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.database.DataSetObserver;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Base Fragment that contains {@link ViewPager} and where happens most logic like dispatching
  * transform event to child fragments, changing background color, and located page indicator.
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-@SuppressWarnings({"unused", "SimplifiableIfStatement"})
+@SuppressWarnings({"unused"})
 public abstract class TutorialFragment extends Fragment {
 
     /**
      * Position of empty fragment, which used for smooth move to content after tutorial.
      */
-    public static int EMPTY_FRAGMENT_POSITION = -1;
+    public static int EMPTY_FRAGMENT_POSITION = TutorialImpl.EMPTY_FRAGMENT_POSITION;
 
-    private ViewPager mViewPager;
-    private View mButtonSkip;
-    private View mSeparator;
-    private TutorialPageIndicator mPageIndicator;
-    private TutorialAdapter mTutorialAdapter;
-    private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
-    private TutorialOptions mTutorialOptions;
-    private List<OnTutorialPageChangeListener> mOnTutorialPageChangeListeners = new ArrayList<>();
-
-    private final DataSetObserver mDataSetObservable = new DataSetObserver() {
+    private final Fragment emptyFragment = new Fragment();
+    private TutorialImpl.TutorialAdapterImpl<Fragment> mTutorialAdapterImpl;
+    private TutorialImpl<Fragment> mTutorial;
+    private final TutorialImpl.InternalFragment mInternalFragment = new TutorialImpl.InternalFragment() {
         @Override
-        public void onChanged() {
-            super.onChanged();
-            mPageIndicator.setPagesCount(mTutorialAdapter.getRealPagesCount());
-            mPageIndicator.postInvalidate();
+        public View getView() {
+            return TutorialFragment.this.getView();
+        }
+
+        @Override
+        public TutorialOptions provideTutorialOptions() {
+            return TutorialFragment.this.provideTutorialOptions();
+        }
+
+        @Override
+        public void removeCurrentFragment() {
+            getActivity().getFragmentManager()
+                    .beginTransaction()
+                    .remove(TutorialFragment.this)
+                    .commitAllowingStateLoss();
+        }
+
+        @Override
+        public PagerAdapter getPagerAdapter() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                return new TutorialAdapter(getChildFragmentManager());
+            } else {
+                return new TutorialAdapter(getFragmentManager());
+            }
         }
     };
 
-    public TutorialFragment() {
+    /**
+     * Create new {@link TutorialOptions.Builder} instance.
+     *
+     * @param context {@link Context} instance
+     * @return {@link TutorialOptions.Builder} instance
+     */
+    public static TutorialOptions.Builder<Fragment> newTutorialOptionsBuilder(@NonNull Context context) {
+        ValidationUtil.checkNotNull(context, "Context can't be null.");
+        return TutorialOptions.newTutorialOptionsBuilder(context, Fragment.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        mTutorial = new TutorialImpl<>(mInternalFragment);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(getLayoutResId(), container, false);
-
-        mTutorialOptions = provideTutorialOptions();
-
-        mViewPager = (ViewPager) view.findViewById(getViewPagerResId());
-        mPageIndicator = (TutorialPageIndicator) view.findViewById(getIndicatorResId());
-        mButtonSkip = view.findViewById(getButtonSkipResId());
-        mSeparator = view.findViewById(getSeparatorResId());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mTutorialAdapter = new TutorialAdapter(getChildFragmentManager());
-        }
-        mTutorialAdapter.registerDataSetObserver(mDataSetObservable);
-        mViewPager.setAdapter(mTutorialAdapter);
-        mViewPager.setPageTransformer(true, new FragmentTransformer());
-        mViewPager.addOnPageChangeListener(new InternalHelperPageChangeDecorator());
-        mPageIndicator.initWith(mTutorialOptions.getIndicatorOptions(), mTutorialOptions.getPagesCount());
-
-        mButtonSkip.setOnClickListener(mTutorialOptions.getOnSkipClickListener());
-
-        return view;
+        return mTutorial.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mTutorialOptions.isUseInfiniteScroll()) {
-            int pos = Integer.MAX_VALUE / 2;
-            pos -= pos % mTutorialOptions.getPagesCount();
-            mViewPager.setCurrentItem(pos);
-        }
+        mTutorialAdapterImpl = new TutorialImpl.TutorialAdapterImpl<Fragment>(mTutorial) {
+            @Override
+            Fragment getEmptyFragment() {
+                return emptyFragment;
+            }
+        };
+        mTutorial.onViewCreated(view, savedInstanceState);
     }
 
     @Override
     public void onDestroyView() {
-        mTutorialAdapter.unregisterDataSetObserver(mDataSetObservable);
-        mViewPager.clearOnPageChangeListeners();
-        mOnTutorialPageChangeListeners.clear();
+        mTutorial.onDestroyView();
         super.onDestroyView();
     }
 
@@ -131,7 +129,7 @@ public abstract class TutorialFragment extends Fragment {
      * @return line separator view
      */
     public View getSeparator() {
-        return mSeparator;
+        return mTutorial.getSeparator();
     }
 
     /**
@@ -140,7 +138,7 @@ public abstract class TutorialFragment extends Fragment {
      * @return view pager
      */
     public ViewPager getViewPager() {
-        return mViewPager;
+        return mTutorial.getViewPager();
     }
 
     /**
@@ -149,7 +147,7 @@ public abstract class TutorialFragment extends Fragment {
      * @return skip button
      */
     public View getSkipButton() {
-        return mButtonSkip;
+        return mTutorial.getSkipButton();
     }
 
     /**
@@ -158,14 +156,7 @@ public abstract class TutorialFragment extends Fragment {
      * @return view pager mPageIndicator
      */
     public View getPagerIndicator() {
-        return mPageIndicator;
-    }
-
-    private void removeFragmentFromScreen() {
-        getActivity().getFragmentManager()
-                .beginTransaction()
-                .remove(TutorialFragment.this)
-                .commitAllowingStateLoss();
+        return mTutorial.getPagerIndicator();
     }
 
     /**
@@ -175,10 +166,7 @@ public abstract class TutorialFragment extends Fragment {
      * @return is 'listener' parameter was added
      */
     public boolean addOnTutorialPageChangeListener(@NonNull OnTutorialPageChangeListener listener) {
-        if (!mOnTutorialPageChangeListeners.contains(listener)) {
-            return mOnTutorialPageChangeListeners.add(listener);
-        }
-        return false;
+        return mTutorial.addOnTutorialPageChangeListener(listener);
     }
 
     /**
@@ -188,32 +176,32 @@ public abstract class TutorialFragment extends Fragment {
      * @return is 'listener' parameter was removed
      */
     public boolean removeOnTutorialPageChangeListener(@NonNull OnTutorialPageChangeListener listener) {
-        return mOnTutorialPageChangeListeners.remove(listener);
+        return mTutorial.removeOnTutorialPageChangeListener(listener);
     }
 
     @LayoutRes
     protected int getLayoutResId() {
-        return R.layout.st_fragment_presentation;
+        return mTutorial.getLayoutResId();
     }
 
     @IdRes
     protected int getViewPagerResId() {
-        return R.id.viewPager;
+        return mTutorial.getViewPagerResId();
     }
 
     @IdRes
     protected int getIndicatorResId() {
-        return R.id.indicator;
+        return mTutorial.getIndicatorResId();
     }
 
     @IdRes
     protected int getButtonSkipResId() {
-        return R.id.tvSkip;
+        return mTutorial.getButtonSkipResId();
     }
 
     @IdRes
     protected int getSeparatorResId() {
-        return R.id.separator;
+        return mTutorial.getSeparatorResId();
     }
 
     /**
@@ -223,7 +211,7 @@ public abstract class TutorialFragment extends Fragment {
      */
     @NonNull
     public TutorialOptions getTutorialOptions() {
-        return mTutorialOptions;
+        return mTutorial.getTutorialOptions();
     }
 
     /**
@@ -233,9 +221,8 @@ public abstract class TutorialFragment extends Fragment {
      * @return page at specified position
      */
     @SuppressWarnings("ConstantConditions")
-    protected PageFragment getPage(int position) {
-        position %= mTutorialOptions.getPagesCount();
-        return mTutorialOptions.getTutorialPageProvider().providePage(position);
+    protected Fragment getPage(int position) {
+        return mTutorial.getPage(position);
     }
 
     /**
@@ -246,7 +233,7 @@ public abstract class TutorialFragment extends Fragment {
      */
     @ColorInt
     protected int getPageColor(int position) {
-        return mTutorialOptions.getPagesColors()[position];
+        return mTutorial.getPageColor(position);
     }
 
     protected abstract TutorialOptions provideTutorialOptions();
@@ -255,7 +242,6 @@ public abstract class TutorialFragment extends Fragment {
      * Implementation of {@link FragmentPagerAdapter} that in addition add empty last fragment.
      */
     class TutorialAdapter extends FragmentPagerAdapter {
-        private final Fragment emptyFragment = new Fragment();
 
         private TutorialAdapter(FragmentManager fm) {
             super(fm);
@@ -263,128 +249,12 @@ public abstract class TutorialFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            int realPagesCount = getRealPagesCount();
-            if (mTutorialOptions.isUseInfiniteScroll()) {
-                position %= realPagesCount;
-            }
-            if (position < realPagesCount) {
-                return getPage(position);
-            } else if (mTutorialOptions.isAutoRemoveTutorialFragment() &&
-                    !mTutorialOptions.isUseInfiniteScroll() &&
-                    position >= realPagesCount) {
-                return emptyFragment;
-            } else {
-                throw new IllegalArgumentException("Invalid position: " + position);
-            }
-        }
-
-        int getRealPagesCount() {
-            return mTutorialOptions.getPagesCount();
+            return mTutorialAdapterImpl.getItem(position);
         }
 
         @Override
         public int getCount() {
-            if (mTutorialOptions.getPagesCount() == 0) {
-                return 0;
-            }
-
-            if (mTutorialOptions.isUseInfiniteScroll()) {
-                return Integer.MAX_VALUE;
-            }
-
-            if (mTutorialOptions.isAutoRemoveTutorialFragment()) {
-                return mTutorialOptions.getPagesCount() + 1;
-            }
-
-            return mTutorialOptions.getPagesCount();
-        }
-    }
-
-    /**
-     * Implementation of {@link android.support.v4.view.ViewPager.PageTransformer} that dispatch
-     * transform page event whenever a visible/attached page is scrolled.
-     */
-    private class FragmentTransformer implements ViewPager.PageTransformer {
-
-        public void transformPage(View view, float position) {
-            Object obj = view.getTag(R.id.st_page_fragment);
-            if (obj instanceof PageFragment) {
-                ((PageFragment) obj).transformPage(view.getWidth(), position);
-            }
-        }
-    }
-
-    interface IndicatorPageListener {
-
-        /**
-         * This method will be invoked when the current page is scrolled, either as part
-         * of a programmatically initiated smooth scroll or a user initiated touch scroll.
-         *
-         * @param position         Position index of the first page currently being displayed.
-         *                         Page position+1 will be visible if positionOffset is nonzero.
-         * @param positionOffset   Value from [0, 1) indicating the offset from the page at position.
-         * @param isInfiniteScroll flag for indicating infinite scroll
-         */
-        void onPageScrolled(int position, float positionOffset, boolean isInfiniteScroll);
-    }
-
-    private class InternalHelperPageChangeDecorator implements ViewPager.OnPageChangeListener {
-
-        private InternalHelperPageChangeDecorator() {
-            //no instance
-        }
-
-        /**
-         * According to position and positionOffset changing background color. If last position then
-         * change root view alpha, also forward callback to ViewPagerIndicator.
-         */
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            // Color change
-            int tempPos = position;
-            if (mTutorialOptions.isUseInfiniteScroll() && mTutorialOptions.getPagesCount() != 0) {
-                tempPos %= mTutorialOptions.getPagesCount();
-            }
-            int nextColorPosition = tempPos + 1;
-            if (nextColorPosition >= mTutorialOptions.getPagesCount()) {
-                nextColorPosition %= mTutorialOptions.getPagesCount();
-            }
-            if (!mTutorialOptions.isUseInfiniteScroll() &&
-                    mTutorialOptions.isAutoRemoveTutorialFragment() &&
-                    tempPos == mTutorialOptions.getPagesCount() - 1) {
-                mViewPager.setBackgroundColor(getPageColor(tempPos));
-                if (getView() != null) {
-                    getView().setAlpha(1f - positionOffset);
-                }
-            } else if (tempPos < mTutorialOptions.getPagesCount()) {
-                mViewPager.setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset, getPageColor(tempPos), getPageColor(nextColorPosition)));
-            }
-
-            // ViewPageIndicator callback forward
-            mPageIndicator.onPageScrolled(position % mTutorialOptions.getPagesCount(),
-                    positionOffset, mTutorialOptions.isUseInfiniteScroll());
-        }
-
-        /**
-         * When last position will be reached then remove fragment from the screen, also forward
-         * callback to all OnTutorialPageChangeListeners.
-         */
-        @Override
-        public void onPageSelected(int position) {
-            // Forward callback to all OnTutorialPageChangeListeners
-            int pos = position == mTutorialOptions.getPagesCount() ? EMPTY_FRAGMENT_POSITION : position;
-            for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
-                onTutorialPageChangeListener.onPageChanged(pos);
-            }
-            // If we reach end of tutorial and flag isUseAutoRemoveTutorialFragment is true - remove TutorialSupportFragment
-            if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
-                removeFragmentFromScreen();
-            }
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-            /* NOP */
+            return mTutorialAdapterImpl.getCount();
         }
     }
 }

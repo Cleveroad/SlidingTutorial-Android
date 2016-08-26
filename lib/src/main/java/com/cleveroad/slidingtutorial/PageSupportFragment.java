@@ -37,33 +37,35 @@ import android.view.ViewGroup;
  */
 public abstract class PageSupportFragment extends Fragment {
 
-    @LayoutRes
-    private int mLayoutResId;
-    private TransformItem[] mTransformItems;
+    private PageImpl mPage;
+    private PageImpl.InternalFragment mInternalFragment = new PageImpl.InternalFragment() {
+        @Override
+        public int getLayoutResId() {
+            return PageSupportFragment.this.getLayoutResId();
+        }
+
+        @Override
+        public TransformItem[] getTransformItems() {
+            return PageSupportFragment.this.getTransformItems();
+        }
+
+        @Override
+        public Bundle getArguments() {
+            return PageSupportFragment.this.getArguments();
+        }
+    };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPage = new PageImpl(mInternalFragment);
+    }
 
     @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mLayoutResId = getLayoutResId();
-        mTransformItems = getTransformItems();
-
-        if (mLayoutResId == 0 || mTransformItems == null || mTransformItems.length == 0) {
-            throw new IllegalArgumentException("Page layout id or transform items not specified");
-        }
-
-        View view = inflater.inflate(mLayoutResId, container, false);
-        view.setTag(R.id.st_page_fragment, this);
-
-        for (TransformItem transformItem : mTransformItems) {
-            View transformView = view.findViewById(transformItem.getViewResId());
-            if (transformView == null) {
-                throw new IllegalArgumentException("View by TransformItem#getViewResId() not found.");
-            }
-            transformItem.setView(transformView);
-        }
-
-        return view;
+        return mPage.onCreateView(inflater, container, savedInstanceState);
     }
 
     /**
@@ -75,13 +77,7 @@ public abstract class PageSupportFragment extends Fragment {
      *                  page position to the right, and -1 is one page position to the left.
      */
     final void transformPage(int pageWidth, float position) {
-        for (TransformItem transformItem : mTransformItems) {
-            float translationX = position * pageWidth * transformItem.getShiftCoefficient();
-            if (transformItem.getDirection() == Direction.RIGHT_TO_LEFT) {
-                translationX = -translationX;
-            }
-            transformItem.getView().setTranslationX(translationX);
-        }
+        mPage.transformPage(pageWidth, position);
     }
 
     @LayoutRes

@@ -35,7 +35,11 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
-public final class TutorialPageIndicator extends View implements IndicatorPageListener {
+/**
+ * Indicator view.
+ */
+@SuppressWarnings("unused")
+public final class TutorialPageIndicator extends View implements TutorialImpl.IndicatorPageListener {
 
     private static final float ANGLE_360 = 360f;
 

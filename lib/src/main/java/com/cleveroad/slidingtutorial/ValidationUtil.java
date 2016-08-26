@@ -61,7 +61,7 @@ final class ValidationUtil {
     }
 
     /**
-     * Checks on equals setPagesCount to pagesColor array size
+     * Checks on less or equals setPagesCount to pagesColor array size
      *
      * @param pagesCount  count of pages
      * @param pagesColors array of pages colors
@@ -70,8 +70,8 @@ final class ValidationUtil {
      */
     static int[] checkPagesColorsSize(int pagesCount, int[] pagesColors) {
         checkPagesCount(pagesCount);
-        if (pagesColors.length < pagesCount || pagesColors.length > pagesCount) {
-            throw new IllegalArgumentException("Pages color array size must be equal to pages count.");
+        if (pagesColors != null && pagesColors.length > pagesCount) {
+            throw new IllegalArgumentException("Pages color array size must be less or equal to pages count.");
         }
         return pagesColors;
     }
@@ -83,7 +83,7 @@ final class ValidationUtil {
      * @return pages count
      * @throws IllegalArgumentException when setPagesColors array has different from setPagesCount value size
      */
-    static int checkPagesCount(int pagesCount) {
+    private static int checkPagesCount(int pagesCount) {
         if (pagesCount < 0) {
             throw new IllegalArgumentException("Pages count can't be less than 0.");
         }

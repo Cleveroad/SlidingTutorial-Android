@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -13,11 +14,10 @@ import com.cleveroad.slidingtutorial.Direction;
 import com.cleveroad.slidingtutorial.IndicatorOptions;
 import com.cleveroad.slidingtutorial.OnTutorialPageChangeListener;
 import com.cleveroad.slidingtutorial.PageOptions;
-import com.cleveroad.slidingtutorial.PageSupportFragment;
 import com.cleveroad.slidingtutorial.TransformItem;
 import com.cleveroad.slidingtutorial.TutorialOptions;
 import com.cleveroad.slidingtutorial.TutorialPageOptionsProvider;
-import com.cleveroad.slidingtutorial.TutorialPageSupportProvider;
+import com.cleveroad.slidingtutorial.TutorialPageProvider;
 import com.cleveroad.slidingtutorial.TutorialSupportFragment;
 import com.cleveroad.slidingtutorial.sample.R;
 import com.cleveroad.slidingtutorial.sample.renderer.RhombusRenderer;
@@ -94,10 +94,10 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
         }
     };
 
-    private final TutorialPageSupportProvider mTutorialPageProvider = new TutorialPageSupportProvider() {
+    private final TutorialPageProvider<Fragment> mTutorialPageProvider = new TutorialPageProvider<Fragment>() {
         @NonNull
         @Override
-        public PageSupportFragment providePage(int position) {
+        public Fragment providePage(int position) {
             position %= ACTUAL_PAGES_COUNT;
             switch (position) {
                 case 0:
@@ -118,7 +118,7 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (pagesColors == null) {
-            pagesColors = new int[] {
+            pagesColors = new int[]{
                     ContextCompat.getColor(getContext(), android.R.color.holo_orange_dark),
                     ContextCompat.getColor(getContext(), android.R.color.holo_green_dark),
                     ContextCompat.getColor(getContext(), android.R.color.holo_blue_dark),
@@ -132,12 +132,12 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
 
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return TutorialOptions.newBuilder(getContext())
+        return newTutorialOptionsBuilder(getContext())
                 .setUseAutoRemoveTutorialFragment(true)
                 .setUseInfiniteScroll(false)
                 .setPagesColors(pagesColors)
                 .setPagesCount(TOTAL_PAGES)
-                //.setTutorialPageSupportProvider(mTutorialPageOptionsProvider)
+                .setTutorialPageProvider(mTutorialPageOptionsProvider)
                 .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
                         .setElementSizeRes(R.dimen.indicator_size)
                         .setElementSpacingRes(R.dimen.indicator_spacing)
@@ -145,8 +145,8 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
                         .setSelectedElementColor(Color.LTGRAY)
                         .setRenderer(RhombusRenderer.create())
                         .build())
-                .setTutorialSupportPageProvider(mTutorialPageProvider)
                 .onSkipClickListener(mOnSkipClickListener)
+                .setTutorialPageProvider(mTutorialPageProvider)
                 .build();
     }
 

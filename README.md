@@ -71,10 +71,10 @@ public class CustomTutorialFragment extends TutorialFragment {
 
     private static final int TOTAL_PAGES = 3;
 
-    private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvider() {
+    private final TutorialPageProvider<Fragment> mTutorialPageProvider = new TutorialPageProvider<Fragment>() {
         @NonNull
         @Override
-        public PageFragment providePage(int position) {
+        public Fragment providePage(int position) {
             switch (position) {
                 case 0:
                     return new FirstCustomPageFragment();
@@ -90,7 +90,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return TutorialOptions.newBuilder(getContext())
+        return newTutorialOptionsBuilder(getContext())
                 .setPagesCount(TOTAL_PAGES)
                 .setTutorialPageProvider(mTutorialPageProvider)
                 .build();
@@ -165,14 +165,20 @@ public class CustomTutorialFragment extends TutorialFragment {
 
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return TutorialOptions.newBuilder(getContext())
+        return newTutorialOptionsBuilder(getContext())
                 .setPagesCount(TOTAL_PAGES)
                 .setTutorialPageProvider(mTutorialPageOptionsProvider)
                 .build();
     }
 }
-
 ```
+### Using with AppCompat library (Recommended way)
+Here's the list of changes in code to use `SlidingTutorial` library with AppCompat library:
+* Your fragment pages must extend [PageSupportFragment].
+* Your tutorial fragment must extend [TutorialSupportFragment].
+* Use [TutorialOptions.Builder#setTutorialSupportPageProvider(TutorialSupportPageProvider)] instead of [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)].
+That's all.
+
 
 ## Customization
 ### Set up skip button click listener
@@ -181,7 +187,7 @@ You have to implement *View.OnClickListener* interface and provide it to [Tutori
 public class CustomTutorialFragment extends TutorialFragment {
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return TutorialOptions.newBuilder(getContext())
+        return newTutorialOptionsBuilder(getContext())
                 .setOnSkipClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -205,7 +211,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return TutorialOptions.newBuilder(getContext())
+        return newTutorialOptionsBuilder(getContext())
                 .setPagesCount(TOTAL_PAGES)
                 .setPagesColors(pagesColors)
                 // set up other configuration ...
@@ -225,7 +231,7 @@ There is [IndicatorOptions] class for configuration indicator view. Here's examp
 public class CustomTutorialFragment extends TutorialFragment {
     @Override
     protected TutorialOptions provideTutorialOptions() {
-        return TutorialOptions.newBuilder(getContext())
+        return newTutorialOptionsBuilder(getContext())
                 .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
                         .setElementSizeRes(R.dimen.indicator_size)
                         .setElementSpacingRes(R.dimen.indicator_spacing)
@@ -275,12 +281,59 @@ public class CustomTutorialFragment extends TutorialFragment
 1. You must change creation [TransformItem] from `new TransformItem(R.id.ivFirstImage, true, 20)` to `TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f)`, where 2-nd parameter now is [Direction] of view translation and 3-rd parameter is *shiftCoefficient*.
 2. Your fragment with tutorial must extend [TutorialFragment] instead of **PresentationPagerFragment**.
 3. In your [TutorialFragment] successor fragment must implement [TutorialFragment#provideTutorialOptions()] method that returns [TutorialOptions] instance.
-4. In [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)] you must specify [TutorialPageProvider] instance. For example:
 ```java
-private final TutorialPageProvider mTutorialPageProvider = new TutorialPageProvider() {
+import android.support.v4.app.Fragment;
+
+public class CustomTutorialFragment extends TutorialSupportFragment {
+
+    private static final int TOTAL_PAGES = 3;
+
+    private final TutorialPageProvider<Fragment> mTutorialPageProvider = new TutorialPageProvider<Fragment>() {
         @NonNull
         @Override
-        public PageFragment providePage(int position) {
+        public Fragment providePage(int position) {
+            position %= ACTUAL_PAGES_COUNT;
+            switch (position) {
+                case 0:
+                    return new FirstCustomPageFragment();
+                case 1:
+                    return new SecondCustomPageFragment();
+                case 2:
+                    return new ThirdCustomPageFragment();
+                default:
+                    throw new IllegalArgumentException("Unknown position: " + position);
+            }
+        }
+    };
+
+    private int[] pagesColors = new int[] { Color.WHITE, Color.BLUE, Color.RED };
+
+    @Override
+    protected TutorialOptions provideTutorialOptions() {
+        return newTutorialOptionsBuilder(getContext())
+                .setUseAutoRemoveTutorialFragment(true)
+                .setUseInfiniteScroll(false)
+                .setPagesColors(pagesColors)
+                .setPagesCount(TOTAL_PAGES)
+                .setIndicatorOptions(IndicatorOptions.newBuilder(getContext())
+                        .setElementSizeRes(R.dimen.indicator_size)
+                        .setElementSpacingRes(R.dimen.indicator_spacing)
+                        .setElementColorRes(android.R.color.darker_gray)
+                        .setSelectedElementColor(Color.LTGRAY)
+                        .setRenderer(DrawableRenderer.create(getContext()))
+                        .build())
+                .setTutorialPageProvider(mTutorialPageProvider)
+                .onSkipClickListener(mOnSkipClickListener)
+                .build();
+    }
+}
+```
+4. In [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)] you must specify [TutorialPageProvider] instance. For example:
+```java
+private final TutorialPageProvider<Fragment> mTutorialPageProvider = new TutorialPageProvider<Fragment>() {
+        @NonNull
+        @Override
+        public Fragment providePage(int position) {
             switch (position) {
                 case 0:
                     return new FirstCustomPageFragment();
@@ -339,6 +392,9 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 [PageFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java
 [PageFragment#getLayoutResId()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java#L123
 [PageFragment#getTransformItems()]: hhttps://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java#L128
+[PageSupportFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageSupportFragment.java
+[PageFragment#getLayoutResId()]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java#L123
+[PageFragment#getTransformItems()]: hhttps://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/PageFragment.java#L128
 [Direction]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/Direction.java
 [IndicatorOptions]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/IndicatorOptions.java
 [IndicatorOptions.Builder]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/IndicatorOptions.java#L92
@@ -356,10 +412,12 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 [TutorialFragment.OnTutorialPageChangeListener]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L315
 [TutorialFragment#addOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L173
 [TutorialFragment#removeOnTutorialPageChangeListener(OnTutorialPageChangeListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialFragment.java#L186
+[TutorialSupportFragment]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialSupportFragment.java
 [TutorialOptions]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java
 [TutorialOptions.Builder]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L112
 [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageOptionsProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L237
 [TutorialOptions.Builder#setTutorialPageProvider(TutorialPageProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L256
+[TutorialOptions.Builder#setTutorialSupportPageProvider(TutorialSupportPageProvider)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L256
 [TutorialOptions.Builder#setOnSkipClickListener(OnClickListener)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L207
 [TutorialOptions.Builder#setPagesColors(int array)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L196
 [TutorialOptions.Builder#setPagesCount(int)]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L185

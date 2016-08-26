@@ -1,7 +1,29 @@
+/*
+ *   The MIT License (MIT)
+ *
+ *   Copyright (c) 2016 Cleveroad
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ *   The above copyright notice and this permission notice shall be included in all
+ *   copies or substantial portions of the Software.
+ *
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *   SOFTWARE.
+ */
 package com.cleveroad.slidingtutorial;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -30,7 +52,7 @@ import android.view.ViewGroup;
  * <p>Subclasses only need to implement {@link #getItem(int)}
  * and {@link #getCount()} to have a working adapter.
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+
 abstract class FragmentPagerAdapter extends PagerAdapter {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
@@ -79,10 +101,16 @@ abstract class FragmentPagerAdapter extends PagerAdapter {
         }
         if (fragment != mCurrentPrimaryItem) {
             fragment.setMenuVisibility(false);
-            fragment.setUserVisibleHint(false);
+            setUserVisibilityHint(fragment, false);
         }
 
         return fragment;
+    }
+
+    private void setUserVisibilityHint(Fragment fragment, boolean isVisible) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            fragment.setUserVisibleHint(isVisible);
+        }
     }
 
     @SuppressLint("CommitTransaction")
@@ -102,11 +130,11 @@ abstract class FragmentPagerAdapter extends PagerAdapter {
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
                 mCurrentPrimaryItem.setMenuVisibility(false);
-                mCurrentPrimaryItem.setUserVisibleHint(false);
+                setUserVisibilityHint(mCurrentPrimaryItem, false);
             }
             if (fragment != null) {
                 fragment.setMenuVisibility(true);
-                fragment.setUserVisibleHint(true);
+                setUserVisibilityHint(fragment, true);
             }
             mCurrentPrimaryItem = fragment;
         }
@@ -145,6 +173,12 @@ abstract class FragmentPagerAdapter extends PagerAdapter {
      */
     public long getItemId(int position) {
         return position;
+    }
+
+    private static void setUserVisibleHint(Fragment fragment, boolean isVisible) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            fragment.setUserVisibleHint(isVisible);
+        }
     }
 
     private static String makeFragmentName(int viewId, long id) {
