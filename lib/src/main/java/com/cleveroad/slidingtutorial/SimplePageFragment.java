@@ -23,66 +23,62 @@
  */
 package com.cleveroad.slidingtutorial;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
- * Single page for {@link TutorialFragment}.
+ * Basic implementation of {@link PageFragment}.
  */
-public abstract class PageFragment extends Fragment {
+public class SimplePageFragment extends PageFragment {
 
-    private PageImpl mPage;
+    private SimplePageImpl mSimplePage;
     private PageImpl.InternalFragment mInternalFragment = new PageImpl.InternalFragment() {
         @Override
         public int getLayoutResId() {
-            return PageFragment.this.getLayoutResId();
+            return SimplePageFragment.this.getLayoutResId();
         }
 
         @Override
         public TransformItem[] getTransformItems() {
-            return PageFragment.this.getTransformItems();
+            return SimplePageFragment.this.getTransformItems();
         }
 
         @Override
         public Bundle getArguments() {
-            return PageFragment.this.getArguments();
+            return SimplePageFragment.this.getArguments();
         }
     };
+
+    public static PageFragment newInstance(@NonNull PageOptions pageOptions) {
+        return newInstance(pageOptions.getPageLayoutResId(), ValidationUtil.checkNotNull(pageOptions.getTransformItems()));
+    }
+
+    public static PageFragment newInstance(@LayoutRes int pageLayoutRes, @NonNull TransformItem[] transformItems) {
+        PageFragment fragment = new SimplePageFragment();
+        fragment.setArguments(SimplePageImpl.getArguments(pageLayoutRes, transformItems));
+        return fragment;
+    }
+
+    public SimplePageFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPage = new PageImpl(mInternalFragment);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return mPage.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    /**
-     * Method that apply a custom transformation to the page views
-     *
-     * @param pageWidth pageWidth
-     * @param position  Position of page relative to the current front-and-center
-     *                  position of the pager. 0 is front and center. 1 is one full
-     *                  page position to the right, and -1 is one page position to the left.
-     */
-    final void transformPage(int pageWidth, float position) {
-        mPage.transformPage(pageWidth, position);
+        mSimplePage = new SimplePageImpl(mInternalFragment);
     }
 
     @LayoutRes
-    protected abstract int getLayoutResId();
+    @Override
+    protected int getLayoutResId() {
+        return mSimplePage.getLayoutResId();
+    }
 
     @NonNull
-    protected abstract TransformItem[] getTransformItems();
+    @Override
+    protected TransformItem[] getTransformItems() {
+        return mSimplePage.getTransformItems();
+    }
 }

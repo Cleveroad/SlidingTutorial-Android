@@ -23,7 +23,6 @@
  */
 package com.cleveroad.slidingtutorial;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -32,40 +31,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Single page for {@link TutorialFragment}.
- */
-public abstract class PageFragment extends Fragment {
+@SuppressWarnings({"UnusedParameters"})
+class PageImpl {
 
-    private PageImpl mPage;
-    private PageImpl.InternalFragment mInternalFragment = new PageImpl.InternalFragment() {
-        @Override
-        public int getLayoutResId() {
-            return PageFragment.this.getLayoutResId();
-        }
+    private InternalFragment mInternalFragment;
 
-        @Override
-        public TransformItem[] getTransformItems() {
-            return PageFragment.this.getTransformItems();
-        }
+    @LayoutRes
+    private int mLayoutResId;
+    private TransformItem[] mTransformItems;
 
-        @Override
-        public Bundle getArguments() {
-            return PageFragment.this.getArguments();
-        }
-    };
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mPage = new PageImpl(mInternalFragment);
+    PageImpl(@NonNull InternalFragment internalFragment) {
+        mInternalFragment = internalFragment;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return mPage.onCreateView(inflater, container, savedInstanceState);
+    View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mLayoutResId = mInternalFragment.getLayoutResId();
+        mTransformItems = mInternalFragment.getTransformItems();
+
+        if (mLayoutResId == 0 || mTransformItems == null || mTransformItems.length == 0) {
+            throw new IllegalArgumentException("Page layout id or transform items not specified");
+        }
+
+        View view = inflater.inflate(mLayoutResId, container, false);
+        view.setTag(R.id.st_page_fragment, this);
+
+        for (TransformItem transformItem : mTransformItems) {
+            View transformView = view.findViewById(transformItem.getViewResId());
+            if (transformView == null) {
+                throw new IllegalArgumentException("View by TransformItem#getViewResId() not found.");
+            }
+            transformItem.setView(transformView);
+        }
+
+        return view;
     }
 
     /**
@@ -77,12 +76,22 @@ public abstract class PageFragment extends Fragment {
      *                  page position to the right, and -1 is one page position to the left.
      */
     final void transformPage(int pageWidth, float position) {
-        mPage.transformPage(pageWidth, position);
+        for (TransformItem transformItem : mTransformItems) {
+            float translationX = position * pageWidth * transformItem.getShiftCoefficient();
+            if (transformItem.getDirection() == Direction.RIGHT_TO_LEFT) {
+                translationX = -translationX;
+            }
+            transformItem.getView().setTranslationX(translationX);
+        }
     }
 
-    @LayoutRes
-    protected abstract int getLayoutResId();
+    interface InternalFragment {
+        @LayoutRes
+        int getLayoutResId();
 
-    @NonNull
-    protected abstract TransformItem[] getTransformItems();
+        TransformItem[] getTransformItems();
+
+        Bundle getArguments();
+    }
+
 }
