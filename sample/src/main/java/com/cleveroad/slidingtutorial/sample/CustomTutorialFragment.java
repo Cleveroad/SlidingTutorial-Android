@@ -59,6 +59,19 @@ public class CustomTutorialFragment extends TutorialFragment
                     break;
                 }
                 case 1: {
+                    pageLayoutResId = R.layout.fragment_page_third;
+                    tutorialItems = new TransformItem[]{
+                            TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
+                            TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
+                            TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.08f),
+                            TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.1f),
+                            TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.03f),
+                            TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
+                            TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f)
+                    };
+                    break;
+                }
+                case 2: {
                     pageLayoutResId = R.layout.fragment_page_second;
                     tutorialItems = new TransformItem[]{
                             TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
@@ -69,19 +82,6 @@ public class CustomTutorialFragment extends TutorialFragment
                             TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
                             TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f),
                             TransformItem.create(R.id.ivEighthImage, Direction.LEFT_TO_RIGHT, 0.07f)
-                    };
-                    break;
-                }
-                case 2: {
-                    pageLayoutResId = R.layout.fragment_page_third;
-                    tutorialItems = new TransformItem[]{
-                            TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
-                            TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.06f),
-                            TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.08f),
-                            TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.1f),
-                            TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.03f),
-                            TransformItem.create(R.id.ivSixthImage, Direction.LEFT_TO_RIGHT, 0.09f),
-                            TransformItem.create(R.id.ivSeventhImage, Direction.LEFT_TO_RIGHT, 0.14f)
                     };
                     break;
                 }
@@ -119,12 +119,12 @@ public class CustomTutorialFragment extends TutorialFragment
         super.onCreate(savedInstanceState);
         if (pagesColors == null) {
             pagesColors = new int[]{
-                    ContextCompat.getColor(getActivity(), android.R.color.holo_orange_dark),
+                    ContextCompat.getColor(getActivity(), android.R.color.darker_gray),
                     ContextCompat.getColor(getActivity(), android.R.color.holo_green_dark),
-                    ContextCompat.getColor(getActivity(), android.R.color.holo_blue_dark),
                     ContextCompat.getColor(getActivity(), android.R.color.holo_red_dark),
+                    ContextCompat.getColor(getActivity(), android.R.color.holo_blue_dark),
                     ContextCompat.getColor(getActivity(), android.R.color.holo_purple),
-                    ContextCompat.getColor(getActivity(), android.R.color.darker_gray)
+                    ContextCompat.getColor(getActivity(), android.R.color.holo_orange_dark),
             };
         }
         addOnTutorialPageChangeListener(this);
@@ -134,10 +134,9 @@ public class CustomTutorialFragment extends TutorialFragment
     protected TutorialOptions provideTutorialOptions() {
         return newTutorialOptionsBuilder(getActivity())
                 .setUseAutoRemoveTutorialFragment(true)
-                .setUseInfiniteScroll(false)
                 .setPagesColors(pagesColors)
                 .setPagesCount(TOTAL_PAGES)
-//                .setTutorialPageProvider(mTutorialPageOptionsProvider)
+                //.setTutorialPageProvider(mTutorialPageOptionsProvider)
                 .setIndicatorOptions(IndicatorOptions.newBuilder(getActivity())
                         .setElementSizeRes(R.dimen.indicator_size)
                         .setElementSpacingRes(R.dimen.indicator_spacing)

@@ -134,8 +134,7 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
     @Override
     protected TutorialOptions provideTutorialOptions() {
         return newTutorialOptionsBuilder(getContext())
-                .setUseAutoRemoveTutorialFragment(true)
-                .setUseInfiniteScroll(false)
+                .setUseInfiniteScroll(true)
                 .setPagesColors(pagesColors)
                 .setPagesCount(TOTAL_PAGES)
                 .setTutorialPageProvider(mTutorialPageOptionsProvider)
@@ -147,7 +146,7 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
                         .setRenderer(RhombusRenderer.create())
                         .build())
                 .onSkipClickListener(mOnSkipClickListener)
-                .setTutorialPageProvider(mTutorialPageProvider)
+                //.setTutorialPageProvider(mTutorialPageProvider)
                 .build();
     }
 

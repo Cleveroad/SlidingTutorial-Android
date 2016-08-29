@@ -57,8 +57,8 @@ public final class TutorialOptions {
                             @NonNull IndicatorOptions indicatorOptions) {
         mAutoRemoveTutorialFragment = autoRemoveTutorialFragment;
         mUseInfiniteScroll = useInfiniteScroll;
-        mPagesCount = pagesCount;
-        mPagesColors = ValidationUtil.checkPagesColorsSize(pagesCount, pagesColors);
+        mPagesCount = ValidationUtil.checkPagesCount(pagesCount);
+        mPagesColors = pagesColors;
         mTutorialPageProvider = ValidationUtil.checkNotNull(tutorialPageProvider, "TutorialPageProvider can't be null");
         mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions);
         mOnSkipClickListener = onSkipClickListener;

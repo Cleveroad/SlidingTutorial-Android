@@ -94,7 +94,12 @@ final class TutorialImpl<TFragment> {
 
         if (mTutorialOptions.isUseInfiniteScroll()) {
             int pos = Integer.MAX_VALUE / 2;
-            pos -= pos % mTutorialOptions.getPagesCount();
+            // to avoid java.lang.ArithmeticException: divide by zero when user specify pages count = 0
+            if (mTutorialOptions.getPagesCount() != 0) {
+                pos -= pos % mTutorialOptions.getPagesCount();
+            } else {
+                pos = 0;
+            }
             mViewPager.setCurrentItem(pos);
         }
     }
@@ -363,6 +368,7 @@ final class TutorialImpl<TFragment> {
         public void onPageSelected(int position) {
             // Forward callback to all OnTutorialPageChangeListeners
             int pos = position == mTutorialOptions.getPagesCount() ? EMPTY_FRAGMENT_POSITION : position;
+            pos %= mTutorialOptions.getPagesCount();
             for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
                 onTutorialPageChangeListener.onPageChanged(pos);
             }

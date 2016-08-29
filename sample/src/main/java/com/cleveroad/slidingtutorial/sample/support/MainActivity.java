@@ -1,5 +1,7 @@
 package com.cleveroad.slidingtutorial.sample.support;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -7,6 +9,10 @@ import android.view.View;
 import com.cleveroad.slidingtutorial.sample.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    public static void start(Context context) {
+        context.startActivity(new Intent(context, MainActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

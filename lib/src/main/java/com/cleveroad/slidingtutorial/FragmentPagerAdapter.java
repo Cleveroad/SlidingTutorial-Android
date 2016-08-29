@@ -175,12 +175,6 @@ abstract class FragmentPagerAdapter extends PagerAdapter {
         return position;
     }
 
-    private static void setUserVisibleHint(Fragment fragment, boolean isVisible) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            fragment.setUserVisibleHint(isVisible);
-        }
-    }
-
     private static String makeFragmentName(int viewId, long id) {
         return "android:switcher:" + viewId + ":" + id;
     }

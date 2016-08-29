@@ -10,22 +10,23 @@
 
         <activity
             android:name=".support.MainActivity"
-            android:label="@string/st_app_name" >
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
+            android:label="@string/st_app_name"/>
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/st_app_name" >
+            android:label="@string/st_app_name"/>
+
+        <activity
+            android:name=".selector.SelectorActivity"
+            android:label="@string/st_app_name"
+            android:theme="@style/AppTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
     </application>
