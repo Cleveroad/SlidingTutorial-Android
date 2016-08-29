@@ -1,12 +1,13 @@
-package com.cleveroad.slidingtutorial.sample;
+package com.cleveroad.slidingtutorial.sample.support;
 
 import android.support.annotation.NonNull;
 
 import com.cleveroad.slidingtutorial.Direction;
-import com.cleveroad.slidingtutorial.PageFragment;
+import com.cleveroad.slidingtutorial.PageSupportFragment;
 import com.cleveroad.slidingtutorial.TransformItem;
+import com.cleveroad.slidingtutorial.sample.R;
 
-public class FirstCustomPageFragment extends PageFragment {
+public class FirstCustomPageSupportFragment extends PageSupportFragment {
 
 	@Override
 	protected int getLayoutResId() {

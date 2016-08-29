@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="st_indicator_size_default">4dp</dimen>
+    <dimen name="st_indicator_spacing_default">4dp</dimen>
+</resources>

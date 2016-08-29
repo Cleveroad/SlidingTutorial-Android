@@ -23,35 +23,35 @@
  */
 package com.cleveroad.slidingtutorial;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Single page for {@link TutorialFragment}.
+ * Single page for {@link TutorialSupportFragment}.
  */
-public abstract class PageFragment extends Fragment {
+public abstract class PageSupportFragment extends Fragment {
 
     private PageImpl mPage;
     private PageImpl.InternalFragment mInternalFragment = new PageImpl.InternalFragment() {
         @Override
         public int getLayoutResId() {
-            return PageFragment.this.getLayoutResId();
+            return PageSupportFragment.this.getLayoutResId();
         }
 
         @Override
         public TransformItem[] getTransformItems() {
-            return PageFragment.this.getTransformItems();
+            return PageSupportFragment.this.getTransformItems();
         }
 
         @Override
         public Bundle getArguments() {
-            return PageFragment.this.getArguments();
+            return PageSupportFragment.this.getArguments();
         }
     };
 
@@ -86,3 +86,4 @@ public abstract class PageFragment extends Fragment {
     @NonNull
     protected abstract TransformItem[] getTransformItems();
 }
+
