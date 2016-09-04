@@ -15,7 +15,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="bottom|center_horizontal">
+        android:layout_gravity="top|center_horizontal">
 
         <View
             android:id="@+id/separator"
