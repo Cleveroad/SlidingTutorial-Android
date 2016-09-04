@@ -70,12 +70,12 @@ final class TutorialImpl<TFragment> {
     }
 
     View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(getLayoutResId(), container, false);
+        View view = inflater.inflate(mInternalFragment.getLayoutResId(), container, false);
 
-        mViewPager = (ViewPager) view.findViewById(getViewPagerResId());
-        mPageIndicator = (TutorialPageIndicator) view.findViewById(getIndicatorResId());
-        mButtonSkip = view.findViewById(getButtonSkipResId());
-        mSeparator = view.findViewById(getSeparatorResId());
+        mViewPager = (ViewPager) view.findViewById(mInternalFragment.getViewPagerResId());
+        mPageIndicator = (TutorialPageIndicator) view.findViewById(mInternalFragment.getIndicatorResId());
+        mButtonSkip = view.findViewById(mInternalFragment.getButtonSkipResId());
+        mSeparator = view.findViewById(mInternalFragment.getSeparatorResId());
 
         mViewPager.setPageTransformer(true, new FragmentTransformer());
         mViewPager.addOnPageChangeListener(new InternalHelperPageChangeDecorator());
@@ -173,27 +173,27 @@ final class TutorialImpl<TFragment> {
     }
 
     @LayoutRes
-    int getLayoutResId() {
+    int getDefaultLayoutResId() {
         return R.layout.st_fragment_presentation;
     }
 
     @IdRes
-    int getViewPagerResId() {
+    int getDefaultViewPagerResId() {
         return R.id.viewPager;
     }
 
     @IdRes
-    int getIndicatorResId() {
+    int getDefaultIndicatorResId() {
         return R.id.indicator;
     }
 
     @IdRes
-    int getButtonSkipResId() {
+    int getDefaultButtonSkipResId() {
         return R.id.tvSkip;
     }
 
     @IdRes
-    int getSeparatorResId() {
+    int getDefaultSeparatorResId() {
         return R.id.separator;
     }
 
@@ -306,6 +306,21 @@ final class TutorialImpl<TFragment> {
         PagerAdapter getPagerAdapter();
 
         void removeCurrentFragment();
+
+        @LayoutRes
+        int getLayoutResId();
+
+        @IdRes
+        int getViewPagerResId();
+
+        @IdRes
+        int getIndicatorResId();
+
+        @IdRes
+        int getButtonSkipResId();
+
+        @IdRes
+        int getSeparatorResId();
     }
 
     @SuppressWarnings("unused")

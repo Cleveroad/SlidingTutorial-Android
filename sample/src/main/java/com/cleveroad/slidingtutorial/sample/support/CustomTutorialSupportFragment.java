@@ -151,6 +151,11 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
     }
 
     @Override
+    protected int getLayoutResId() {
+        return R.layout.custom_tutorial_layout;
+    }
+
+    @Override
     public void onPageChanged(int position) {
         Log.i(TAG, "onPageChanged: position = " + position);
         if (position == TutorialSupportFragment.EMPTY_FRAGMENT_POSITION) {
