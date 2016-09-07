@@ -73,12 +73,37 @@ public abstract class TutorialFragment extends Fragment {
         }
 
         @Override
+        public int getLayoutResId() {
+            return TutorialFragment.this.getLayoutResId();
+        }
+
+        @Override
         public PagerAdapter getPagerAdapter() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 return new TutorialAdapter(getChildFragmentManager());
             } else {
                 return new TutorialAdapter(getFragmentManager());
             }
+        }
+
+        @Override
+        public int getViewPagerResId() {
+            return TutorialFragment.this.getViewPagerResId();
+        }
+
+        @Override
+        public int getIndicatorResId() {
+            return TutorialFragment.this.getIndicatorResId();
+        }
+
+        @Override
+        public int getButtonSkipResId() {
+            return TutorialFragment.this.getButtonSkipResId();
+        }
+
+        @Override
+        public int getSeparatorResId() {
+            return TutorialFragment.this.getSeparatorResId();
         }
     };
 
@@ -181,27 +206,27 @@ public abstract class TutorialFragment extends Fragment {
 
     @LayoutRes
     protected int getLayoutResId() {
-        return mTutorial.getLayoutResId();
+        return mTutorial.getDefaultLayoutResId();
     }
 
     @IdRes
     protected int getViewPagerResId() {
-        return mTutorial.getViewPagerResId();
+        return mTutorial.getDefaultViewPagerResId();
     }
 
     @IdRes
     protected int getIndicatorResId() {
-        return mTutorial.getIndicatorResId();
+        return mTutorial.getDefaultIndicatorResId();
     }
 
     @IdRes
     protected int getButtonSkipResId() {
-        return mTutorial.getButtonSkipResId();
+        return mTutorial.getDefaultButtonSkipResId();
     }
 
     @IdRes
     protected int getSeparatorResId() {
-        return mTutorial.getSeparatorResId();
+        return mTutorial.getDefaultSeparatorResId();
     }
 
     /**
