@@ -6,6 +6,7 @@
 
 Version | Changes
 ---     | ---
+v.1.0.3 | Fixed issues with layout coustizations. Fixed issues with translate animations.
 v.1.0.2 | Minor fixes.
 v.1.0.1 | Changed gradle plugin version to stable `2.1.0`.
 v.1.0.0 | Library fully refactored. See full [1.0.0 Changelog](#100_Changelog)
