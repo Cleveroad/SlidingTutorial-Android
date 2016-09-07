@@ -292,8 +292,8 @@ final class TutorialImpl<TFragment> {
 
         public void transformPage(View view, float position) {
             Object obj = view.getTag(R.id.st_page_fragment);
-            if (obj instanceof PageFragment) {
-                ((PageFragment) obj).transformPage(view.getWidth(), position);
+            if (obj instanceof PageImpl) {
+                ((PageImpl) obj).transformPage(view.getWidth(), position);
             }
         }
     }
