@@ -31,7 +31,7 @@ All you need to do is:
 First, add gradle dependency into your build.gradle:
 ```groovy
 dependencies {
-    compile 'com.cleveroad:slidingtutorial:1.0.0'
+    compile 'com.cleveroad:slidingtutorial:1.0.3'
 }
 ``` 
 
@@ -175,7 +175,7 @@ public class CustomTutorialFragment extends TutorialFragment {
 Here's the list of changes in code to use `SlidingTutorial` library with `AppCompat` library:
 * Your fragment pages must extend [PageSupportFragment].
 * Your tutorial fragment must extend [TutorialSupportFragment].
-* [TutorialPageProvider] must provide **android.support.v4.app.Fragment** intances.
+* [TutorialPageProvider] must provide **android.support.v4.app.Fragment** instances.
 That's all.
 
 
@@ -247,7 +247,7 @@ As you can see, you can specify *element size*, *element spacing* (aka padding),
 * [Renderer.Factory#newCircleRenderer()] - draw indicators with circle shape
 * [Renderer.Factory#newSquareRenderer()] - draw indicators with square shape
 
-Also in sample module there are two implementaions:
+Also in sample module there are two implementations:
 * [DrawableRenderer] - draw indicators with drawable background
 * [RhombusRenderer] - draw indicators with rhombus shape
 

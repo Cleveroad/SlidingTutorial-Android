@@ -75,6 +75,32 @@ public abstract class TutorialSupportFragment extends Fragment {
         public PagerAdapter getPagerAdapter() {
             return new TutorialAdapter(getChildFragmentManager());
         }
+
+        @Override
+        public int getLayoutResId() {
+            return TutorialSupportFragment.this.getLayoutResId();
+        }
+
+        @Override
+        public int getViewPagerResId() {
+            return TutorialSupportFragment.this.getViewPagerResId();
+        }
+
+        @Override
+        public int getIndicatorResId() {
+            return TutorialSupportFragment.this.getIndicatorResId();
+        }
+
+        @Override
+        public int getButtonSkipResId() {
+            return TutorialSupportFragment.this.getButtonSkipResId();
+        }
+
+        @Override
+        public int getSeparatorResId() {
+            return TutorialSupportFragment.this.getSeparatorResId();
+        }
+
     };
 
     /**
@@ -176,27 +202,27 @@ public abstract class TutorialSupportFragment extends Fragment {
 
     @LayoutRes
     protected int getLayoutResId() {
-        return mTutorial.getLayoutResId();
+        return mTutorial.getDefaultLayoutResId();
     }
 
     @IdRes
     protected int getViewPagerResId() {
-        return mTutorial.getViewPagerResId();
+        return mTutorial.getDefaultViewPagerResId();
     }
 
     @IdRes
     protected int getIndicatorResId() {
-        return mTutorial.getIndicatorResId();
+        return mTutorial.getDefaultIndicatorResId();
     }
 
     @IdRes
     protected int getButtonSkipResId() {
-        return mTutorial.getButtonSkipResId();
+        return mTutorial.getDefaultButtonSkipResId();
     }
 
     @IdRes
     protected int getSeparatorResId() {
-        return mTutorial.getSeparatorResId();
+        return mTutorial.getDefaultSeparatorResId();
     }
 
     /**
