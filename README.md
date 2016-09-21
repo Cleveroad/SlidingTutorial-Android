@@ -31,7 +31,7 @@ All you need to do is:
 First, add gradle dependency into your build.gradle:
 ```groovy
 dependencies {
-    compile 'com.cleveroad:slidingtutorial:1.0.3'
+    compile 'com.cleveroad:slidingtutorial:1.0.4'
 }
 ``` 
 
