@@ -6,12 +6,13 @@
 
 Version | Changes
 ---     | ---
-v.1.0.3 | Fixed issues with layout coustizations. Fixed issues with translate animations.
-v.1.0.2 | Minor fixes.
-v.1.0.1 | Changed gradle plugin version to stable `2.1.0`.
+v.1.0.4 | Added ability to set PageTransformer
+v.1.0.3 | Fixed issues with layout customizations. Fixed issues with translate animations
+v.1.0.2 | Minor fixes
+v.1.0.1 | Changed gradle plugin version to stable `2.1.0`
 v.1.0.0 | Library fully refactored. See full [1.0.0 Changelog](#100_Changelog)
 v.0.9.5 | Added getters for views. Possible fix for manifest merging issues
-v.0.9.4 | Renamed all attributes; all resources marked as private |
+v.0.9.4 | Renamed all attributes; all resources marked as private
 v.0.9.3 | Fixed issue with wrong page showed at startup if pages count not equals 3 
 v.0.9.2 | Added onSkipButtonClicked method and SimplePagerFragment 
 v.0.9.1 | Added infinite scroll behavior

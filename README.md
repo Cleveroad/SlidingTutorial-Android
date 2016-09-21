@@ -276,6 +276,21 @@ public class CustomTutorialFragment extends TutorialFragment
 }
 ``` 
 
+### Add OnTutorialPageChangeListener
+You can apply your own property transformation to the given page - just implement `ViewPager.PageTransformer` interface and set it via [TutorialOptions.Builder#setPageTransformer(ViewPager.PageTransformer pageTransformer)].
+```java
+ViewPager.PageTransformer pageTransformer = new ViewPager.PageTransformer() {
+                @Override
+                public void transformPage(View page, float position) {
+                    //Implement your transformation here
+                }
+            };
+            TutorialOptions tutorialOptions = newTutorialOptionsBuilder(getContext())
+                    // ...
+                    .setPageTransformer(pageTransformer)
+                    .build();
+```
+
 ## Migrations
 See all [migration manuals].
 
@@ -354,3 +369,4 @@ at info@cleveroad.com (email subject: «Sliding android app tutorial. Support re
 [TutorialPageIndicator]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageIndicator.java
 [TutorialPageOptionsProvider]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageOptionsProvider.java
 [TutorialPageProvider]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/lib/src/main/java/com/cleveroad/slidingtutorial/TutorialPageProvider.java
+[TutorialOptions.Builder#setPageTransformer(ViewPager.PageTransformer pageTransformer)]: /lib/src/main/java/com/cleveroad/slidingtutorial/TutorialOptions.java#L290
