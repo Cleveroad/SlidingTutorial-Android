@@ -280,15 +280,16 @@ public class CustomTutorialFragment extends TutorialFragment
 You can apply your own property transformation to the given page - just implement `ViewPager.PageTransformer` interface and set it via [TutorialOptions.Builder#setPageTransformer(ViewPager.PageTransformer pageTransformer)].
 ```java
 ViewPager.PageTransformer pageTransformer = new ViewPager.PageTransformer() {
-                @Override
-                public void transformPage(View page, float position) {
-                    //Implement your transformation here
-                }
-            };
-            TutorialOptions tutorialOptions = newTutorialOptionsBuilder(getContext())
-                    // ...
-                    .setPageTransformer(pageTransformer)
-                    .build();
+    @Override
+    public void transformPage(View page, float position) {
+        //Implement your transformation here
+    }
+};
+
+TutorialOptions tutorialOptions = newTutorialOptionsBuilder(getContext())
+    // ...
+    .setPageTransformer(pageTransformer)
+    .build();
 ```
 
 ## Migrations
