@@ -26,6 +26,7 @@ package com.cleveroad.slidingtutorial;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 
 /**
@@ -41,13 +42,16 @@ public final class TutorialOptions {
     private View.OnClickListener mOnSkipClickListener;
     private IndicatorOptions mIndicatorOptions;
     private TutorialPageProvider mTutorialPageProvider;
+    private ViewPager.PageTransformer mPageTransformer;
 
     @SuppressWarnings("unchecked")
     static TutorialOptions create(@NonNull Builder builder) {
-        return new TutorialOptions(builder.isUseAutoRemoveTutorialFragment(),
+        TutorialOptions tutorialOptions =  new TutorialOptions(builder.isUseAutoRemoveTutorialFragment(),
                 builder.isUseInfiniteScroll(), builder.getPagesCount(), builder.getPagesColors(),
                 builder.getOnSkipClickListener(), builder.getTutorialPageProvider(),
                 builder.getIndicatorOptions());
+        tutorialOptions.mPageTransformer = builder.mPageTransformer;
+        return tutorialOptions;
     }
 
     private TutorialOptions(boolean autoRemoveTutorialFragment, boolean useInfiniteScroll,
@@ -96,6 +100,11 @@ public final class TutorialOptions {
         return mTutorialPageProvider;
     }
 
+    @Nullable
+    ViewPager.PageTransformer getPageTransformer() {
+        return mPageTransformer;
+    }
+
     /**
      * Create new {@link TutorialOptions.Builder} instance.
      *
@@ -120,6 +129,7 @@ public final class TutorialOptions {
         private IndicatorOptions mIndicatorOptions;
         private TutorialPageProvider<TFragment> mTutorialPageProvider;
         private Context mContext;
+        private ViewPager.PageTransformer mPageTransformer;
 
         private Builder(@NonNull Context context, Class<TFragment> aClass) {
             mContext = ValidationUtil.checkNotNull(context);
@@ -263,6 +273,22 @@ public final class TutorialOptions {
          */
         public Builder<TFragment> setTutorialPageProvider(@NonNull TutorialPageProvider<TFragment> tutorialPageProvider) {
             mTutorialPageProvider = tutorialPageProvider;
+            return this;
+        }
+
+        /**
+         * Set a {@link ViewPager.PageTransformer} that will be called for each attached page whenever
+         * the scroll position is changed. This allows the application to apply custom property
+         * transformations to each page, overriding the default sliding look and feel.
+         *
+         * <p><em>Note:</em> Prior to Android 3.0 the property animation APIs did not exist.
+         * As a result, setting a PageTransformer prior to Android 3.0 (API 11) will have no effect.</p>
+         * @param pageTransformer PageTransformer that will modify each page's animation properties
+         * @return current {@link Builder}
+         * @see ViewPager#setPageTransformer(boolean, ViewPager.PageTransformer)
+         */
+        public Builder<TFragment> setPageTransformer(ViewPager.PageTransformer pageTransformer) {
+            mPageTransformer = pageTransformer;
             return this;
         }
 

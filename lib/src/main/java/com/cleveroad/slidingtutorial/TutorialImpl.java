@@ -295,6 +295,11 @@ final class TutorialImpl<TFragment> {
             if (obj instanceof PageImpl) {
                 ((PageImpl) obj).transformPage(view.getWidth(), position);
             }
+
+            ViewPager.PageTransformer userPageTransformer = mTutorialOptions.getPageTransformer();
+            if(userPageTransformer != null) {
+                userPageTransformer.transformPage(view, position);
+            }
         }
     }
 
