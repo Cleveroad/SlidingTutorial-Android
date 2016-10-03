@@ -6,6 +6,7 @@
 
 Version | Changes
 ---     | ---
+v.1.0.5 | Fixed NullPointerException & IndexOutOfBoundsException inside ViewPager. Added SlidingTutorialViewPager
 v.1.0.4 | Added ability to set PageTransformer
 v.1.0.3 | Fixed issues with layout customizations. Fixed issues with translate animations
 v.1.0.2 | Minor fixes
