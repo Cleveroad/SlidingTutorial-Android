@@ -47,16 +47,16 @@ public final class TutorialPageIndicator extends View implements TutorialImpl.In
     static final int DEFAULT_VALUE = 0;
     static final int NO_COLOR = 1;
     @ColorInt
-    static final int DEFAULT_COLOR = Color.TRANSPARENT;
+    static final int DEFAULT_COLOR = Color.RED;
 
-    private RectF mClipBounds;
-    private RectF mElementBounds;
+    private final RectF mClipBounds = new RectF();
+    private final RectF mElementBounds = new RectF();
     private float mScrolledOffset;
     private int mSelectedPosition;
     private float mIndicatorElementSpacing;
     private float mIndicatorElementSize;
-    private Paint mIndicatorSelectedPaint;
-    private Paint mIndicatorPaint;
+    private final Paint mIndicatorSelectedPaint = new Paint();
+    private final Paint mIndicatorPaint = new Paint();
     private Renderer mRenderer;
     private int mPagesCount;
     private boolean mIsInfiniteScroll;
@@ -79,10 +79,6 @@ public final class TutorialPageIndicator extends View implements TutorialImpl.In
     }
 
     void initWith(@NonNull IndicatorOptions indicatorOptions, int pagesCount) {
-        mElementBounds = new RectF();
-        mClipBounds = new RectF();
-
-        mIndicatorPaint = new Paint();
         mIndicatorPaint.setAntiAlias(true);
         int elementColor;
         if (indicatorOptions.getElementColor() != NO_COLOR) {
@@ -92,7 +88,6 @@ public final class TutorialPageIndicator extends View implements TutorialImpl.In
         }
         mIndicatorPaint.setColor(elementColor);
 
-        mIndicatorSelectedPaint = new Paint();
         mIndicatorSelectedPaint.setAntiAlias(true);
         int selectedElementColor;
         if (indicatorOptions.getSelectedElementColor() != NO_COLOR) {
