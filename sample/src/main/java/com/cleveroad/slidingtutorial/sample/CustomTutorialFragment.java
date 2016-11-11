@@ -170,7 +170,7 @@ public class CustomTutorialFragment extends TutorialFragment
                         .setRenderer(DrawableRenderer.create(getActivity()))
                         .build())
                 .setTutorialPageProvider(mTutorialPageProvider)
-                .onSkipClickListener(mOnSkipClickListener)
+                .setOnSkipClickListener(mOnSkipClickListener)
                 .build();
     }
 

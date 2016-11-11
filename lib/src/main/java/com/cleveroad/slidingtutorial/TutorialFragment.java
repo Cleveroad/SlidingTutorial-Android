@@ -23,6 +23,7 @@
  */
 package com.cleveroad.slidingtutorial;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -116,6 +117,10 @@ public abstract class TutorialFragment extends Fragment {
     public static TutorialOptions.Builder<Fragment> newTutorialOptionsBuilder(@NonNull Context context) {
         ValidationUtil.checkNotNull(context, "Context can't be null.");
         return TutorialOptions.newTutorialOptionsBuilder(context, Fragment.class);
+    }
+
+    public static TutorialFragment newInstance(@NonNull TutorialOptions tutorialOptions) {
+        return new TutorialFragmentImpl(tutorialOptions);
     }
 
     @Override
@@ -280,6 +285,30 @@ public abstract class TutorialFragment extends Fragment {
         @Override
         public int getCount() {
             return mTutorialAdapterImpl.getCount();
+        }
+    }
+
+    public static final class TutorialFragmentImpl extends TutorialFragment {
+
+        private TutorialOptions mTutorialOptions;
+
+        public TutorialFragmentImpl() {
+        }
+
+        @SuppressLint("ValidFragment")
+        private TutorialFragmentImpl(@NonNull TutorialOptions tutorialOptions) {
+            mTutorialOptions = tutorialOptions;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setRetainInstance(true);
+        }
+
+        @Override
+        protected TutorialOptions provideTutorialOptions() {
+            return mTutorialOptions;
         }
     }
 }

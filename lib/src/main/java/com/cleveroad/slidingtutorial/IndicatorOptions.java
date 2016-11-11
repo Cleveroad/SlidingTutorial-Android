@@ -24,13 +24,12 @@
 package com.cleveroad.slidingtutorial;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 
 /**
  * Class contains configuration for {@link TutorialPageIndicator}.
@@ -50,28 +49,7 @@ public final class IndicatorOptions {
 
     private Renderer mRenderer;
 
-    /**
-     * Provide default configuration for indicator:
-     * <ul>
-     * <li>elementColor         : {@link android.graphics.Color#DKGRAY}</li>
-     * <li>selectedElementColor : {@link android.graphics.Color#WHITE}</li>
-     * <li>elementSize          : {@link com.cleveroad.slidingtutorial.R.dimen#st_indicator_size_default} = 4dp</li>
-     * <li>setElementSpacing    : {@link com.cleveroad.slidingtutorial.R.dimen#st_indicator_spacing_default} = 4dp</li>
-     * </ul>
-     *
-     * @param context {@link Context} instance
-     * @return default {@link IndicatorOptions} configuration for {@link TutorialPageIndicator}
-     */
-    public static IndicatorOptions provideDefault(@NonNull Context context) {
-        return new Builder(context)
-                .setElementColor(Color.DKGRAY)
-                .setSelectedElementColor(Color.WHITE)
-                .setElementSizeRes(R.dimen.st_indicator_size_default)
-                .setElementSpacingRes(R.dimen.st_indicator_spacing_default)
-                .build();
-    }
-
-    private IndicatorOptions(Builder builder) {
+    private IndicatorOptions(@NonNull Builder builder) {
         mElementColor = builder.mElementColor;
         mSelectedElementColor = builder.mSelectedElementColor;
         mElementSize = builder.mElementSize;
@@ -135,7 +113,7 @@ public final class IndicatorOptions {
          * @see #setSelectedElementColorRes(int)
          */
         public Builder setSelectedElementColorRes(@ColorRes int indicatorColorResource) {
-            return setSelectedElementColor(getColor(mContext, indicatorColorResource));
+            return setSelectedElementColor(ContextCompat.getColor(mContext, indicatorColorResource));
         }
 
         /**
@@ -158,7 +136,7 @@ public final class IndicatorOptions {
          * @see #setSelectedElementColorRes(int)
          */
         public Builder setElementColorRes(@ColorRes int indicatorColorResource) {
-            return setElementColor(getColor(mContext, indicatorColorResource));
+            return setElementColor(ContextCompat.getColor(mContext, indicatorColorResource));
         }
 
         /**
@@ -228,15 +206,6 @@ public final class IndicatorOptions {
         public Builder setRenderer(@NonNull Renderer renderer) {
             mRenderer = ValidationUtil.checkNotNull(renderer);
             return this;
-        }
-
-        @SuppressWarnings("deprecation")
-        private static int getColor(@NonNull Context context, @ColorRes int colorResource) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                return context.getColor(colorResource);
-            } else {
-                return context.getResources().getColor(colorResource);
-            }
         }
 
         /**

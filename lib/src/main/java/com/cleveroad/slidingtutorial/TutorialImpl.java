@@ -31,6 +31,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -46,8 +47,11 @@ final class TutorialImpl<TFragment> {
     static final int EMPTY_FRAGMENT_POSITION = -1;
 
     private ViewPager mViewPager;
+    @Nullable
     private View mButtonSkip;
+    @Nullable
     private View mSeparator;
+    @Nullable
     private TutorialPageIndicator mPageIndicator;
     private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     private PagerAdapter mTutorialAdapter;
@@ -60,8 +64,10 @@ final class TutorialImpl<TFragment> {
         @Override
         public void onChanged() {
             super.onChanged();
-            mPageIndicator.setPagesCount(mTutorialOptions.getPagesCount());
-            mPageIndicator.postInvalidate();
+            if (mPageIndicator != null) {
+                mPageIndicator.setPagesCount(mTutorialOptions.getPagesCount());
+                mPageIndicator.postInvalidate();
+            }
         }
     };
 
@@ -89,8 +95,12 @@ final class TutorialImpl<TFragment> {
         mTutorialAdapter = mInternalFragment.getPagerAdapter();
         mTutorialAdapter.registerDataSetObserver(mDataSetObservable);
         mViewPager.setAdapter(mTutorialAdapter);
-        mPageIndicator.initWith(mTutorialOptions.getIndicatorOptions(), mTutorialOptions.getPagesCount());
-        mButtonSkip.setOnClickListener(mTutorialOptions.getOnSkipClickListener());
+        if (mPageIndicator != null) {
+            mPageIndicator.initWith(mTutorialOptions.getIndicatorOptions(), mTutorialOptions.getPagesCount());
+        }
+        if (mButtonSkip != null) {
+            mButtonSkip.setOnClickListener(mTutorialOptions.getOnSkipClickListener());
+        }
 
         if (mTutorialOptions.isUseInfiniteScroll()) {
             int pos = Integer.MAX_VALUE / 2;
@@ -117,6 +127,7 @@ final class TutorialImpl<TFragment> {
      *
      * @return line separator view
      */
+    @SuppressWarnings("NullableProblems")
     View getSeparator() {
         return mSeparator;
     }
@@ -376,8 +387,10 @@ final class TutorialImpl<TFragment> {
             }
 
             // ViewPageIndicator callback forward
-            mPageIndicator.onPageScrolled(position % mTutorialOptions.getPagesCount(),
-                    positionOffset, mTutorialOptions.isUseInfiniteScroll());
+            if (mPageIndicator != null) {
+                mPageIndicator.onPageScrolled(position % mTutorialOptions.getPagesCount(),
+                        positionOffset, mTutorialOptions.isUseInfiniteScroll());
+            }
         }
 
         /**

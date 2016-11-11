@@ -132,7 +132,7 @@ public final class TutorialOptions {
         private ViewPager.PageTransformer mPageTransformer;
 
         private Builder(@NonNull Context context, Class<TFragment> aClass) {
-            mContext = ValidationUtil.checkNotNull(context);
+            mContext = ValidationUtil.checkNotNull(context).getApplicationContext();
             mClass = aClass;
         }
 
@@ -216,7 +216,7 @@ public final class TutorialOptions {
          * @param onSkipClickListener instance {@link android.view.View.OnClickListener}
          * @return current {@link Builder}
          */
-        public Builder<TFragment> onSkipClickListener(@NonNull View.OnClickListener onSkipClickListener) {
+        public Builder<TFragment> setOnSkipClickListener(@NonNull View.OnClickListener onSkipClickListener) {
             mOnSkipClickListener = onSkipClickListener;
             return this;
         }
@@ -299,7 +299,7 @@ public final class TutorialOptions {
          */
         public TutorialOptions build() {
             if (mIndicatorOptions == null) {
-                mIndicatorOptions = IndicatorOptions.provideDefault(mContext);
+                mIndicatorOptions = IndicatorOptions.newBuilder(mContext).build();
             }
             return TutorialOptions.create(this);
         }
