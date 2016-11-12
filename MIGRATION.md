@@ -1,6 +1,9 @@
 ## SlidingTutorial [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome) <img src="https://www.cleveroad.com/public/comercial/label-android.svg" height="20"> <a href="https://www.cleveroad.com/?utm_source=github&utm_medium=label&utm_campaign=contacts"><img src="https://www.cleveroad.com/public/comercial/label-cleveroad.svg" height="20"></a>
 ![Header image](/images/header.jpg)
 
+## Migrations from v.1.0.5 to v.1.0.6
+`TutorialOptions.Builder#onSkipClickListener(...)` was renamed to `TutorialOptions.Builder#setOnSkipClickListener(...)`.
+
 ## Migrations from v.0.9.5 to v.1.0.0
 1. You must change creation [TransformItem] from `new TransformItem(R.id.ivFirstImage, true, 20)` to `TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.2f)`, where 2-nd parameter now is [Direction] of view translation and 3-rd parameter is *shiftCoefficient*.
 2. Your fragment with tutorial must extend [TutorialFragment] instead of **PresentationPagerFragment**.
@@ -104,15 +107,6 @@ Added **isInfinityScrollEnabled()** method. Override it and return `true` to ena
 
 **NOTE:** make sure you're returning new fragment instance when displaying tutorial with infinite scroll enabled.
 
-## Support
-If you have any questions regarding the use of this tutorial, please contact us for support
-at info@cleveroad.com (email subject: «Sliding android app tutorial. Support request.»)
-<br>or
-<br>Use our contacts:
-<br><a href="https://www.cleveroad.com/?utm_source=github&utm_medium=link&utm_campaign=contacts">Cleveroad.com</a>
-<br><a href="https://www.facebook.com/cleveroadinc">Facebook account</a>
-<br><a href="https://twitter.com/CleveroadInc">Twitter account</a>
-<br><a href="https://plus.google.com/+CleveroadInc/">Google+ account</a>
 
 [migration manuals]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/MIGRATION.md
 [changelog history]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/CHANGELOG.md
