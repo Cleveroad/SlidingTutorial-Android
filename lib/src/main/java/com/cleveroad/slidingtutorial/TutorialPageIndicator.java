@@ -44,74 +44,74 @@ public final class TutorialPageIndicator extends View implements TutorialImpl.In
     private static final float ANGLE_360 = 360f;
 
     static final int NO_VALUE = -1;
-    static final int DEFAULT_VALUE = 0;
     static final int NO_COLOR = 1;
     @ColorInt
-    static final int DEFAULT_COLOR = Color.TRANSPARENT;
+    static final int DEFAULT_ELEMENT_COLOR = Color.LTGRAY;
+    @ColorInt
+    static final int DEFAULT_SELECTED_ELEMENT_COLOR = Color.WHITE;
 
-    private RectF mClipBounds;
-    private RectF mElementBounds;
+    private final RectF mClipBounds = new RectF();
+    private final RectF mElementBounds = new RectF();
     private float mScrolledOffset;
     private int mSelectedPosition;
     private float mIndicatorElementSpacing;
     private float mIndicatorElementSize;
-    private Paint mIndicatorSelectedPaint;
-    private Paint mIndicatorPaint;
+    private final Paint mIndicatorSelectedPaint = new Paint();
+    private final Paint mIndicatorPaint = new Paint();
     private Renderer mRenderer;
     private int mPagesCount;
     private boolean mIsInfiniteScroll;
 
     public TutorialPageIndicator(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public TutorialPageIndicator(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public TutorialPageIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initDefaultSizes(context);
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public TutorialPageIndicator(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        initDefaultSizes(context);
+    }
+
+    private void initDefaultSizes(@NonNull Context context) {
+        mIndicatorElementSize = context.getResources().getDimension(R.dimen.st_indicator_size_default);
+        mIndicatorElementSpacing = context.getResources().getDimension(R.dimen.st_indicator_spacing_default);
     }
 
     void initWith(@NonNull IndicatorOptions indicatorOptions, int pagesCount) {
-        mElementBounds = new RectF();
-        mClipBounds = new RectF();
-
-        mIndicatorPaint = new Paint();
         mIndicatorPaint.setAntiAlias(true);
         int elementColor;
         if (indicatorOptions.getElementColor() != NO_COLOR) {
             elementColor = indicatorOptions.getElementColor();
         } else {
-            elementColor = TutorialPageIndicator.DEFAULT_COLOR;
+            elementColor = TutorialPageIndicator.DEFAULT_ELEMENT_COLOR;
         }
         mIndicatorPaint.setColor(elementColor);
 
-        mIndicatorSelectedPaint = new Paint();
         mIndicatorSelectedPaint.setAntiAlias(true);
         int selectedElementColor;
         if (indicatorOptions.getSelectedElementColor() != NO_COLOR) {
             selectedElementColor = indicatorOptions.getSelectedElementColor();
         } else {
-            selectedElementColor = TutorialPageIndicator.DEFAULT_COLOR;
+            selectedElementColor = TutorialPageIndicator.DEFAULT_SELECTED_ELEMENT_COLOR;
         }
         mIndicatorSelectedPaint.setColor(selectedElementColor);
 
         if (indicatorOptions.getElementSize() != NO_VALUE) {
             mIndicatorElementSize = indicatorOptions.getElementSize();
-        } else {
-            mIndicatorElementSize = DEFAULT_VALUE;
         }
 
         if (indicatorOptions.getElementSpacing() != NO_VALUE) {
             mIndicatorElementSpacing = indicatorOptions.getElementSpacing();
-        } else {
-            mIndicatorElementSpacing = DEFAULT_VALUE;
         }
 
         if (indicatorOptions.getRenderer() != null) {

@@ -145,7 +145,7 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
                         .setSelectedElementColor(Color.LTGRAY)
                         .setRenderer(RhombusRenderer.create())
                         .build())
-                .onSkipClickListener(mOnSkipClickListener)
+                .setOnSkipClickListener(mOnSkipClickListener)
                 //.setTutorialPageProvider(mTutorialPageProvider)
                 .build();
     }

@@ -6,7 +6,8 @@
 
 Version | Changes
 ---     | ---
-v.1.0.5 | Fixed NullPointerException & IndexOutOfBoundsException inside ViewPager. Added SlidingTutorialViewPager
+v.1.0.6 | <ul><li>Added new simple way of creation of tutorial</li><li>Fixed memory leaks issues</li><li>Updated default sizes of page indicator's elements</li><li>Updated default colors of page indicator</li><li>Updated versions of dependencies</li><li>Removed unused or unnecessary methods</li></ul>
+v.1.0.5 | <ul><li>Fixed NullPointerException & IndexOutOfBoundsException inside ViewPager.</li><li>Added SlidingTutorialViewPager</li></ul>
 v.1.0.4 | Added ability to set PageTransformer
 v.1.0.3 | Fixed issues with layout customizations. Fixed issues with translate animations
 v.1.0.2 | Minor fixes
@@ -40,16 +41,6 @@ Changed gradle plugin version to stable `2.1.0`.
 * Created [IndicatorOptions] to configure [TutorialPageIndicator] view.
 * Created [Renderer] interface that responds for drawing single indicator item. There are 2 default implementation: [Renderer.Factory#newCircleRenderer()] and [Renderer.Factory#newSquareRenderer()].
 * Created [TutorialSupportFragment] and [PageSupportFragment] for use with **AppCompat** library. [TutorialFragment] and [PageFragment] now using **android.app.Fragment**.
-
-## Support
-If you have any questions regarding the use of this tutorial, please contact us for support
-at info@cleveroad.com (email subject: «Sliding android app tutorial. Support request.»)
-<br>or
-<br>Use our contacts:
-<br><a href="https://www.cleveroad.com/?utm_source=github&utm_medium=link&utm_campaign=contacts">Cleveroad.com</a>
-<br><a href="https://www.facebook.com/cleveroadinc">Facebook account</a>
-<br><a href="https://twitter.com/CleveroadInc">Twitter account</a>
-<br><a href="https://plus.google.com/+CleveroadInc/">Google+ account</a>
 
 [migration manuals]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/MIGRATION.md
 [changelog history]: https://github.com/Cleveroad/SlidingTutorial-Android/blob/master/CHANGELOG.md

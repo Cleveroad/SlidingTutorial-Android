@@ -68,16 +68,10 @@ public abstract class PageFragment extends Fragment {
         return mPage.onCreateView(inflater, container, savedInstanceState);
     }
 
-    /**
-     * Method that apply a custom transformation to the page views
-     *
-     * @param pageWidth pageWidth
-     * @param position  Position of page relative to the current front-and-center
-     *                  position of the pager. 0 is front and center. 1 is one full
-     *                  page position to the right, and -1 is one page position to the left.
-     */
-    final void transformPage(int pageWidth, float position) {
-        mPage.transformPage(pageWidth, position);
+    @Override
+    public void onDestroyView() {
+        mPage.onDestroyView();
+        super.onDestroyView();
     }
 
     @LayoutRes

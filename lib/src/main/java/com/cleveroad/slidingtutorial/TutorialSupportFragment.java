@@ -23,6 +23,7 @@
  */
 package com.cleveroad.slidingtutorial;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -112,6 +113,10 @@ public abstract class TutorialSupportFragment extends Fragment {
     public static TutorialOptions.Builder<Fragment> newTutorialOptionsBuilder(@NonNull Context context) {
         ValidationUtil.checkNotNull(context, "Context can't be null.");
         return TutorialOptions.newTutorialOptionsBuilder(context, Fragment.class);
+    }
+
+    public static TutorialFragment newInstance(@NonNull TutorialOptions tutorialOptions) {
+        return new TutorialSupportFragmentImpl(tutorialOptions);
     }
 
     @Override
@@ -275,6 +280,30 @@ public abstract class TutorialSupportFragment extends Fragment {
         @Override
         public int getCount() {
             return mTutorialAdapterImpl.getCount();
+        }
+    }
+
+    public static final class TutorialSupportFragmentImpl extends TutorialFragment {
+
+        private TutorialOptions mTutorialOptions;
+
+        public TutorialSupportFragmentImpl() {
+        }
+
+        @SuppressLint("ValidFragment")
+        private TutorialSupportFragmentImpl(@NonNull TutorialOptions tutorialOptions) {
+            mTutorialOptions = tutorialOptions;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setRetainInstance(true);
+        }
+
+        @Override
+        protected TutorialOptions provideTutorialOptions() {
+            return mTutorialOptions;
         }
     }
 }

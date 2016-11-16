@@ -67,6 +67,12 @@ class PageImpl {
         return view;
     }
 
+    void onDestroyView() {
+        for (TransformItem transformItem : mTransformItems) {
+            transformItem.setView(null);
+        }
+    }
+
     /**
      * Method that apply a custom transformation to the page views
      *
