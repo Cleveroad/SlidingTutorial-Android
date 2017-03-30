@@ -283,7 +283,7 @@ public abstract class TutorialSupportFragment extends Fragment {
         }
     }
 
-    public static final class TutorialSupportFragmentImpl extends TutorialFragment {
+    public static final class TutorialSupportFragmentImpl extends TutorialSupportFragment {
 
         private TutorialOptions mTutorialOptions;
 
