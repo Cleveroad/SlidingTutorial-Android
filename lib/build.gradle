@@ -26,3 +26,6 @@ dependencies {
 }
 
 apply from: './gradle-mvn-push.gradle'
+apply plugin: 'com.github.dcendents.android-maven' 
+group='com.github.smabbas1234'
+
