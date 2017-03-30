@@ -115,7 +115,7 @@ public abstract class TutorialSupportFragment extends Fragment {
         return TutorialOptions.newTutorialOptionsBuilder(context, Fragment.class);
     }
 
-    public static TutorialFragment newInstance(@NonNull TutorialOptions tutorialOptions) {
+    public static TutorialSupportFragment newInstance(@NonNull TutorialOptions tutorialOptions) {
         return new TutorialSupportFragmentImpl(tutorialOptions);
     }
 
