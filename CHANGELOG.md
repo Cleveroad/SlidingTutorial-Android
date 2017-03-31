@@ -6,6 +6,7 @@
 
 Version | Changes
 ---     | ---
+v.1.0.7 | <ul><li>Fixed import for SupportTutorialFragment</li><li>Updated versions of dependencies</li></ul>
 v.1.0.6 | <ul><li>Added new simple way of creation of tutorial</li><li>Fixed memory leaks issues</li><li>Updated default sizes of page indicator's elements</li><li>Updated default colors of page indicator</li><li>Updated versions of dependencies</li><li>Removed unused or unnecessary methods</li></ul>
 v.1.0.5 | <ul><li>Fixed NullPointerException & IndexOutOfBoundsException inside ViewPager.</li><li>Added SlidingTutorialViewPager</li></ul>
 v.1.0.4 | Added ability to set PageTransformer
