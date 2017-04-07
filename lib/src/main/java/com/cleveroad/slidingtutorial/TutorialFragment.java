@@ -108,6 +108,8 @@ public abstract class TutorialFragment extends Fragment {
         }
     };
 
+
+
     /**
      * Create new {@link TutorialOptions.Builder} instance.
      *
@@ -123,11 +125,14 @@ public abstract class TutorialFragment extends Fragment {
         return new TutorialFragmentImpl(tutorialOptions);
     }
 
+    public TutorialFragment() {
+        mTutorial = new TutorialImpl<>(mInternalFragment);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mTutorial = new TutorialImpl<>(mInternalFragment);
     }
 
     @Override
