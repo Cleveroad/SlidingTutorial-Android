@@ -119,11 +119,14 @@ public abstract class TutorialSupportFragment extends Fragment {
         return new TutorialSupportFragmentImpl(tutorialOptions);
     }
 
+    public TutorialSupportFragment() {
+        mTutorial = new TutorialImpl<>(mInternalFragment);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mTutorial = new TutorialImpl<>(mInternalFragment);
     }
 
     @Override
