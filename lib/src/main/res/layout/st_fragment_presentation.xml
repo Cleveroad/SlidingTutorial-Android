@@ -47,7 +47,7 @@
             android:visibility="gone"
             android:fontFamily="sans-serif-light"
             android:padding="10dp"
-            android:text="Complete"
+            android:text="@string/st_complete"
             android:textColor="@android:color/white"
             android:textSize="21sp"
             tools:ignore="UnusedAttribute"/>

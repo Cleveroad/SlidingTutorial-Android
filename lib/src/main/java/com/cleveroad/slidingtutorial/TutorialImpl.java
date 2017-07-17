@@ -98,6 +98,7 @@ final class TutorialImpl<TFragment> {
         mTutorialAdapter = mInternalFragment.getPagerAdapter();
         mTutorialAdapter.registerDataSetObserver(mDataSetObservable);
         mViewPager.setAdapter(mTutorialAdapter);
+        mViewPager.setOffscreenPageLimit(mTutorialOptions.getPagesCount()-1);
         if (mPageIndicator != null) {
             mPageIndicator.initWith(mTutorialOptions.getIndicatorOptions(), mTutorialOptions.getPagesCount());
         }
@@ -114,6 +115,8 @@ final class TutorialImpl<TFragment> {
                 pos = 0;
             }
             mViewPager.setCurrentItem(pos);
+
+
         }
     }
 
