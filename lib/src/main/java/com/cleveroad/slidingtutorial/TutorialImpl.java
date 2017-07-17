@@ -50,6 +50,8 @@ final class TutorialImpl<TFragment> {
     @Nullable
     private View mButtonSkip;
     @Nullable
+    private View mButtonComplete;
+    @Nullable
     private View mSeparator;
     @Nullable
     private TutorialPageIndicator mPageIndicator;
@@ -81,6 +83,7 @@ final class TutorialImpl<TFragment> {
         mViewPager = (ViewPager) view.findViewById(mInternalFragment.getViewPagerResId());
         mPageIndicator = (TutorialPageIndicator) view.findViewById(mInternalFragment.getIndicatorResId());
         mButtonSkip = view.findViewById(mInternalFragment.getButtonSkipResId());
+        mButtonComplete = view.findViewById(mInternalFragment.getButtonCompleteResId());
         mSeparator = view.findViewById(mInternalFragment.getSeparatorResId());
 
         mViewPager.setPageTransformer(true, new FragmentTransformer());
@@ -201,6 +204,11 @@ final class TutorialImpl<TFragment> {
     @IdRes
     int getDefaultButtonSkipResId() {
         return R.id.tvSkip;
+    }
+
+    @IdRes
+    int getDefaultButtonCompleteResId() {
+        return R.id.tvComplete;
     }
 
     @IdRes
@@ -336,6 +344,9 @@ final class TutorialImpl<TFragment> {
         int getButtonSkipResId();
 
         @IdRes
+        int getButtonCompleteResId();
+
+        @IdRes
         int getSeparatorResId();
     }
 
@@ -400,14 +411,30 @@ final class TutorialImpl<TFragment> {
         @Override
         public void onPageSelected(int position) {
             // Forward callback to all OnTutorialPageChangeListeners
+
             int pos = position == mTutorialOptions.getPagesCount() ? EMPTY_FRAGMENT_POSITION : position;
             pos %= mTutorialOptions.getPagesCount();
+
+            if(pos == mTutorialOptions.getPagesCount() -1 && mTutorialOptions.isShowCompleteButton()) {
+                mButtonComplete.setVisibility(View.VISIBLE);
+                mButtonComplete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mTutorialOptions.getOnSkipClickListener().onClick(view);
+                    }
+                });
+            } else {
+                mButtonComplete.setVisibility(View.GONE);
+            }
+
             for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
                 onTutorialPageChangeListener.onPageChanged(pos);
             }
             // If we reach end of tutorial and flag isUseAutoRemoveTutorialFragment is true - remove TutorialSupportFragment
             if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
                 mInternalFragment.removeCurrentFragment();
+                // Call to tutorial finished listener
+                mTutorialOptions.getmTutorialFinishedListener().OnTutorialPageFinishedListener();
             }
         }
 

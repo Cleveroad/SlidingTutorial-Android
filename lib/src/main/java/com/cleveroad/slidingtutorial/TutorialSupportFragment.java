@@ -96,6 +96,10 @@ public abstract class TutorialSupportFragment extends Fragment {
         public int getButtonSkipResId() {
             return TutorialSupportFragment.this.getButtonSkipResId();
         }
+        @Override
+        public int getButtonCompleteResId() {
+            return TutorialSupportFragment.this.getButtonCompleteResId();
+        }
 
         @Override
         public int getSeparatorResId() {
@@ -226,6 +230,11 @@ public abstract class TutorialSupportFragment extends Fragment {
     @IdRes
     protected int getButtonSkipResId() {
         return mTutorial.getDefaultButtonSkipResId();
+    }
+
+    @IdRes
+    protected int getButtonCompleteResId() {
+        return mTutorial.getDefaultButtonCompleteResId();
     }
 
     @IdRes

@@ -43,13 +43,15 @@ public final class TutorialOptions {
     private IndicatorOptions mIndicatorOptions;
     private TutorialPageProvider mTutorialPageProvider;
     private ViewPager.PageTransformer mPageTransformer;
+    private TutorialFinishedInterface mTutorialFinishedListener;
+    private boolean showCompleteButton;
 
     @SuppressWarnings("unchecked")
     static TutorialOptions create(@NonNull Builder builder) {
         TutorialOptions tutorialOptions =  new TutorialOptions(builder.isUseAutoRemoveTutorialFragment(),
                 builder.isUseInfiniteScroll(), builder.getPagesCount(), builder.getPagesColors(),
                 builder.getOnSkipClickListener(), builder.getTutorialPageProvider(),
-                builder.getIndicatorOptions());
+                builder.getIndicatorOptions(), builder.getTutorialFinishedListener(), builder.isCompleteButtonShown());
         tutorialOptions.mPageTransformer = builder.mPageTransformer;
         return tutorialOptions;
     }
@@ -58,7 +60,7 @@ public final class TutorialOptions {
                             int pagesCount, @NonNull int[] pagesColors,
                             @NonNull View.OnClickListener onSkipClickListener,
                             @NonNull TutorialPageProvider tutorialPageProvider,
-                            @NonNull IndicatorOptions indicatorOptions) {
+                            @NonNull IndicatorOptions indicatorOptions, TutorialFinishedInterface mTutorialFinishedListener, boolean showCompleteButton) {
         mAutoRemoveTutorialFragment = autoRemoveTutorialFragment;
         mUseInfiniteScroll = useInfiniteScroll;
         mPagesCount = ValidationUtil.checkPagesCount(pagesCount);
@@ -66,10 +68,20 @@ public final class TutorialOptions {
         mTutorialPageProvider = ValidationUtil.checkNotNull(tutorialPageProvider, "TutorialPageProvider can't be null");
         mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions);
         mOnSkipClickListener = onSkipClickListener;
+        this.mTutorialFinishedListener = mTutorialFinishedListener;
+        this.showCompleteButton = showCompleteButton;
+    }
+
+    public boolean isShowCompleteButton() {
+        return showCompleteButton;
     }
 
     boolean isAutoRemoveTutorialFragment() {
         return mAutoRemoveTutorialFragment;
+    }
+
+    public TutorialFinishedInterface getmTutorialFinishedListener() {
+        return mTutorialFinishedListener;
     }
 
     boolean isUseInfiniteScroll() {
@@ -130,6 +142,8 @@ public final class TutorialOptions {
         private TutorialPageProvider<TFragment> mTutorialPageProvider;
         private Context mContext;
         private ViewPager.PageTransformer mPageTransformer;
+        private TutorialFinishedInterface mTutorialFinishedListener;
+        private boolean isCompleteButtonShown;
 
         private Builder(@NonNull Context context, Class<TFragment> aClass) {
             mContext = ValidationUtil.checkNotNull(context).getApplicationContext();
@@ -210,6 +224,15 @@ public final class TutorialOptions {
             return this;
         }
 
+        public boolean isCompleteButtonShown() {
+            return isCompleteButtonShown;
+        }
+
+        public Builder<TFragment> setIsCompleteButtonShown(boolean completeButtonShown) {
+            isCompleteButtonShown = completeButtonShown;
+            return this;
+        }
+
         /**
          * Set click listener for skip tutorial button.
          *
@@ -235,6 +258,16 @@ public final class TutorialOptions {
          */
         public Builder<TFragment> setIndicatorOptions(@NonNull IndicatorOptions indicatorOptions) {
             mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions, "IndicatorOptions can't be null.");
+            return this;
+        }
+
+
+        public TutorialFinishedInterface getTutorialFinishedListener() {
+            return mTutorialFinishedListener;
+        }
+
+        public Builder<TFragment> setTutorialFinishedListener(TutorialFinishedInterface mTutorialFinishedListener) {
+            this.mTutorialFinishedListener = mTutorialFinishedListener;
             return this;
         }
 

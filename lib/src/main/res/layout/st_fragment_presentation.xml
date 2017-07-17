@@ -37,6 +37,21 @@
             android:textSize="21sp"
             tools:ignore="UnusedAttribute"/>
 
+        <TextView
+            android:id="@+id/tvComplete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom|end"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+            android:fontFamily="sans-serif-light"
+            android:padding="10dp"
+            android:text="Complete"
+            android:textColor="@android:color/white"
+            android:textSize="21sp"
+            tools:ignore="UnusedAttribute"/>
+
         <com.cleveroad.slidingtutorial.TutorialPageIndicator
             android:id="@+id/indicator"
             android:layout_width="match_parent"
