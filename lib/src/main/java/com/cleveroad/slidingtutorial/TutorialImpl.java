@@ -267,9 +267,9 @@ final class TutorialImpl<TFragment> {
 
         TFragment getItem(int position) {
             int realPagesCount = getRealPagesCount();
-            if (mTutorial.getTutorialOptions().isUseInfiniteScroll()) {
+          //  if (mTutorial.getTutorialOptions().isUseInfiniteScroll()) {
                 position %= realPagesCount;
-            }
+          //  }
             if (position < realPagesCount) {
                 return mTutorial.getPage(position);
             } else if (mTutorial.getTutorialOptions().isAutoRemoveTutorialFragment() &&
@@ -433,8 +433,10 @@ final class TutorialImpl<TFragment> {
             // If we reach end of tutorial and flag isUseAutoRemoveTutorialFragment is true - remove TutorialSupportFragment
             if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
                 mInternalFragment.removeCurrentFragment();
-                // Call to tutorial finished listener
-                mTutorialOptions.getmTutorialFinishedListener().OnTutorialPageFinishedListener();
+                if(mTutorialOptions.getTutorialFinishedListener() != null) {
+                    // Call to tutorial finished listener
+                    mTutorialOptions.getTutorialFinishedListener().OnTutorialPageFinishedListener();
+                }
             }
         }
 

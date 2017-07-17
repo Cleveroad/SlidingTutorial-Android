@@ -80,7 +80,7 @@ public final class TutorialOptions {
         return mAutoRemoveTutorialFragment;
     }
 
-    public TutorialFinishedInterface getmTutorialFinishedListener() {
+    public TutorialFinishedInterface getTutorialFinishedListener() {
         return mTutorialFinishedListener;
     }
 
