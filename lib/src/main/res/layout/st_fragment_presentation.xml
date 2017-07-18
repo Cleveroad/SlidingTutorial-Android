@@ -27,12 +27,27 @@
             android:id="@+id/tvSkip"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="bottom"
+            android:layout_gravity="bottom|start"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:fontFamily="sans-serif-light"
             android:padding="10dp"
             android:text="@string/st_skip"
+            android:textColor="@android:color/white"
+            android:textSize="21sp"
+            tools:ignore="UnusedAttribute"/>
+
+        <TextView
+            android:id="@+id/tvComplete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom|end"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+            android:fontFamily="sans-serif-light"
+            android:padding="10dp"
+            android:text="@string/st_complete"
             android:textColor="@android:color/white"
             android:textSize="21sp"
             tools:ignore="UnusedAttribute"/>

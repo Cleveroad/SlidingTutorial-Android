@@ -40,6 +40,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @SuppressWarnings("UnusedParameters")
 final class TutorialImpl<TFragment> {
@@ -49,6 +50,8 @@ final class TutorialImpl<TFragment> {
     private ViewPager mViewPager;
     @Nullable
     private View mButtonSkip;
+    @Nullable
+    private View mButtonComplete;
     @Nullable
     private View mSeparator;
     @Nullable
@@ -81,6 +84,7 @@ final class TutorialImpl<TFragment> {
         mViewPager = (ViewPager) view.findViewById(mInternalFragment.getViewPagerResId());
         mPageIndicator = (TutorialPageIndicator) view.findViewById(mInternalFragment.getIndicatorResId());
         mButtonSkip = view.findViewById(mInternalFragment.getButtonSkipResId());
+        mButtonComplete = view.findViewById(mInternalFragment.getButtonCompleteResId());
         mSeparator = view.findViewById(mInternalFragment.getSeparatorResId());
 
         mViewPager.setPageTransformer(true, new FragmentTransformer());
@@ -95,6 +99,7 @@ final class TutorialImpl<TFragment> {
         mTutorialAdapter = mInternalFragment.getPagerAdapter();
         mTutorialAdapter.registerDataSetObserver(mDataSetObservable);
         mViewPager.setAdapter(mTutorialAdapter);
+        mViewPager.setOffscreenPageLimit(mTutorialOptions.getPagesCount()-1);
         if (mPageIndicator != null) {
             mPageIndicator.initWith(mTutorialOptions.getIndicatorOptions(), mTutorialOptions.getPagesCount());
         }
@@ -110,8 +115,23 @@ final class TutorialImpl<TFragment> {
             } else {
                 pos = 0;
             }
-            mViewPager.setCurrentItem(pos);
+
+                mViewPager.setCurrentItem(pos);
         }
+
+        if(isRTL()) {
+            mViewPager.setCurrentItem(mTutorialOptions.getPagesCount() - 1);
+        }
+    }
+
+    private boolean isRTL() {
+        return isRTL(Locale.getDefault());
+    }
+
+    private boolean isRTL(Locale locale) {
+        final int directionality = Character.getDirectionality(locale.getDisplayName().charAt(0));
+        return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
+                directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;
     }
 
     void onDestroyView() {
@@ -204,6 +224,11 @@ final class TutorialImpl<TFragment> {
     }
 
     @IdRes
+    int getDefaultButtonCompleteResId() {
+        return R.id.tvComplete;
+    }
+
+    @IdRes
     int getDefaultSeparatorResId() {
         return R.id.separator;
     }
@@ -259,9 +284,9 @@ final class TutorialImpl<TFragment> {
 
         TFragment getItem(int position) {
             int realPagesCount = getRealPagesCount();
-            if (mTutorial.getTutorialOptions().isUseInfiniteScroll()) {
+          //  if (mTutorial.getTutorialOptions().isUseInfiniteScroll()) {
                 position %= realPagesCount;
-            }
+          //  }
             if (position < realPagesCount) {
                 return mTutorial.getPage(position);
             } else if (mTutorial.getTutorialOptions().isAutoRemoveTutorialFragment() &&
@@ -336,6 +361,9 @@ final class TutorialImpl<TFragment> {
         int getButtonSkipResId();
 
         @IdRes
+        int getButtonCompleteResId();
+
+        @IdRes
         int getSeparatorResId();
     }
 
@@ -400,14 +428,41 @@ final class TutorialImpl<TFragment> {
         @Override
         public void onPageSelected(int position) {
             // Forward callback to all OnTutorialPageChangeListeners
+
             int pos = position == mTutorialOptions.getPagesCount() ? EMPTY_FRAGMENT_POSITION : position;
             pos %= mTutorialOptions.getPagesCount();
+
+            if(!isRTL() && pos == mTutorialOptions.getPagesCount() - 1 && mTutorialOptions.isShowCompleteButton()) {
+                mButtonComplete.setVisibility(View.VISIBLE);
+                mButtonComplete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mTutorialOptions.getOnSkipClickListener().onClick(view);
+                    }
+                });
+            } else if(isRTL() && pos == 0 && mTutorialOptions.isShowCompleteButton()) {
+                mButtonComplete.setVisibility(View.VISIBLE);
+                mButtonComplete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mTutorialOptions.getOnSkipClickListener().onClick(view);
+                    }
+                });
+            }
+            else {
+                mButtonComplete.setVisibility(View.GONE);
+            }
+
             for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
                 onTutorialPageChangeListener.onPageChanged(pos);
             }
             // If we reach end of tutorial and flag isUseAutoRemoveTutorialFragment is true - remove TutorialSupportFragment
             if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
                 mInternalFragment.removeCurrentFragment();
+                if(mTutorialOptions.getTutorialFinishedListener() != null) {
+                    // Call to tutorial finished listener
+                    mTutorialOptions.getTutorialFinishedListener().OnTutorialPageFinishedListener();
+                }
             }
         }
 

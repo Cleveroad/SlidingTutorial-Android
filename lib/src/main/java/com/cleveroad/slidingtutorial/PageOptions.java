@@ -25,6 +25,8 @@ package com.cleveroad.slidingtutorial;
 
 import android.support.annotation.LayoutRes;
 
+import java.util.Locale;
+
 /**
  * Class contains configuration for creating {@link PageFragment} and {@link PageSupportFragment} instances.
  */
@@ -53,6 +55,7 @@ public class PageOptions {
         mPageLayoutResId = pageLayoutResId;
         mPosition = ValidationUtil.checkPosition(position);
         mTransformItems = transformItems;
+
     }
 
     int getPageLayoutResId() {
