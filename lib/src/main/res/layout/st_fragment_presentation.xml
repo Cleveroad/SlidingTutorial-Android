@@ -27,7 +27,7 @@
             android:id="@+id/tvSkip"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="bottom"
+            android:layout_gravity="bottom|start"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:fontFamily="sans-serif-light"

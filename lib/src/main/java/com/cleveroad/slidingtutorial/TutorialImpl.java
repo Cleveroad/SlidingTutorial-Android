@@ -40,6 +40,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @SuppressWarnings("UnusedParameters")
 final class TutorialImpl<TFragment> {
@@ -114,10 +115,23 @@ final class TutorialImpl<TFragment> {
             } else {
                 pos = 0;
             }
-            mViewPager.setCurrentItem(pos);
 
-
+                mViewPager.setCurrentItem(pos);
         }
+
+        if(isRTL()) {
+            mViewPager.setCurrentItem(mTutorialOptions.getPagesCount() - 1);
+        }
+    }
+
+    private boolean isRTL() {
+        return isRTL(Locale.getDefault());
+    }
+
+    private boolean isRTL(Locale locale) {
+        final int directionality = Character.getDirectionality(locale.getDisplayName().charAt(0));
+        return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
+                directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;
     }
 
     void onDestroyView() {
@@ -418,7 +432,7 @@ final class TutorialImpl<TFragment> {
             int pos = position == mTutorialOptions.getPagesCount() ? EMPTY_FRAGMENT_POSITION : position;
             pos %= mTutorialOptions.getPagesCount();
 
-            if(pos == mTutorialOptions.getPagesCount() -1 && mTutorialOptions.isShowCompleteButton()) {
+            if(!isRTL() && pos == mTutorialOptions.getPagesCount() - 1 && mTutorialOptions.isShowCompleteButton()) {
                 mButtonComplete.setVisibility(View.VISIBLE);
                 mButtonComplete.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -426,7 +440,16 @@ final class TutorialImpl<TFragment> {
                         mTutorialOptions.getOnSkipClickListener().onClick(view);
                     }
                 });
-            } else {
+            } else if(isRTL() && pos == 0 && mTutorialOptions.isShowCompleteButton()) {
+                mButtonComplete.setVisibility(View.VISIBLE);
+                mButtonComplete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mTutorialOptions.getOnSkipClickListener().onClick(view);
+                    }
+                });
+            }
+            else {
                 mButtonComplete.setVisibility(View.GONE);
             }
 
