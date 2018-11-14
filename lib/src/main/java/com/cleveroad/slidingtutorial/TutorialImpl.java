@@ -44,9 +44,9 @@ import java.util.List;
 @SuppressWarnings("UnusedParameters")
 final class TutorialImpl<TFragment> {
 
-    static final int EMPTY_FRAGMENT_POSITION = -1;
+    public static final int EMPTY_FRAGMENT_POSITION = -1;
 
-    private ViewPager mViewPager;
+    private SlidingTutorialViewPager mViewPager;
     @Nullable
     private View mButtonSkip;
     @Nullable
@@ -56,6 +56,16 @@ final class TutorialImpl<TFragment> {
     private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     private PagerAdapter mTutorialAdapter;
     private TutorialOptions mTutorialOptions;
+    // keep index of slided items in one direction mode
+    // for getting bg color and correct position of indicator
+    private int currentItem = 0;
+    // despite that we deleting the first page, ViewPager keeps old position of the page and sets the next one
+    // This variable prevents of immediately setting a new page.
+    // Wait for scrolling complete and then set the page.
+    private boolean removePage;
+    private boolean removeTutorial;
+    private int prevPosition;
+
     private List<OnTutorialPageChangeListener> mOnTutorialPageChangeListeners = new ArrayList<>();
 
     private InternalFragment mInternalFragment;
@@ -77,29 +87,32 @@ final class TutorialImpl<TFragment> {
 
     View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(mInternalFragment.getLayoutResId(), container, false);
-
-        mViewPager = (ViewPager) view.findViewById(mInternalFragment.getViewPagerResId());
-        mPageIndicator = (TutorialPageIndicator) view.findViewById(mInternalFragment.getIndicatorResId());
+        mViewPager = view.findViewById(mInternalFragment.getViewPagerResId());
+        mPageIndicator = view.findViewById(mInternalFragment.getIndicatorResId());
         mButtonSkip = view.findViewById(mInternalFragment.getButtonSkipResId());
         mSeparator = view.findViewById(mInternalFragment.getSeparatorResId());
-
         mViewPager.setPageTransformer(true, new FragmentTransformer());
         mViewPager.addOnPageChangeListener(new InternalHelperPageChangeDecorator());
-
+        // provide tutorial options here to prevent npe on pager adapter init
+        mTutorialOptions = mInternalFragment.provideTutorialOptions();
         return view;
     }
 
     void onViewCreated(View view, Bundle savedInstanceState) {
-        mTutorialOptions = mInternalFragment.provideTutorialOptions();
-
         mTutorialAdapter = mInternalFragment.getPagerAdapter();
         mTutorialAdapter.registerDataSetObserver(mDataSetObservable);
         mViewPager.setAdapter(mTutorialAdapter);
+
         if (mPageIndicator != null) {
             mPageIndicator.initWith(mTutorialOptions.getIndicatorOptions(), mTutorialOptions.getPagesCount());
         }
         if (mButtonSkip != null) {
-            mButtonSkip.setOnClickListener(mTutorialOptions.getOnSkipClickListener());
+            if (mTutorialOptions.isShowSkipButton()) {
+                mButtonSkip.setOnClickListener(mTutorialOptions.getOnSkipClickListener());
+                mButtonSkip.setVisibility(View.VISIBLE);
+            } else {
+                mButtonSkip.setVisibility(View.GONE);
+            }
         }
 
         if (mTutorialOptions.isUseInfiniteScroll()) {
@@ -112,6 +125,8 @@ final class TutorialImpl<TFragment> {
             }
             mViewPager.setCurrentItem(pos);
         }
+
+        removeTutorialFragment();
     }
 
     void onDestroyView() {
@@ -190,7 +205,7 @@ final class TutorialImpl<TFragment> {
 
     @IdRes
     int getDefaultViewPagerResId() {
-        return R.id.viewPager;
+        return R.id.stvPager;
     }
 
     @IdRes
@@ -253,8 +268,17 @@ final class TutorialImpl<TFragment> {
 
         abstract TFragment getEmptyFragment();
 
+        // Used in one direction slide mode.
+        // A unique id of the first element from the list of pages.
+        // Ids of following items based on baseId and position of the element.
+        private long baseId = 0;
+
+        // flag that true if we can slide only forward
+        private boolean noRollback;
+
         TutorialAdapterImpl(TutorialImpl<TFragment> tutorial) {
             mTutorial = tutorial;
+            noRollback = isMovingOnlyForward();
         }
 
         TFragment getItem(int position) {
@@ -262,6 +286,8 @@ final class TutorialImpl<TFragment> {
             if (mTutorial.getTutorialOptions().isUseInfiniteScroll()) {
                 position %= realPagesCount;
             }
+
+            position += mTutorial.getCurrentItem();
             if (position < realPagesCount) {
                 return mTutorial.getPage(position);
             } else if (mTutorial.getTutorialOptions().isAutoRemoveTutorialFragment() &&
@@ -273,13 +299,16 @@ final class TutorialImpl<TFragment> {
             }
         }
 
-        int getRealPagesCount() {
+        private int getRealPagesCount() {
             return mTutorial.getTutorialOptions().getPagesCount();
         }
 
+        private boolean isMovingOnlyForward() {
+            return mTutorial.getTutorialOptions().isMoveOnlyForward();
+        }
+
         int getCount() {
-            int pagesCount = mTutorial.getTutorialOptions().getPagesCount();
-            if (pagesCount == 0) {
+            if (mTutorial.getTutorialOptions().getPagesCount() == 0) {
                 return 0;
             }
 
@@ -288,10 +317,43 @@ final class TutorialImpl<TFragment> {
             }
 
             if (mTutorial.getTutorialOptions().isAutoRemoveTutorialFragment()) {
-                return pagesCount + 1;
+                return getRealPagesCount() + 1;
             }
 
-            return pagesCount;
+            return getRealPagesCount();
+        }
+
+        int getItemPosition() {
+            if (noRollback) {
+                // refresh all fragments when data set changed
+                return PagerAdapter.POSITION_NONE;
+            } else {
+                return PagerAdapter.POSITION_UNCHANGED;
+            }
+        }
+
+        long getItemId(int position) {
+            if (noRollback) {
+                // give an ID different from position when position has been changed
+                return baseId + position;
+            } else {
+                return position;
+            }
+        }
+
+        /**
+         * If the pager is allowed to slide only forward,
+         * this function prevents to show a number of removed pages.
+         * In fact, fragments are removed after {@link PagerAdapter#notifyDataSetChanged()}
+         * method has been executed.
+         * Needs to override {@link PagerAdapter#getItemPosition(Object)}
+         * and {@link android.support.v4.app.FragmentPagerAdapter#getItemId(int)}
+         */
+        void refreshIds() {
+            // Notify that the position of a fragment has been changed.
+            // Create a new ID for each position to force recreation of the fragment
+            baseId += getRealPagesCount();
+            mTutorial.incrementCurrentItem();
         }
     }
 
@@ -301,14 +363,14 @@ final class TutorialImpl<TFragment> {
      */
     private class FragmentTransformer implements ViewPager.PageTransformer {
 
-        public void transformPage(View view, float position) {
+        public void transformPage(@NonNull View view, float position) {
             Object obj = view.getTag(R.id.st_page_fragment);
             if (obj instanceof PageImpl) {
                 ((PageImpl) obj).transformPage(view.getWidth(), position);
             }
 
             ViewPager.PageTransformer userPageTransformer = mTutorialOptions.getPageTransformer();
-            if(userPageTransformer != null) {
+            if (userPageTransformer != null) {
                 userPageTransformer.transformPage(view, position);
             }
         }
@@ -322,6 +384,8 @@ final class TutorialImpl<TFragment> {
         PagerAdapter getPagerAdapter();
 
         void removeCurrentFragment();
+
+        void removeFirstPage();
 
         @LayoutRes
         int getLayoutResId();
@@ -352,6 +416,7 @@ final class TutorialImpl<TFragment> {
          * @param isInfiniteScroll flag for indicating infinite scroll
          */
         void onPageScrolled(int position, float positionOffset, boolean isInfiniteScroll);
+
     }
 
     private class InternalHelperPageChangeDecorator implements ViewPager.OnPageChangeListener {
@@ -366,8 +431,11 @@ final class TutorialImpl<TFragment> {
          */
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            position += currentItem;
+
             // Color change
             int tempPos = position;
+
             if (mTutorialOptions.isUseInfiniteScroll() && mTutorialOptions.getPagesCount() != 0) {
                 tempPos %= mTutorialOptions.getPagesCount();
             }
@@ -378,6 +446,7 @@ final class TutorialImpl<TFragment> {
             if (!mTutorialOptions.isUseInfiniteScroll() &&
                     mTutorialOptions.isAutoRemoveTutorialFragment() &&
                     tempPos == mTutorialOptions.getPagesCount() - 1) {
+
                 mViewPager.setBackgroundColor(getPageColor(tempPos));
                 if (mInternalFragment.getView() != null) {
                     mInternalFragment.getView().setAlpha(1f - positionOffset);
@@ -399,21 +468,50 @@ final class TutorialImpl<TFragment> {
          */
         @Override
         public void onPageSelected(int position) {
-            // Forward callback to all OnTutorialPageChangeListeners
-            int pos = position == mTutorialOptions.getPagesCount() ? EMPTY_FRAGMENT_POSITION : position;
-            pos %= mTutorialOptions.getPagesCount();
-            for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
-                onTutorialPageChangeListener.onPageChanged(pos);
-            }
+            if (mTutorialOptions.isMoveOnlyForward() && position != 1) return;
+            position += currentItem;
+            if (position > prevPosition) removePage = true;
+            prevPosition = position;
+
             // If we reach end of tutorial and flag isUseAutoRemoveTutorialFragment is true - remove TutorialSupportFragment
             if (mTutorialOptions.isAutoRemoveTutorialFragment() && position == mTutorialOptions.getPagesCount()) {
-                mInternalFragment.removeCurrentFragment();
+                removeTutorial = true;
+                position = EMPTY_FRAGMENT_POSITION;
+            }
+
+            // Forward callback to all OnTutorialPageChangeListeners
+            for (OnTutorialPageChangeListener onTutorialPageChangeListener : mOnTutorialPageChangeListeners) {
+                onTutorialPageChangeListener.onPageChanged(position);
             }
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-            /* NOP */
+            if (mTutorialOptions.isMoveOnlyForward() && removePage && state != 2) {
+                removePage();
+            }
+            removeTutorialFragment();
         }
+
+        private void removePage() {
+            mInternalFragment.removeFirstPage();
+            mTutorialAdapter.notifyDataSetChanged();
+            mViewPager.setCurrentItem(0, false);
+            removePage = false;
+        }
+    }
+
+    private void removeTutorialFragment() {
+        if (removeTutorial) {
+            mInternalFragment.removeCurrentFragment();
+        }
+    }
+
+    private int getCurrentItem() {
+        return currentItem;
+    }
+
+    private void incrementCurrentItem() {
+        currentItem++;
     }
 }

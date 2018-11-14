@@ -38,7 +38,9 @@ public final class TutorialOptions {
     private boolean mAutoRemoveTutorialFragment;
     private boolean mUseInfiniteScroll;
     private int mPagesCount;
+    private boolean mNoRollBack;
     private int[] mPagesColors;
+    private boolean mShowSkipButton;
     private View.OnClickListener mOnSkipClickListener;
     private IndicatorOptions mIndicatorOptions;
     private TutorialPageProvider mTutorialPageProvider;
@@ -46,22 +48,24 @@ public final class TutorialOptions {
 
     @SuppressWarnings("unchecked")
     static TutorialOptions create(@NonNull Builder builder) {
-        TutorialOptions tutorialOptions =  new TutorialOptions(builder.isUseAutoRemoveTutorialFragment(),
-                builder.isUseInfiniteScroll(), builder.getPagesCount(), builder.getPagesColors(),
+        TutorialOptions tutorialOptions = new TutorialOptions(builder.isUseAutoRemoveTutorialFragment(),
+                builder.isUseInfiniteScroll(), builder.isShowSkipButton(), builder.getPagesCount(), builder.isMoveOnlyForward(), builder.getPagesColors(),
                 builder.getOnSkipClickListener(), builder.getTutorialPageProvider(),
                 builder.getIndicatorOptions());
         tutorialOptions.mPageTransformer = builder.mPageTransformer;
         return tutorialOptions;
     }
 
-    private TutorialOptions(boolean autoRemoveTutorialFragment, boolean useInfiniteScroll,
-                            int pagesCount, @NonNull int[] pagesColors,
+    private TutorialOptions(boolean autoRemoveTutorialFragment, boolean useInfiniteScroll, boolean showSkipButton,
+                            int pagesCount, boolean noRollBack, @NonNull int[] pagesColors,
                             @NonNull View.OnClickListener onSkipClickListener,
                             @NonNull TutorialPageProvider tutorialPageProvider,
                             @NonNull IndicatorOptions indicatorOptions) {
         mAutoRemoveTutorialFragment = autoRemoveTutorialFragment;
         mUseInfiniteScroll = useInfiniteScroll;
+        mShowSkipButton = showSkipButton;
         mPagesCount = ValidationUtil.checkPagesCount(pagesCount);
+        mNoRollBack = noRollBack;
         mPagesColors = pagesColors;
         mTutorialPageProvider = ValidationUtil.checkNotNull(tutorialPageProvider, "TutorialPageProvider can't be null");
         mIndicatorOptions = ValidationUtil.checkNotNull(indicatorOptions);
@@ -72,8 +76,16 @@ public final class TutorialOptions {
         return mAutoRemoveTutorialFragment;
     }
 
+    boolean isShowSkipButton() {
+        return mShowSkipButton;
+    }
+
     boolean isUseInfiniteScroll() {
         return mUseInfiniteScroll;
+    }
+
+    boolean isMoveOnlyForward() {
+        return mNoRollBack;
     }
 
     int getPagesCount() {
@@ -123,8 +135,10 @@ public final class TutorialOptions {
         private final Class<TFragment> mClass;
         private boolean mAutoRemoveTutorialFragment;
         private boolean mUseInfiniteScroll;
+        private boolean mNoRollback;
         private int mPagesCount;
         private int[] mPagesColors;
+        private boolean mShowSkipButton;
         private View.OnClickListener mOnSkipClickListener;
         private IndicatorOptions mIndicatorOptions;
         private TutorialPageProvider<TFragment> mTutorialPageProvider;
@@ -140,8 +154,16 @@ public final class TutorialOptions {
             return mAutoRemoveTutorialFragment;
         }
 
+        boolean isShowSkipButton() {
+            return mShowSkipButton;
+        }
+
         boolean isUseInfiniteScroll() {
             return mUseInfiniteScroll;
+        }
+
+        boolean isMoveOnlyForward() {
+            return mNoRollback;
         }
 
         int getPagesCount() {
@@ -177,6 +199,18 @@ public final class TutorialOptions {
         }
 
         /**
+         * Set flag, which indicate need show or hide button "SKIP".
+         * By default is {@link Boolean#FALSE}.
+         *
+         * @param showSkipButton boolean flag
+         * @return current {@link Builder}
+         */
+        public Builder<TFragment> setShowSkipButton(boolean showSkipButton) {
+            mShowSkipButton = showSkipButton;
+            return this;
+        }
+
+        /**
          * Set flag, which indicate using infinite scroll.
          * By default is {@link Boolean#FALSE}.
          *
@@ -198,6 +232,20 @@ public final class TutorialOptions {
             mPagesCount = pagesCount;
             return this;
         }
+
+
+        /**
+         * Set flag, which indicate sliding only forward, no rollback.
+         * By default is {@link Boolean#FALSE}.
+         *
+         * @param noRollback boolean flag
+         * @return current {@link Builder}
+         */
+        public Builder<TFragment> setNoRollBack(boolean noRollback) {
+            mNoRollback = noRollback;
+            return this;
+        }
+
 
         /**
          * Set pages color array with size equal to pages count.
@@ -280,9 +328,10 @@ public final class TutorialOptions {
          * Set a {@link ViewPager.PageTransformer} that will be called for each attached page whenever
          * the scroll position is changed. This allows the application to apply custom property
          * transformations to each page, overriding the default sliding look and feel.
-         *
+         * <p>
          * <p><em>Note:</em> Prior to Android 3.0 the property animation APIs did not exist.
          * As a result, setting a PageTransformer prior to Android 3.0 (API 11) will have no effect.</p>
+         *
          * @param pageTransformer PageTransformer that will modify each page's animation properties
          * @return current {@link Builder}
          * @see ViewPager#setPageTransformer(boolean, ViewPager.PageTransformer)
@@ -304,5 +353,4 @@ public final class TutorialOptions {
             return TutorialOptions.create(this);
         }
     }
-
 }

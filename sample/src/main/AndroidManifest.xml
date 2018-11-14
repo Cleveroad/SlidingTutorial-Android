@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.cleveroad.slidingtutorial.sample" >
 
     <application
@@ -7,18 +8,11 @@
         android:icon="@mipmap/s_0_1"
         android:label="@string/st_app_name"
         android:theme="@style/AppTheme"
-        android:name=".SampleApplication">
+        android:name=".SampleApplication"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".support.MainActivity"
-            android:label="@string/st_app_name"/>
-
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/st_app_name"/>
-
-        <activity
-            android:name=".selector.SelectorActivity"
+            android:name=".SelectorActivity"
             android:label="@string/st_app_name"
             android:theme="@style/AppTheme">
 
@@ -29,6 +23,14 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".supportsample.SampleSupportActivity"
+            android:label="@string/st_app_name"/>
+
+        <activity
+            android:name=".sample.SampleActivity"
+            android:label="@string/st_app_name"/>
 
     </application>
 

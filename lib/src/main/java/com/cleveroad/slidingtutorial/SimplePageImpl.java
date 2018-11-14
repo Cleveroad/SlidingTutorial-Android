@@ -72,5 +72,4 @@ class SimplePageImpl {
 
         return transformItems;
     }
-
 }

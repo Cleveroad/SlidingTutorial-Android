@@ -6,6 +6,7 @@
 
 Version | Changes
 ---     | ---
+v.1.0.9 | <ul><li>Fixed issue #65 https://github.com/Cleveroad/SlidingTutorial-Android/issues/65</li><li>Scrolling in one direction. Added flag for rollback?</li></ul>
 v.1.0.8 | Fixed issue with NullPointerException with addOnTutorialPageChangeListener() called before onCreate()
 v.1.0.7 | <ul><li>Fixed import for SupportTutorialFragment</li><li>Updated versions of dependencies</li></ul>
 v.1.0.6 | <ul><li>Added new simple way of creation of tutorial</li><li>Fixed memory leaks issues</li><li>Updated default sizes of page indicator's elements</li><li>Updated default colors of page indicator</li><li>Updated versions of dependencies</li><li>Removed unused or unnecessary methods</li></ul>

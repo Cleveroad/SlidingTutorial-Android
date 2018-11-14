@@ -28,6 +28,14 @@ All you need to do is:
 
 ## Full Documentation
 
+## Setup
+To include this library to your project add dependency in **build.gradle** file:
+```groovy
+    dependencies {
+        implementation "com.cleveroad:slidingtutorial:1.0.9"
+    }
+```
+
 [Quick Start]
 
 * [Configure your tutorial with TutorialOptions]

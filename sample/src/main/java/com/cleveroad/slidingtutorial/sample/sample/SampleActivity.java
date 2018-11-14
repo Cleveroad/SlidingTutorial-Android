@@ -1,17 +1,17 @@
-package com.cleveroad.slidingtutorial.sample.support;
+package com.cleveroad.slidingtutorial.sample.sample;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.cleveroad.slidingtutorial.sample.R;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class SampleActivity extends Activity implements View.OnClickListener {
 
     public static void start(Context context) {
-        context.startActivity(new Intent(context, MainActivity.class));
+        context.startActivity(new Intent(context, SampleActivity.class));
     }
 
     @Override
@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void replaceTutorialFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, new CustomTutorialSupportFragment())
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, CustomTutorialFragment.newInstance())
                 .commit();
     }
-
 }

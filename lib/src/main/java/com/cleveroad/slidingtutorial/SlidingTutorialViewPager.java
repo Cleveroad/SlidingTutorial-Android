@@ -16,6 +16,7 @@ import android.view.MotionEvent;
  * @see <a href="https://code.google.com/p/android/issues/detail?id=66620">Issue 66620</a>
  */
 public class SlidingTutorialViewPager extends ViewPager {
+
     public SlidingTutorialViewPager(Context context) {
         super(context);
     }
@@ -33,11 +34,11 @@ public class SlidingTutorialViewPager extends ViewPager {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(MotionEvent event) {
         if (getAdapter() == null || getAdapter().getCount() == 0) {
             return false;
         }
-        return super.onTouchEvent(ev);
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -46,7 +47,6 @@ public class SlidingTutorialViewPager extends ViewPager {
             return super.getChildDrawingOrder(childCount, i);
         } catch (IndexOutOfBoundsException ignored) {
         }
-
         return 0;
     }
 
