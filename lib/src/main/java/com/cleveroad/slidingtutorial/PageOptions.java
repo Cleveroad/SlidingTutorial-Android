@@ -66,5 +66,4 @@ public class PageOptions {
     TransformItem[] getTransformItems() {
         return mTransformItems;
     }
-
 }

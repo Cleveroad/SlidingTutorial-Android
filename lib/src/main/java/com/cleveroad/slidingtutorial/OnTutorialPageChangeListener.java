@@ -35,5 +35,4 @@ public interface OnTutorialPageChangeListener {
      * @param position Position index of the new selected page.
      */
     void onPageChanged(int position);
-
 }

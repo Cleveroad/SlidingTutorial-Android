@@ -1,14 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 18
-        versionName "1.0.8"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 19
+        versionName "1.0.9"
     }
     buildTypes {
         release {
@@ -21,8 +20,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:25.3.1'
+    final support_version = '28.0.0'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:support-v4:$support_version"
 }
 
 apply from: './gradle-mvn-push.gradle'

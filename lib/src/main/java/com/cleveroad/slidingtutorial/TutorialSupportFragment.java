@@ -25,6 +25,7 @@ package com.cleveroad.slidingtutorial;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
@@ -32,11 +33,12 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Objects;
 
 /**
  * Base Fragment that contains {@link ViewPager} and where happens most logic like dispatching
@@ -46,63 +48,12 @@ import android.view.ViewGroup;
 public abstract class TutorialSupportFragment extends Fragment {
 
     /**
-     * Position of empty fragment, which used for smooth move to content after tutorial.
+     * Position of empty fragment.
      */
     public static int EMPTY_FRAGMENT_POSITION = TutorialImpl.EMPTY_FRAGMENT_POSITION;
 
-    private final Fragment emptyFragment = new Fragment();
     private TutorialImpl<Fragment> mTutorial;
     private TutorialImpl.TutorialAdapterImpl<Fragment> mTutorialAdapterImpl;
-    private final TutorialImpl.InternalFragment mInternalFragment = new TutorialImpl.InternalFragment() {
-        @Override
-        public View getView() {
-            return TutorialSupportFragment.this.getView();
-        }
-
-        @Override
-        public TutorialOptions provideTutorialOptions() {
-            return TutorialSupportFragment.this.provideTutorialOptions();
-        }
-
-        @Override
-        public void removeCurrentFragment() {
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(TutorialSupportFragment.this)
-                    .commitAllowingStateLoss();
-        }
-
-        @Override
-        public PagerAdapter getPagerAdapter() {
-            return new TutorialAdapter(getChildFragmentManager());
-        }
-
-        @Override
-        public int getLayoutResId() {
-            return TutorialSupportFragment.this.getLayoutResId();
-        }
-
-        @Override
-        public int getViewPagerResId() {
-            return TutorialSupportFragment.this.getViewPagerResId();
-        }
-
-        @Override
-        public int getIndicatorResId() {
-            return TutorialSupportFragment.this.getIndicatorResId();
-        }
-
-        @Override
-        public int getButtonSkipResId() {
-            return TutorialSupportFragment.this.getButtonSkipResId();
-        }
-
-        @Override
-        public int getSeparatorResId() {
-            return TutorialSupportFragment.this.getSeparatorResId();
-        }
-
-    };
 
     /**
      * Create new {@link TutorialOptions.Builder} instance.
@@ -120,6 +71,73 @@ public abstract class TutorialSupportFragment extends Fragment {
     }
 
     public TutorialSupportFragment() {
+        TutorialImpl.InternalFragment mInternalFragment = new TutorialImpl.InternalFragment() {
+            @Override
+            public View getView() {
+                return TutorialSupportFragment.this.getView();
+            }
+
+            @Override
+            public TutorialOptions provideTutorialOptions() {
+                return TutorialSupportFragment.this.provideTutorialOptions();
+            }
+
+            @Override
+            public void removeCurrentFragment() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    Objects.requireNonNull(getActivity()).getSupportFragmentManager()
+                            .beginTransaction()
+                            .remove(TutorialSupportFragment.this)
+                            .commitAllowingStateLoss();
+                } else {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .remove(TutorialSupportFragment.this)
+                            .commitAllowingStateLoss();
+                }
+            }
+
+            @Override
+            public void removeFirstPage() {
+                mTutorialAdapterImpl.refreshIds();
+                if (mTutorial.getTutorialOptions().isMoveOnlyForward()) {
+                    for (Fragment fragment : getChildFragmentManager().getFragments()) {
+                        getChildFragmentManager().beginTransaction().remove(fragment).commit();
+                    }
+                }
+            }
+
+            @Override
+            public TutorialAdapter getPagerAdapter() {
+                return new TutorialAdapter(getChildFragmentManager());
+            }
+
+            @Override
+            public int getLayoutResId() {
+                return TutorialSupportFragment.this.getLayoutResId();
+            }
+
+            @Override
+            public int getViewPagerResId() {
+                return TutorialSupportFragment.this.getViewPagerResId();
+            }
+
+            @Override
+            public int getIndicatorResId() {
+                return TutorialSupportFragment.this.getIndicatorResId();
+            }
+
+            @Override
+            public int getButtonSkipResId() {
+                return TutorialSupportFragment.this.getButtonSkipResId();
+            }
+
+            @Override
+            public int getSeparatorResId() {
+                return TutorialSupportFragment.this.getSeparatorResId();
+            }
+
+        };
         mTutorial = new TutorialImpl<>(mInternalFragment);
     }
 
@@ -130,17 +148,17 @@ public abstract class TutorialSupportFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return mTutorial.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTutorialAdapterImpl = new TutorialImpl.TutorialAdapterImpl<Fragment>(mTutorial) {
             @Override
             Fragment getEmptyFragment() {
-                return emptyFragment;
+                return new Fragment();
             }
         };
         mTutorial.onViewCreated(view, savedInstanceState);
@@ -283,6 +301,16 @@ public abstract class TutorialSupportFragment extends Fragment {
         @Override
         public int getCount() {
             return mTutorialAdapterImpl.getCount();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return mTutorialAdapterImpl.getItemPosition();
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return mTutorialAdapterImpl.getItemId(position);
         }
     }
 

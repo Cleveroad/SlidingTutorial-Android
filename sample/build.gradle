@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.cleveroad.tutorialsample"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -23,10 +22,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:percent:25.3.1'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    compile project(':lib')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation "junit:junit:$junit_version"
+    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:percent:$support_version"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary_version"
+    implementation project(':lib')
 }

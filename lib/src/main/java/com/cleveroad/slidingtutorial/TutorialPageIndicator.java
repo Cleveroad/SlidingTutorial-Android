@@ -186,9 +186,7 @@ public final class TutorialPageIndicator extends View implements TutorialImpl.In
         float left = startX + (mIndicatorElementSize + mIndicatorElementSpacing) * activeItemOffset;
         float right = left + mIndicatorElementSize;
         mElementBounds.set(left, top, right, bottom);
-
         canvas.clipRect(mClipBounds);
-
         canvas.save();
         canvas.rotate(ANGLE_360 * mScrolledOffset, mElementBounds.centerX(), mElementBounds.centerY());
         mRenderer.draw(canvas, mElementBounds, mIndicatorSelectedPaint, true);
@@ -241,5 +239,4 @@ public final class TutorialPageIndicator extends View implements TutorialImpl.In
         float right = left + itemWithOffset * (totalCount - 1) + mIndicatorElementSize + halfItemWithOffset * 2;
         mClipBounds.set(left, top - halfSize, right, bottom + halfSize);
     }
-
 }

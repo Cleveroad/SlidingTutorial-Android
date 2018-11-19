@@ -35,10 +35,8 @@ import android.view.ViewGroup;
 class PageImpl {
 
     private InternalFragment mInternalFragment;
-
-    @LayoutRes
-    private int mLayoutResId;
     private TransformItem[] mTransformItems;
+    private int mLayoutResId;
 
     PageImpl(@NonNull InternalFragment internalFragment) {
         mInternalFragment = internalFragment;
@@ -63,7 +61,6 @@ class PageImpl {
             }
             transformItem.setView(transformView);
         }
-
         return view;
     }
 
@@ -99,5 +96,4 @@ class PageImpl {
 
         Bundle getArguments();
     }
-
 }

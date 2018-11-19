@@ -51,64 +51,8 @@ public abstract class TutorialFragment extends Fragment {
      */
     public static int EMPTY_FRAGMENT_POSITION = TutorialImpl.EMPTY_FRAGMENT_POSITION;
 
-    private final Fragment emptyFragment = new Fragment();
     private TutorialImpl.TutorialAdapterImpl<Fragment> mTutorialAdapterImpl;
     private TutorialImpl<Fragment> mTutorial;
-    private final TutorialImpl.InternalFragment mInternalFragment = new TutorialImpl.InternalFragment() {
-        @Override
-        public View getView() {
-            return TutorialFragment.this.getView();
-        }
-
-        @Override
-        public TutorialOptions provideTutorialOptions() {
-            return TutorialFragment.this.provideTutorialOptions();
-        }
-
-        @Override
-        public void removeCurrentFragment() {
-            getActivity().getFragmentManager()
-                    .beginTransaction()
-                    .remove(TutorialFragment.this)
-                    .commitAllowingStateLoss();
-        }
-
-        @Override
-        public int getLayoutResId() {
-            return TutorialFragment.this.getLayoutResId();
-        }
-
-        @Override
-        public PagerAdapter getPagerAdapter() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                return new TutorialAdapter(getChildFragmentManager());
-            } else {
-                return new TutorialAdapter(getFragmentManager());
-            }
-        }
-
-        @Override
-        public int getViewPagerResId() {
-            return TutorialFragment.this.getViewPagerResId();
-        }
-
-        @Override
-        public int getIndicatorResId() {
-            return TutorialFragment.this.getIndicatorResId();
-        }
-
-        @Override
-        public int getButtonSkipResId() {
-            return TutorialFragment.this.getButtonSkipResId();
-        }
-
-        @Override
-        public int getSeparatorResId() {
-            return TutorialFragment.this.getSeparatorResId();
-        }
-    };
-
-
 
     /**
      * Create new {@link TutorialOptions.Builder} instance.
@@ -126,6 +70,64 @@ public abstract class TutorialFragment extends Fragment {
     }
 
     public TutorialFragment() {
+        TutorialImpl.InternalFragment mInternalFragment = new TutorialImpl.InternalFragment() {
+            @Override
+            public View getView() {
+                return TutorialFragment.this.getView();
+            }
+
+            @Override
+            public TutorialOptions provideTutorialOptions() {
+                return TutorialFragment.this.provideTutorialOptions();
+            }
+
+            @Override
+            public void removeCurrentFragment() {
+                getActivity().getFragmentManager()
+                        .beginTransaction()
+                        .remove(TutorialFragment.this)
+                        .commitAllowingStateLoss();
+            }
+
+            @Override
+            public void removeFirstPage() {
+                mTutorialAdapterImpl.refreshIds();
+            }
+
+            @Override
+            public int getLayoutResId() {
+                return TutorialFragment.this.getLayoutResId();
+            }
+
+            @Override
+            public PagerAdapter getPagerAdapter() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    return new TutorialAdapter(getChildFragmentManager());
+                } else {
+                    return new TutorialAdapter(getFragmentManager());
+                }
+            }
+
+            @Override
+            public int getViewPagerResId() {
+                return TutorialFragment.this.getViewPagerResId();
+            }
+
+            @Override
+            public int getIndicatorResId() {
+                return TutorialFragment.this.getIndicatorResId();
+            }
+
+            @Override
+            public int getButtonSkipResId() {
+                return TutorialFragment.this.getButtonSkipResId();
+            }
+
+            @Override
+            public int getSeparatorResId() {
+                return TutorialFragment.this.getSeparatorResId();
+            }
+        };
         mTutorial = new TutorialImpl<>(mInternalFragment);
     }
 
@@ -146,7 +148,7 @@ public abstract class TutorialFragment extends Fragment {
         mTutorialAdapterImpl = new TutorialImpl.TutorialAdapterImpl<Fragment>(mTutorial) {
             @Override
             Fragment getEmptyFragment() {
-                return emptyFragment;
+                return new Fragment();
             }
         };
         mTutorial.onViewCreated(view, savedInstanceState);
@@ -290,6 +292,16 @@ public abstract class TutorialFragment extends Fragment {
         @Override
         public int getCount() {
             return mTutorialAdapterImpl.getCount();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return mTutorialAdapterImpl.getItemPosition();
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return mTutorialAdapterImpl.getItemId(position);
         }
     }
 

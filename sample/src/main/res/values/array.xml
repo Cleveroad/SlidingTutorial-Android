@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="options">
-        <item>android.support.v4.app.Fragment sample</item>
-        <item>android.app.Fragment sample</item>
+        <item>support.v4.app.Fragment</item>
+        <item>support.v4.app.Fragment no rollback</item>
+        <item>app.Fragment infinite scroll</item>
     </string-array>
 </resources>

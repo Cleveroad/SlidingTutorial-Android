@@ -62,8 +62,6 @@ class ParcelableUtils {
             }
             return items;
         }
-
         return null;
     }
-
 }

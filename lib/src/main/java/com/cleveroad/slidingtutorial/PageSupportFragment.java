@@ -64,7 +64,7 @@ public abstract class PageSupportFragment extends Fragment {
     @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return mPage.onCreateView(inflater, container, savedInstanceState);
     }
 

@@ -110,5 +110,4 @@ public final class TransformItem implements Parcelable {
         dest.writeString(mDirection.name());
         dest.writeFloat(mShiftCoefficient);
     }
-
 }
